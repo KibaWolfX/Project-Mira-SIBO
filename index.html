@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<title>🌿 My SIBO Toolkit</title>
+<style>
+  /* Import fonts with fallback - works offline too */
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
+  :root {
+    --green: #1FBF80;
+    --green-light: #D6FAF0;
+    --green-mid: #9AECD5;
+    --yellow: #FFD166;
+    --yellow-light: #FFF5D6;
+    --orange: #FF8C69;
+    --orange-light: #FFE4DA;
+    --blue: #5BB8FF;
+    --blue-light: #DAEEFF;
+    --purple: #B388FF;
+    --purple-light: #EEE5FF;
+    --pink: #FF7EB3;
+    --pink-light: #FFE0F0;
+    --mint: #5DDDB8;
+    --mint-light: #D8FAF0;
+    --red: #FF6B7A;
+    --bg: #FFF0F7;
+    --card: #FFFFFF;
+    --text: #3A2845;
+    --text-muted: #A07898;
+    --border: #F9C8E3;
+    --radius: 20px;
+    --shadow: 0 4px 24px rgba(255,126,179,0.13);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* iOS Safari fixes */
+  button {
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  input {
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 0;
+  }
+
+  body {
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'SF Pro Rounded', 'Helvetica Neue', sans-serif;
+    background: #FFF0F7;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(255,126,179,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(179,136,255,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 60% 10%, rgba(91,184,255,0.06) 0%, transparent 40%);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #FF7EB3 0%, #FF5FA0 40%, #C96EE8 100%);
+    padding: 28px 20px 20px;
+    padding-top: calc(28px + env(safe-area-inset-top));
+    text-align: center;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 24px rgba(255,95,160,0.30);
+  }
+  .header h1 {
+    font-family: 'Fredoka One', 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 1.9rem;
+    color: white;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+  }
+  .header p {
+    color: rgba(255,255,255,0.85);
+    font-size: 0.85rem;
+    margin-top: 4px;
+    font-weight: 600;
+  }
+
+  /* ── NAV TABS ── */
+  .nav {
+    display: flex;
+    background: white;
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 92px;
+    z-index: 90;
+    box-shadow: 0 2px 10px rgba(255,126,179,0.08);
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav-btn {
+    flex: 0 0 auto;
+    padding: 14px 18px;
+    border: none;
+    background: none;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .nav-btn.active {
+    color: var(--pink);
+    border-bottom-color: var(--pink);
+  }
+  .nav-btn .nav-icon { font-size: 1.1rem; }
+
+  /* ── SCREENS ── */
+  .screen { display: none; padding: 16px; }
+  .screen.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+    border: 1.5px solid var(--border);
+  }
+  .card-title {
+    font-family: 'Fredoka One', 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 1.1rem;
+    color: var(--pink);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── MEAL PLAN ── */
+  .day-selector {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+    margin-bottom: 16px;
+  }
+  .day-selector::-webkit-scrollbar { display: none; }
+  .day-btn {
+    flex: 0 0 auto;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    border: 2px solid #F9C8E3;
+    background: white;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-weight: 800;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    line-height: 1.2;
+  }
+  .day-btn .day-num { font-size: 1.1rem; color: var(--text); }
+  .day-btn.active {
+    background: linear-gradient(135deg, #FF7EB3, #B388FF);
+    border-color: #FF7EB3;
+    color: white;
+    box-shadow: 0 4px 14px rgba(255,126,179,0.40);
+  }
+  .day-btn.active .day-num { color: white; }
+
+  .meal-block {
+    border-radius: 14px;
+    padding: 14px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .meal-block.breakfast { background: #FFF5D6; border-left: 4px solid var(--yellow); }
+  .meal-block.lunch     { background: var(--green-light); border-left: 4px solid var(--green); }
+  .meal-block.snack     { background: var(--pink-light); border-left: 4px solid var(--pink); }
+  .meal-block.dinner    { background: var(--blue-light); border-left: 4px solid var(--blue); }
+
+  .meal-label {
+    font-size: 0.68rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 4px;
+  }
+  .meal-block.breakfast .meal-label { color: #C8900A; }
+  .meal-block.lunch .meal-label     { color: var(--green); }
+  .meal-block.snack .meal-label     { color: var(--pink); }
+  .meal-block.dinner .meal-label    { color: var(--blue); }
+
+  .meal-name {
+    font-weight: 800;
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+  .meal-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .expand-btn {
+    margin-top: 10px;
+    background: none;
+    border: 2px solid currentColor;
+    border-radius: 30px;
+    padding: 5px 14px;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-weight: 800;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .meal-block.breakfast .expand-btn { color: #C8900A; }
+  .meal-block.lunch .expand-btn { color: var(--green); }
+  .meal-block.snack .expand-btn { color: var(--pink); }
+  .meal-block.dinner .expand-btn { color: var(--blue); }
+
+  .recipe-detail {
+    display: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1.5px dashed rgba(0,0,0,0.1);
+  }
+  .recipe-detail.open { display: block; }
+
+  .ingredient-list {
+    list-style: none;
+    margin-bottom: 10px;
+  }
+  .ingredient-list li {
+    padding: 4px 0;
+    font-size: 0.83rem;
+    color: var(--text);
+    font-weight: 600;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .ingredient-list li::before { content: '•'; color: var(--pink); font-size: 1rem; line-height: 1.2; flex-shrink: 0; }
+
+  .steps-list {
+    list-style: none;
+    counter-reset: steps;
+  }
+  .steps-list li {
+    counter-increment: steps;
+    padding: 5px 0 5px 32px;
+    font-size: 0.82rem;
+    color: var(--text);
+    font-weight: 600;
+    position: relative;
+    line-height: 1.5;
+  }
+  .steps-list li::before {
+    content: counter(steps);
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #FF7EB3, #B388FF);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.72rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .shuffle-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #FF7EB3, #B388FF);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-family: 'Fredoka One', 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 18px rgba(255,126,179,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .shuffle-btn:active { transform: scale(0.97); }
+
+  /* ── SNACKS ── */
+  .snack-filter {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .filter-chip {
+    padding: 6px 14px;
+    border-radius: 30px;
+    border: 2px solid #F9C8E3;
+    background: white;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-chip.active {
+    background: linear-gradient(135deg, #FF7EB3, #B388FF);
+    border-color: #FF7EB3;
+    color: white;
+  }
+
+  .snack-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .snack-emoji {
+    font-size: 2.2rem;
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    background: var(--pink-light);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .snack-brand { font-size: 0.78rem; color: var(--pink); font-weight: 700; margin: 2px 0; }
+  .snack-notes { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+  .snack-buy { font-size: 0.72rem; color: var(--blue); font-weight: 700; margin-top: 4px; }
+
+  .convention-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #FFD166, #FF8C69);
+    color: white;
+    font-size: 0.68rem;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin-top: 4px;
+  }
+
+  /* ── FOOD GUIDE ── */
+  .fodmap-section { margin-bottom: 20px; }
+  .fodmap-section h3 {
+    font-family: 'Fredoka One', 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 1.15rem;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .fodmap-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .fodmap-col {
+    border-radius: 14px;
+    padding: 12px;
+  }
+  .fodmap-col.green  { background: var(--green-light);  border: 1.5px solid var(--green-mid); }
+  .fodmap-col.yellow { background: #FFF5D6; border: 1.5px solid #FFE08A; }
+  .fodmap-col.orange { background: var(--orange-light); border: 1.5px solid #FFBBA8; }
+  .fodmap-col.red    { background: #FFE4E8; border: 1.5px solid #FFB3BC; }
+  .fodmap-col-title {
+    font-size: 0.68rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .fodmap-col.green .fodmap-col-title { color: var(--green); }
+  .fodmap-col.yellow .fodmap-col-title { color: #9A7200; }
+  .fodmap-col.orange .fodmap-col-title { color: var(--orange); }
+  .fodmap-col.red .fodmap-col-title { color: var(--red); }
+
+  .food-pill {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    margin: 2px 2px 2px 0;
+  }
+  .fodmap-col.green .food-pill { background: white; color: var(--green); }
+  .fodmap-col.yellow .food-pill { background: white; color: #9A7200; }
+  .fodmap-col.orange .food-pill { background: white; color: var(--orange); }
+  .fodmap-col.red .food-pill { background: white; color: var(--red); }
+
+  /* ── TIPS / AUTISM-FRIENDLY ── */
+  .tip-card {
+    background: var(--purple-light);
+    border: 1.5px solid #D4BBFF;
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .tip-icon { font-size: 1.8rem; margin-bottom: 6px; display: block; }
+  .tip-title { font-weight: 900; font-size: 0.95rem; margin-bottom: 6px; color: var(--purple); }
+  .tip-body { font-size: 0.83rem; color: var(--text); font-weight: 600; line-height: 1.6; }
+
+  .sensory-card {
+    background: var(--mint-light);
+    border: 1.5px solid #8EECD8;
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .sensory-card .tip-title { color: #10A880; }
+
+  .checklist {
+    list-style: none;
+    margin-top: 8px;
+  }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 0.83rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .checklist li::before {
+    content: '✓';
+    color: var(--pink);
+    font-weight: 900;
+    flex-shrink: 0;
+    font-size: 0.9rem;
+  }
+
+  /* ── CONVENTION PACK ── */
+  .pack-section { margin-bottom: 20px; }
+  .pack-header {
+    font-family: 'Fredoka One', 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 1.15rem;
+    color: var(--pink);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .pack-item {
+    background: white;
+    border-radius: 14px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 10px rgba(255,126,179,0.08);
+  }
+  .pack-item-emoji { font-size: 1.6rem; flex-shrink: 0; }
+  .pack-item-text { flex: 1; }
+  .pack-item-name { font-weight: 800; font-size: 0.9rem; }
+  .pack-item-note { font-size: 0.76rem; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+
+  .pack-tip {
+    background: linear-gradient(135deg, #FFF0F7, #EEE5FF);
+    border: 2px solid #F5C0E0;
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 14px;
+    font-size: 0.83rem;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+  .pack-tip strong { color: var(--pink); }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 2px solid var(--border);
+    display: flex;
+    z-index: 200;
+    box-shadow: 0 -4px 20px rgba(255,126,179,0.12);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .bottom-btn {
+    flex: 1;
+    border: none;
+    background: none;
+    padding: 12px 4px 14px;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    transition: all 0.2s;
+  }
+  .bottom-btn .b-icon { font-size: 1.5rem; line-height: 1; transition: transform 0.2s; }
+  .bottom-btn.active { color: var(--pink); }
+  .bottom-btn.active .b-icon { transform: scale(1.15); }
+
+  /* ── SEARCH ── */
+  .search-bar {
+    background: var(--pink-light);
+    border: 2px solid #F9C0DC;
+    border-radius: 14px;
+    padding: 12px 16px;
+    width: 100%;
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+    outline: none;
+    margin-bottom: 14px;
+  }
+  .search-bar::placeholder { color: var(--text-muted); }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    margin-top: 4px;
+  }
+
+  /* ── STATUS PILL ── */
+  .status-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .pill-green { background: var(--green-light); color: var(--green); }
+  .pill-red { background: #FEF0F0; color: var(--red); }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .empty .empty-icon { font-size: 3rem; display: block; margin-bottom: 10px; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .screen.active { animation: fadeSlide 0.25s ease; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinning { animation: spin 0.4s ease; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>🌿 My SIBO Toolkit</h1>
+  <p>SIBO + Low Histamine • Autism-Friendly Edition</p>
+</div>
+
+<!-- TOP NAV -->
+<div class="nav" id="topNav">
+  <button class="nav-btn active" onclick="showScreen('meal')" data-screen="meal">
+    <span class="nav-icon">🍽️</span> Meal Plan
+  </button>
+  <button class="nav-btn" onclick="showScreen('snacks')" data-screen="snacks">
+    <span class="nav-icon">🎒</span> Snacks
+  </button>
+  <button class="nav-btn" onclick="showScreen('convention')" data-screen="convention">
+    <span class="nav-icon">🎉</span> Convention
+  </button>
+  <button class="nav-btn" onclick="showScreen('foods')" data-screen="foods">
+    <span class="nav-icon">📋</span> Food Guide
+  </button>
+  <button class="nav-btn" onclick="showScreen('breakfast')" data-screen="breakfast">
+    <span class="nav-icon">🌅</span> Grab & Go
+  </button>
+  <button class="nav-btn" onclick="showScreen('breakfast')" data-screen="breakfast">
+    <span class="nav-icon">🌅</span> Quick Bfast
+  </button>
+  <button class="nav-btn" onclick="showScreen('tips')" data-screen="tips">
+    <span class="nav-icon">💜</span> Autism Tips
+  </button>
+</div>
+
+<!-- ══════════════ MEAL PLAN SCREEN ══════════════ -->
+<div class="screen active" id="screen-meal">
+
+  <button class="shuffle-btn" onclick="shuffleMeals()">
+    <span id="shuffleIcon">🔀</span> Surprise Me! Shuffle This Week's Meals
+  </button>
+
+  <div class="day-selector" id="daySelector"></div>
+  <div id="mealContent"></div>
+</div>
+
+<!-- ══════════════ SNACKS SCREEN ══════════════ -->
+<div class="screen" id="screen-snacks">
+  <input class="search-bar" type="text" placeholder="🔍 Search snacks..." oninput="filterSnacks(this.value)">
+
+  <div class="snack-filter">
+    <button class="filter-chip active" onclick="setSnackFilter('all', this)">All</button>
+    <button class="filter-chip" onclick="setSnackFilter('protein', this)">🥩 Protein</button>
+    <button class="filter-chip" onclick="setSnackFilter('veggie', this)">🥦 Veggie</button>
+    <button class="filter-chip" onclick="setSnackFilter('fruit', this)">🍓 Fruit</button>
+    <button class="filter-chip" onclick="setSnackFilter('dairy', this)">🧀 Dairy</button>
+    <button class="filter-chip" onclick="setSnackFilter('drink', this)">💧 Drink</button>
+    <button class="filter-chip" onclick="setSnackFilter('convention', this)">🎉 Con-Safe</button>
+  </div>
+
+  <div id="snackList"></div>
+</div>
+
+<!-- ══════════════ CONVENTION SCREEN ══════════════ -->
+<div class="screen" id="screen-convention">
+
+  <div class="pack-tip">
+    <strong>🎉 MegaCon & DragonCon Packing Guide</strong><br>
+    Conventions can be overwhelming — long lines, sensory overload, and zero SIBO-safe food in sight. This is your checklist for staying nourished, comfortable, and in control all day.
+  </div>
+
+  <div class="pack-section">
+    <div class="pack-header">🎒 The "Con Bag" Snack Pack</div>
+    <div class="pack-item"><span class="pack-item-emoji">🥩</span><div class="pack-item-text"><div class="pack-item-name">Chomps Beef Sticks (2–3)</div><div class="pack-item-note">No refrigeration, high protein, fits in any bag</div></div></div>
+    <div class="pack-item"><span class="pack-item-emoji">🥥</span><div class="pack-item-text"><div class="pack-item-name">Dang Coconut Chips (1 bag)</div><div class="pack-item-note">Light, crunchy — great sensory snack, no mess</div></div></div>
+    <div class="pack-item"><span class="pack-item-emoji">🌿</span><div class="pack-item-text"><div class="pack-item-name">Seaweed Snacks — gimMe (2 packs)</div><div class="pack-item-note">Zero smell, quiet to eat, low-FODMAP safe</div></div></div>
+    <div class="pack-item"><span class="pack-item-emoji">🥜</span><div class="pack-item-text"><div class="pack-item-name">Macadamia Nuts (small bag, ~10–20 nuts)</div><div class="pack-item-note">Pre-portion in a zip bag the night before</div></div></div>
+    <div class="pack-item"><span class="pack-item-emoji">🍎</span><div class="pack-item-text"><div class="pack-item-name">Freeze-Dried Blueberries — Natierra</div><div class="pack-item-note">No bruising, no mess, sweet and crunchy</div></div></div>
+    <div class="pack-item"><span class="pack-item-emoji">💧</span><div class="pack-item-text"><div class="pack-item-name">Trace Minerals Electrolyte Water (2 bottles)</div><div class="pack-item-note">Hydration without additives — bring a soft cooler sleeve</div></div></div>
+    <div class="pack-item"><span class="pack-item-emoji">🫙</span><div class="pack-item-text"><div class="pack-item-name">Moon Cheese — Cheddar (1 bag)</div><div class="pack-item-note">Loud crunch, but packs small and stays shelf-stable</div></div></div>
+    <div class="pack-item"><span class="pack-item-emoji">🦃</span><div class="pack-item-text"><div class="pack-item-name">Nick's Sticks Turkey Mini Sticks (2)</div><div class="pack-item-note">Backup protein, easy to open even in a crowd</div></div></div>
+  </div>
+
+  <div class="pack-section">
+    <div class="pack-header">🧠 Sensory Survival Pack</div>
+    <div class="pack-item"><span class="pack-item-emoji">🎧</span><div class="pack-item-text"><div class="pack-item-name">Noise-canceling headphones or earplugs</div><div class="pack-item-note">For sound overload — wear them freely, no explanation needed</div></div></div>
+    <div class="pack-item"><span class="pack-item-emoji">😎</span><div class="pack-item-text"><div class="pack-item-name">Sunglasses (indoors is okay)</div><div class="pack-item-note">Bright convention lighting can trigger overwhelm fast</div></div></div>
+    <div class="pack-item"><span class="pack-item-emoji">🗺️</span><div class="pack-item-text"><div class="pack-item-name">Printed floor map + schedule</div><div class="pack-item-note">Visual planning reduces surprise — mark quiet zones in advance</div></div></div>
+    <div class="pack-item"><span class="pack-item-emoji">🕐</span><div class="pack-item-text"><div class="pack-item-name">Scheduled snack + water alarm</div><div class="pack-item-note">Set phone alarms every 2–3 hours so eating doesn't get skipped</div></div></div>
+    <div class="pack-item"><span class="pack-item-emoji">🌬️</span><div class="pack-item-text"><div class="pack-item-name">Small handheld fan</div><div class="pack-item-note">Heat + crowd = easy overload trigger. Instant relief.</div></div></div>
+    <div class="pack-item"><span class="pack-item-emoji">🪑</span><div class="pack-item-text"><div class="pack-item-name">Identify quiet areas on arrival</div><div class="pack-item-note">Most cons have medical/quiet rooms — find yours before you need it</div></div></div>
+  </div>
+
+  <div class="pack-section">
+    <div class="pack-header">📋 Morning-Of Checklist</div>
+    <div id="conventionChecklist"></div>
+  </div>
+
+  <div class="pack-section">
+    <div class="pack-header">🍽️ What to Eat at the Con</div>
+    <div class="card">
+      <p style="font-size:0.83rem; font-weight:600; line-height:1.7; color:var(--text)">
+        <strong style="color:var(--orange)">Safe bets at convention food courts:</strong><br>
+        • <strong>Plain grilled chicken or beef</strong> — ask for no sauce<br>
+        • <strong>Plain rice or salad (no dressing)</strong> — add your own olive oil packet<br>
+        • <strong>Hard-boiled eggs</strong> if available<br>
+        • <strong>Bring your own</strong> wherever possible — it's always the safest option<br><br>
+        <strong style="color:var(--red)">Avoid at cons:</strong><br>
+        • Fried foods, sauces, marinades<br>
+        • Anything with "seasoning blend" (usually contains garlic/onion powder)<br>
+        • Convention energy drinks and sodas<br>
+        • Shared/buffet foods where cross-contamination is high
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ FOOD GUIDE SCREEN ══════════════ -->
+<div class="screen" id="screen-foods">
+
+  <div class="card" style="background: linear-gradient(135deg, #FFF0F7, #EEE5FF); border-color: #F5C0E0; margin-bottom:16px;">
+    <p style="font-size:0.83rem; font-weight:700; line-height:1.7; color:var(--text)">
+      🟢 <strong>Green</strong> = Less fermentable, safest to eat freely<br>
+      🟡 <strong>Yellow</strong> = Moderate — limit to 1 per meal (3–4 hrs apart)<br>
+      🟠 <strong>Orange</strong> = Higher FODMAP — eat small amounts, watch reactions<br>
+      🔴 <strong>Red</strong> = SCD Illegal — avoid on SIBO diet
+    </p>
+  </div>
+
+  <div id="foodGuideContent"></div>
+</div>
+
+<!-- ══════════════ GRAB & GO BREAKFAST SCREEN ══════════════ -->
+<div class="screen" id="screen-breakfast">
+
+  <div class="pack-tip">
+    <strong>🌅 Grab & Go Breakfasts for Busy Mornings</strong><br>
+    Some days there's no time to cook. These options are all SIBO + low-histamine safe — either fully store-bought or prepped the night before so mornings are zero-effort. Built especially for days when eating breakfast feels like too much.
+  </div>
+
+  <!-- FILTER CHIPS -->
+  <div class="snack-filter" style="margin-bottom:14px;">
+    <button class="filter-chip active" onclick="setBfFilter('all',this)">All</button>
+    <button class="filter-chip" onclick="setBfFilter('storebought',this)">🛒 Store-Bought</button>
+    <button class="filter-chip" onclick="setBfFilter('prepnight',this)">🌙 Prep Night Before</button>
+    <button class="filter-chip" onclick="setBfFilter('5min',this)">⚡ Under 5 Min</button>
+    <button class="filter-chip" onclick="setBfFilter('norefrig',this)">🎒 No Fridge Needed</button>
+  </div>
+
+  <div id="bfList"></div>
+
+  <!-- PREP TIPS SECTION -->
+  <div style="margin-top:8px;">
+    <div class="section-label">🧠 Tips for Low-Energy Mornings</div>
+    <div class="sensory-card">
+      <span class="tip-icon">🌙</span>
+      <div class="tip-title">Sunday Prep = Whole Week of Easy Mornings</div>
+      <div class="tip-body">
+        <ul class="checklist">
+          <li>Bake a batch of egg muffins — freeze individually, reheat in 60 sec</li>
+          <li>Mix overnight oats in 4 jars — grab one each morning Mon–Thu</li>
+          <li>Hard-boil 6 eggs at once — keep in the fridge up to 5 days</li>
+          <li>Pre-portion macadamia nuts + freeze-dried fruit into zip bags</li>
+          <li>Make a coconut chia pudding base — add toppings day-of</li>
+        </ul>
+      </div>
+    </div>
+    <div class="sensory-card">
+      <span class="tip-icon">⚠️</span>
+      <div class="tip-title">Histamine Note on Leftovers</div>
+      <div class="tip-body">Histamine builds up in proteins over time — even in the fridge. For low-histamine safety: cook eggs and meat fresh or freeze immediately after cooking. Don't leave cooked protein in the fridge for more than <strong>24 hours</strong> before eating. Freeze egg muffins the same day you make them.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ GRAB & GO BREAKFAST SCREEN ══════════════ -->
+<div class="screen" id="screen-breakfast">
+
+  <div class="card" style="background: linear-gradient(135deg,#FEF8E7,#FFF4D6); border-color:#F9D87A; margin-bottom:16px;">
+    <p style="font-size:0.83rem; font-weight:700; line-height:1.7; color:var(--text)">
+      🌅 <strong>Samantha's Quick Breakfast Guide</strong><br>
+      On busy days, breakfast doesn't have to be cooked. These are store-bought, prep-free (or prep-the-night-before) options that are fully SIBO + low histamine safe. Grab one and go.
+    </p>
+  </div>
+
+  <!-- FILTER TABS -->
+  <div class="snack-filter" style="margin-bottom:16px;">
+    <button class="filter-chip active" onclick="setBfastFilter('all', this)">All</button>
+    <button class="filter-chip" onclick="setBfastFilter('notouch', this)">🙌 Zero Prep</button>
+    <button class="filter-chip" onclick="setBfastFilter('nightbefore', this)">🌙 Night Before</button>
+    <button class="filter-chip" onclick="setBfastFilter('5min', this)">⚡ 5 Min</button>
+  </div>
+
+  <div id="bfastList"></div>
+
+  <!-- BATCH PREP TIP -->
+  <div class="pack-tip" style="margin-top: 6px;">
+    <strong>💡 Sunday Batch Tip for Samantha</strong><br>
+    Spend 20 minutes on Sunday: boil a batch of eggs, portion out nuts + blueberries into zip bags, and prep 2–3 overnight oat jars. That covers Mon–Wed with zero morning effort.
+  </div>
+
+  <!-- WHAT TO AVOID NOTE -->
+  <div class="tip-card" style="margin-top:4px;">
+    <span class="tip-icon">⚠️</span>
+    <div class="tip-title">Watch Out For These in Packaged Breakfast</div>
+    <div class="tip-body">
+      <ul class="checklist">
+        <li>Honey (high FODMAP unless alfalfa/clover/raspberry type)</li>
+        <li>Inulin / chicory root fiber (common in protein bars — very high FODMAP)</li>
+        <li>Guar gum, carrageenan (SCD Illegal thickeners)</li>
+        <li>Onion/garlic powder in savory items</li>
+        <li>Sugar alcohols: xylitol, sorbitol, mannitol (big FODMAP triggers)</li>
+        <li>Vinegar (high histamine — avoid in morning when gut is empty)</li>
+        <li>Aged or processed cheese (high histamine)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ AUTISM TIPS SCREEN ══════════════ -->
+<div class="screen" id="screen-tips">
+
+  <div class="tip-card">
+    <span class="tip-icon">🧠</span>
+    <div class="tip-title">Why This Matters</div>
+    <div class="tip-body">Autism and SIBO can be a tough combo. Sensory sensitivities around food textures, smells, and appearance make it harder to stick to a diet. These tips are designed to reduce friction and make eating feel safer and more predictable.</div>
+  </div>
+
+  <div class="section-label">Food Sensory Tips</div>
+
+  <div class="sensory-card">
+    <span class="tip-icon">👁️</span>
+    <div class="tip-title">Keep Foods Separate on the Plate</div>
+    <div class="tip-body">Mixed foods can feel unpredictable. Use divided plates or bowls. Put sauces on the side. Knowing exactly what each bite is reduces anxiety and makes eating feel safe.
+      <ul class="checklist" style="margin-top:8px;">
+        <li>Bento-style boxes work great for this</li>
+        <li>Same color/texture foods together when possible</li>
+        <li>Prep meals visually the same way each time</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sensory-card">
+    <span class="tip-icon">🌡️</span>
+    <div class="tip-title">Temperature Consistency</div>
+    <div class="tip-body">Serve foods at the same temperature each time. Unexpected hot or cold can cause refusal. For SIBO, lightly warm (not hot) cooked veggies are easier to digest and more predictable texturally.</div>
+  </div>
+
+  <div class="sensory-card">
+    <span class="tip-icon">👃</span>
+    <div class="tip-title">Managing Strong Food Smells</div>
+    <div class="tip-body">Some SIBO-safe foods (fish, certain veggies) have strong smells. Tips:
+      <ul class="checklist" style="margin-top:8px;">
+        <li>Cook when you have time and space, not when overwhelmed</li>
+        <li>Use a fan or open window when cooking fish</li>
+        <li>Mild proteins (chicken, turkey) are often smell-neutral wins</li>
+        <li>Freeze-dried snacks have almost no smell</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-label">Routine Building</div>
+
+  <div class="tip-card">
+    <span class="tip-icon">📅</span>
+    <div class="tip-title">Use the Meal Plan as a Script</div>
+    <div class="tip-body">The 7-day rotating meal plan gives you a predictable script to follow. Knowing what's coming reduces decision fatigue. You can even print it and check off each meal.
+      <ul class="checklist" style="margin-top:8px;">
+        <li>Prep Sunday: cook proteins, chop veggies for the week</li>
+        <li>Eat at the same times daily when possible</li>
+        <li>Use the shuffle button only when you feel ready for variety</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-card">
+    <span class="tip-icon">🛒</span>
+    <div class="tip-title">Safe Food Shopping</div>
+    <div class="tip-body">Grocery stores can be overwhelming. Reduce friction:
+      <ul class="checklist" style="margin-top:8px;">
+        <li>Use the snacks list as a pre-written shopping list</li>
+        <li>Order from Amazon/Thrive Market to avoid stores on hard days</li>
+        <li>Stock backup "safe foods" you know you can always eat</li>
+        <li>Batch-buy non-perishables once a month</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-label">At Conventions & Social Events</div>
+
+  <div class="tip-card">
+    <span class="tip-icon">🎭</span>
+    <div class="tip-title">Convention Food Strategy</div>
+    <div class="tip-body">Having a plan removes the anxiety of "what will I eat today?" Pre-packing removes almost all food decisions from an already high-stimulation day.
+      <ul class="checklist" style="margin-top:8px;">
+        <li>Pack the full "Con Bag" the night before, not the morning of</li>
+        <li>Keep snacks in an easy-to-reach outer pocket</li>
+        <li>Set eating alarms — forgetting to eat at cons is common</li>
+        <li>Bring a familiar "safe food" for comfort eating if overwhelmed</li>
+        <li>It's okay to step outside or find a quiet spot to eat alone</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-card">
+    <span class="tip-icon">💬</span>
+    <div class="tip-title">Explaining Your Diet to Others</div>
+    <div class="tip-body">You don't owe anyone a detailed medical explanation. Some options:
+      <ul class="checklist" style="margin-top:8px;">
+        <li>"I have a digestive condition that limits what I can eat"</li>
+        <li>"I'm really particular about ingredients — I'll stick to what I brought"</li>
+        <li>It's always okay to say "no thank you" without explanation</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section-label">Emergency Toolkit</div>
+
+  <div class="sensory-card">
+    <span class="tip-icon">🆘</span>
+    <div class="tip-title">When You're Overwhelmed and Hungry</div>
+    <div class="tip-body">
+      <strong style="color:var(--blue)">Your 5-minute reset:</strong>
+      <ul class="checklist" style="margin-top:8px;">
+        <li>Step away from the crowd (outside, hallway, bathroom)</li>
+        <li>Drink water first — even mild dehydration worsens everything</li>
+        <li>Eat something from your bag — a beef stick or seaweed pack</li>
+        <li>Put on headphones or sunglasses if stimulation is high</li>
+        <li>Give yourself permission to slow down — you don't have to push through</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="bottom-btn active" onclick="showScreen('meal')" data-bscreen="meal">
+    <span class="b-icon">🍽️</span>Meals
+  </button>
+  <button class="bottom-btn" onclick="showScreen('snacks')" data-bscreen="snacks">
+    <span class="b-icon">🎒</span>Snacks
+  </button>
+  <button class="bottom-btn" onclick="showScreen('convention')" data-bscreen="convention">
+    <span class="b-icon">🎉</span>Con Pack
+  </button>
+  <button class="bottom-btn" onclick="showScreen('foods')" data-bscreen="foods">
+    <span class="b-icon">📋</span>Foods
+  </button>
+  <button class="bottom-btn" onclick="showScreen('breakfast')" data-bscreen="breakfast">
+    <span class="b-icon">🌅</span>Grab&Go
+  </button>
+  <button class="bottom-btn" onclick="showScreen('breakfast')" data-bscreen="breakfast">
+    <span class="b-icon">🌅</span>Bfast
+  </button>
+  <button class="bottom-btn" onclick="showScreen('tips')" data-bscreen="tips">
+    <span class="b-icon">💜</span>Tips
+  </button>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────
+
+const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const DAY_FULL = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+const ALL_MEALS = {
+  breakfast: [
+    { name: 'Scrambled Eggs with Zucchini & Chives', desc: 'Light, protein-rich start', ingredients: ['2 eggs', '½ small zucchini diced', '1 tbsp chives chopped', '1 tsp olive oil', 'Salt, pepper'], steps: ['Heat olive oil over medium heat', 'Sauté zucchini 2–3 min until soft', 'Beat eggs, pour over zucchini, season', 'Stir gently until just set', 'Sprinkle chives and serve'] },
+    { name: 'Overnight Oats with Blueberries', desc: 'Prep the night before — no morning stress', ingredients: ['½ cup GF oats', '1 cup almond milk', '½ cup blueberries', '1 tsp honey'], steps: ['Combine oats, almond milk, honey in a jar', 'Stir in blueberries', 'Refrigerate overnight', 'Stir before eating — no cooking needed!'] },
+    { name: 'Omelet with Spinach & Parsley', desc: 'Fluffy, mild, and filling', ingredients: ['2 eggs', '½ cup spinach', '1 tbsp parsley', '1 tsp olive oil', 'Salt, pepper'], steps: ['Heat oil in a pan', 'Sauté spinach 2 minutes', 'Beat eggs, pour over spinach, season', 'Cook until set, fold omelet'] },
+    { name: 'Coconut Chia Pudding with Mango', desc: 'Creamy, no cooking', ingredients: ['¼ cup chia seeds', '1 cup coconut milk', '½ cup diced mango', '1 tsp honey'], steps: ['Mix chia seeds and coconut milk', 'Stir well, wait 10 min, stir again', 'Refrigerate overnight', 'Top with mango and honey'] },
+    { name: 'Boiled Eggs, Sautéed Kale & Carrot', desc: 'Simple and predictable', ingredients: ['2 eggs', '1 cup kale', '1 carrot sliced', '1 tsp olive oil', 'Salt, pepper'], steps: ['Boil eggs 8 min, cool and peel', 'Sauté kale and carrot 5 min', 'Season and plate separately'] },
+    { name: 'Rice Porridge with Apple & Cinnamon', desc: 'Warm, soothing, mild', ingredients: ['½ cup white rice', '1 cup almond milk', '1 apple diced', '½ tsp cinnamon'], steps: ['Combine rice and almond milk', 'Simmer 15–20 min, stirring often', 'Add apple and cinnamon, cook 5 more min'] },
+    { name: 'Scrambled Eggs with Kale & Chives', desc: 'Quick and easy', ingredients: ['2 eggs', '½ cup kale', '1 tbsp chives', '1 tsp olive oil', 'Salt, pepper'], steps: ['Sauté kale in oil 2 min', 'Pour beaten eggs over kale', 'Cook while stirring until set', 'Sprinkle with chives'] },
+  ],
+  lunch: [
+    { name: 'Chicken Burger + Parsnip Fries + Cucumber Salad', desc: 'A full plate, all SIBO-safe', ingredients: ['100g ground chicken', '1 tbsp parsley', '1 parsnip', '½ cucumber', 'Olive oil, salt, rosemary, lemon'], steps: ['Mix chicken + parsley, form patty, grill 5–7 min/side', 'Toss parsnip with oil + rosemary, bake 400°F 25 min', 'Toss cucumber with oil and lemon juice'] },
+    { name: 'Poached Cod + Quinoa + Sautéed Kale', desc: 'Clean protein, mild flavors', ingredients: ['1 cod fillet', '½ cup quinoa', '1 cup kale', 'Olive oil, salt, bay leaf'], steps: ['Simmer water + bay leaf, poach cod 7–8 min', 'Rinse quinoa, boil with water 15 min, fluff', 'Sauté kale in oil 3–4 min'] },
+    { name: 'Turkey Lettuce Wraps', desc: 'No dishes, easy to eat', ingredients: ['100g ground turkey', '1 carrot grated', '½ cucumber', '4 lettuce leaves', 'Olive oil, parsley, salt'], steps: ['Cook turkey in oil until browned', 'Add carrot, cook 2 min', 'Spoon into lettuce leaves with cucumber on top'] },
+    { name: 'Quinoa Salad', desc: 'Served cold — great for batch prep', ingredients: ['½ cup cooked quinoa', '½ cucumber diced', '2 radishes sliced', '1 cup arugula', 'Olive oil, lemon, salt'], steps: ['Cook quinoa ahead and cool', 'Toss all ingredients together', 'Serve chilled'] },
+    { name: 'Chicken & Veggie Soup', desc: 'Warm, comforting, gentle on gut', ingredients: ['100g chicken breast', '½ cup carrot', '½ cup kale', 'Ginger, bay leaf, sage, oregano, salt'], steps: ['Combine chicken, water, ginger, bay leaf, herbs', 'Simmer, skim foam', 'Add carrots 10 min, then kale 5 min', 'Remove bay leaf, season and serve'] },
+    { name: 'Turkey Burger + Roasted Sweet Potato + Greens', desc: 'Filling and colorful', ingredients: ['100g ground turkey', '1 small sweet potato', '2 cups mixed greens', 'Olive oil, parsley, salt, lemon'], steps: ['Mix turkey + parsley, form patty, grill 5–7 min/side', 'Toss sweet potato with oil, roast 400°F 25 min', 'Dress greens with olive oil and lemon'] },
+    { name: 'Chicken Salad', desc: 'Simple cold lunch, great for leftovers', ingredients: ['100g poached chicken diced', '½ cucumber diced', '2 radishes sliced', 'Olive oil, parsley, salt'], steps: ['Combine all ingredients in a bowl', 'Toss well', 'Serve chilled'] },
+  ],
+  snack: [
+    { name: 'Apple Slices + Macadamia Nut Butter', desc: 'Sweet + filling, great texture combo', ingredients: ['1 apple', '1 tbsp macadamia nut butter'], steps: ['Slice apple', 'Serve with nut butter on the side for dipping'] },
+    { name: 'Pear + Chestnuts', desc: 'Naturally sweet + satisfying', ingredients: ['1 pear sliced', 'A handful of roasted chestnuts'], steps: ['Slice pear', 'Serve chestnuts alongside'] },
+    { name: 'Blueberry Coconut Ramekin Cake', desc: 'Baked snack, feels like a treat', ingredients: ['1 tbsp coconut oil', '¼ cup coconut flour', '¼ cup coconut milk', '5 macadamia nuts chopped', '⅛ cup blueberries', '1 tsp honey'], steps: ['Mix all ingredients', 'Pour into greased ramekin', 'Bake 350°F 20–30 min until golden', 'Cool before eating'] },
+    { name: 'Sliced Peaches + Cottage Cheese', desc: 'Creamy + refreshing', ingredients: ['1 peach sliced', '½ cup lactose-free cottage cheese'], steps: ['Slice peach', 'Serve cottage cheese alongside'] },
+    { name: 'Melon Cubes', desc: 'Hydrating and light', ingredients: ['1 cup melon diced'], steps: ['Dice and serve chilled'] },
+    { name: 'Pear Slices + Chestnut Spread', desc: 'Mild and sweet', ingredients: ['1 pear sliced', '1 tbsp chestnut spread'], steps: ['Slice pear', 'Spread chestnut on each slice'] },
+    { name: 'Blueberries + Macadamia Nuts', desc: 'Fast grab-and-go', ingredients: ['½ cup blueberries', '10 macadamia nuts'], steps: ['Combine in a bowl or container', 'Eat at room temp or chilled'] },
+  ],
+  dinner: [
+    { name: 'Grilled Turkey Breast + Steamed Broccoli + Carrot Mash', desc: 'Classic clean dinner', ingredients: ['1 turkey breast', '1 cup broccoli florets', '2 carrots', 'Olive oil, salt, thyme'], steps: ['Brush turkey with oil + thyme, grill 6–8 min/side', 'Steam broccoli 4–5 min', 'Boil carrots, mash with olive oil and salt'] },
+    { name: 'Beef Stir-Fry + Bell Pepper + Zucchini + Rice', desc: 'Quick and satisfying', ingredients: ['100g beef sliced thin', '½ bell pepper', '½ zucchini', 'Fresh ginger', 'Olive oil, salt, 1 cup rice'], steps: ['Heat oil, cook ginger + beef 2–3 min', 'Add veggies, stir-fry 4–5 min', 'Season, serve over cooked rice'] },
+    { name: 'Baked Chicken Thigh + Roasted Carrots + Green Beans', desc: 'Oven-done with little effort', ingredients: ['1 chicken thigh', '2 carrots', '1 cup green beans', 'Olive oil, rosemary, salt, pepper'], steps: ['Rub chicken with oil + rosemary, bake 400°F 25–30 min', 'Roast carrots with oil 25 min', 'Steam green beans 4–5 min'] },
+    { name: 'Lamb Chops + Mashed Cauliflower + Sautéed Zucchini', desc: 'Hearty and flavorful', ingredients: ['2 lamb chops', '½ head cauliflower', '1 zucchini', 'Olive oil, thyme, salt'], steps: ['Rub lamb with oil + thyme, sear 3–4 min/side', 'Boil cauliflower 10–12 min, mash with oil', 'Sauté zucchini until golden, ~5 min'] },
+    { name: 'Grilled Beef Steak + Roasted Beets + Steamed Broccoli', desc: 'Iron-rich and filling', ingredients: ['1 beef steak', '1 beet cubed', '1 cup broccoli', 'Olive oil, salt, pepper'], steps: ['Rub steak with oil + seasoning, grill 4–5 min/side', 'Roast beets with oil 400°F 30 min', 'Steam broccoli 5 min'] },
+    { name: 'Baked Cod + Quinoa + Sautéed Bell Peppers', desc: 'Light, clean, easy to digest', ingredients: ['1 cod fillet', '½ cup quinoa', '½ bell pepper', 'Olive oil, thyme, salt'], steps: ['Brush cod with oil + thyme, bake 400°F 12–15 min', 'Cook quinoa (boil 15 min, fluff)', 'Sauté bell pepper until tender'] },
+    { name: 'Lamb Stew with Rice', desc: 'Slow-cooked, very gentle on the gut', ingredients: ['100g lamb diced', '1 carrot', '1 celery stalk', 'Bay leaf, thyme, salt, ½ cup rice'], steps: ['Combine lamb, carrot, celery, water, herbs', 'Bring to boil, simmer 45 min', 'Remove bay leaf, season', 'Serve with rice'] },
+  ]
+};
+
+// Shuffled week meal indices
+let weekMeals = {
+  breakfast: [0,1,2,3,4,5,6],
+  lunch:     [0,1,2,3,4,5,6],
+  snack:     [0,1,2,3,4,5,6],
+  dinner:    [0,1,2,3,4,5,6],
+};
+
+let selectedDay = 0;
+
+function shuffleMeals() {
+  const icon = document.getElementById('shuffleIcon');
+  icon.classList.add('spinning');
+  setTimeout(() => icon.classList.remove('spinning'), 400);
+
+  ['breakfast','lunch','snack','dinner'].forEach(type => {
+    const arr = ALL_MEALS[type].map((_,i)=>i);
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    weekMeals[type] = arr;
+  });
+
+  renderDayView();
+}
+
+function renderDaySelector() {
+  const el = document.getElementById('daySelector');
+  el.innerHTML = DAYS.map((d, i) => `
+    <button class="day-btn ${i === selectedDay ? 'active' : ''}" onclick="selectDay(${i})">
+      <span class="day-num">${i+1}</span>
+      ${d}
+    </button>
+  `).join('');
+}
+
+function selectDay(i) {
+  selectedDay = i;
+  renderDaySelector();
+  renderDayView();
+}
+
+function renderDayView() {
+  renderDaySelector();
+  const container = document.getElementById('mealContent');
+  const meals = [
+    { type: 'breakfast', label: '☀️ Breakfast', cls: 'breakfast' },
+    { type: 'lunch',     label: '🥗 Lunch',     cls: 'lunch' },
+    { type: 'snack',     label: '🍎 Snack',     cls: 'snack' },
+    { type: 'dinner',    label: '🌙 Dinner',    cls: 'dinner' },
+  ];
+
+  container.innerHTML = `<div class="card-title" style="font-size:1.2rem; margin-bottom:14px;">📅 ${DAY_FULL[selectedDay]}</div>` +
+    meals.map(({ type, label, cls }) => {
+      const meal = ALL_MEALS[type][weekMeals[type][selectedDay]];
+      const id = `recipe-${type}`;
+      return `
+        <div class="meal-block ${cls}">
+          <div class="meal-label">${label}</div>
+          <div class="meal-name">${meal.name}</div>
+          <div class="meal-desc">${meal.desc}</div>
+          <button class="expand-btn" onclick="toggleRecipe('${id}', this)">📖 Show Recipe</button>
+          <div class="recipe-detail" id="${id}">
+            <p style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px;">Ingredients</p>
+            <ul class="ingredient-list">
+              ${meal.ingredients.map(i => `<li>${i}</li>`).join('')}
+            </ul>
+            <p style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px;">Steps</p>
+            <ol class="steps-list">
+              ${meal.steps.map(s => `<li>${s}</li>`).join('')}
+            </ol>
+          </div>
+        </div>`;
+    }).join('');
+}
+
+function toggleRecipe(id, btn) {
+  const el = document.getElementById(id);
+  const open = el.classList.toggle('open');
+  btn.textContent = open ? '📖 Hide Recipe' : '📖 Show Recipe';
+}
+
+// ── SNACKS ────────────────────────────────────────────────────
+
+const SNACKS = [
+  { id:1, name:'Grass-Fed Beef Stick', brand:'Chomps', buy:'Thrive Market, Whole Foods, Amazon', note:'No garlic/onion, protein-rich', cat:'protein', convention:true, emoji:'🥩' },
+  { id:2, name:'Sea Salt Coconut Chips', brand:'Dang Foods', buy:'Thrive Market, Sprouts, Amazon', note:'Clean coconut, crunchy', cat:'veggie', convention:true, emoji:'🥥' },
+  { id:3, name:'Plain Roasted Seaweed Snacks', brand:'gimMe or SeaSnax', buy:"Trader Joe's, Whole Foods, Amazon", note:'Choose avocado oil version', cat:'veggie', convention:true, emoji:'🌿' },
+  { id:4, name:'Grain-Free Puffs (Savory)', brand:'Serenity Kids', buy:'Amazon, Thrive Market', note:'Baby snack, clean for adults', cat:'veggie', convention:true, emoji:'🌾' },
+  { id:5, name:'Grass-Fed Bison/Chicken Bar', brand:'EPIC Provisions', buy:'Whole Foods, Sprouts, Amazon', note:'No pork or spicy flavors', cat:'protein', convention:true, emoji:'🦬' },
+  { id:6, name:'Dehydrated Organic Carrots', brand:'Rhythm Superfoods', buy:'Whole Foods, Thrive Market', note:'Just carrots and salt', cat:'veggie', convention:true, emoji:'🥕' },
+  { id:7, name:'Classic Salted Pork Rinds', brand:'4505 Chicharrones', buy:'Whole Foods, Sprouts', note:'Zero carbs, no additives', cat:'protein', convention:false, emoji:'🫓' },
+  { id:8, name:'Organic Hard-Boiled Eggs (2-pack)', brand:'Vital Farms / Organic Valley', buy:"Trader Joe's, Whole Foods", note:'No citric acid', cat:'protein', convention:false, emoji:'🥚' },
+  { id:9, name:'Plantain Chips — Coconut Oil', brand:'Barnana Himalayan Pink Salt', buy:'Thrive Market, Whole Foods', note:'No garlic flavors', cat:'veggie', convention:true, emoji:'🍌' },
+  { id:10, name:'Freeze-Dried Blueberries', brand:'Natierra', buy:'Amazon, Sprouts', note:'Just fruit, great on-the-go', cat:'fruit', convention:true, emoji:'🫐' },
+  { id:11, name:'Turkey Jerky (No Sugar/Garlic)', brand:"Nick's Sticks Free Range Turkey", buy:'Amazon, Thrive Market', note:'Super clean protein', cat:'protein', convention:true, emoji:'🦃' },
+  { id:12, name:'Turkey Mini Sticks (Sea Salt)', brand:'The New Primal', buy:'Whole Foods, Amazon', note:'Avoid honey/BBQ flavors', cat:'protein', convention:true, emoji:'🥩' },
+  { id:13, name:'Coconut Wraps', brand:'NUCO', buy:'Sprouts, Thrive Market', note:'Great with avocado or turkey', cat:'veggie', convention:false, emoji:'🌯' },
+  { id:14, name:'Turkey Bone Broth To-Go Cup', brand:'Kettle & Fire', buy:'Amazon, Whole Foods', note:'Plain version only', cat:'drink', convention:false, emoji:'🍵' },
+  { id:15, name:'Organic Sliced Cucumber Packs', brand:'Whole Foods 365', buy:'Whole Foods', note:'Grab-n-go hydration snack', cat:'veggie', convention:true, emoji:'🥒' },
+  { id:16, name:'Oven-Baked Cheese Snacks', brand:'Moon Cheese – Cheddar', buy:'Amazon, Target, Thrive', note:'Lactose-free, no starches', cat:'dairy', convention:true, emoji:'🧀' },
+  { id:17, name:'Organic Applesauce (No Sugar)', brand:'Santa Cruz Organic', buy:'Target, Sprouts, Amazon', note:'One ingredient: apples', cat:'fruit', convention:true, emoji:'🍎' },
+  { id:18, name:'Sliced Turkey Breast', brand:'Applegate Naturals', buy:'Whole Foods, Sprouts', note:'No carrageenan, no binders', cat:'protein', convention:false, emoji:'🦃' },
+  { id:19, name:'Mini Cucumber Snack Packs', brand:'Good & Gather', buy:'Target', note:'Easy to digest, low FODMAP', cat:'veggie', convention:true, emoji:'🥒' },
+  { id:20, name:'Electrolyte Water (No Flavoring)', brand:'Trace Minerals Electrolyte Stamina', buy:'Amazon, Natural Grocers', note:'Clean hydration, no additives', cat:'drink', convention:true, emoji:'💧' },
+];
+
+let snackFilter = 'all';
+let snackSearch = '';
+
+function setSnackFilter(cat, btn) {
+  snackFilter = cat;
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSnacks();
+}
+
+function filterSnacks(val) {
+  snackSearch = val.toLowerCase();
+  renderSnacks();
+}
+
+function renderSnacks() {
+  const container = document.getElementById('snackList');
+  let filtered = SNACKS.filter(s => {
+    const matchCat = snackFilter === 'all' || s.cat === snackFilter || (snackFilter === 'convention' && s.convention);
+    const matchSearch = !snackSearch || s.name.toLowerCase().includes(snackSearch) || s.brand.toLowerCase().includes(snackSearch);
+    return matchCat && matchSearch;
+  });
+
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty"><span class="empty-icon">🔍</span>No snacks found.<br>Try a different filter!</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(s => `
+    <div class="snack-card">
+      <div class="snack-emoji">${s.emoji}</div>
+      <div class="snack-info">
+        <div class="snack-name">${s.name}</div>
+        <div class="snack-brand">${s.brand}</div>
+        <div class="snack-notes">${s.note}</div>
+        <div class="snack-buy">🛒 ${s.buy}</div>
+        ${s.convention ? '<span class="convention-badge">🎉 Con-Approved</span>' : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── CONVENTION CHECKLIST ───────────────────────────────────────
+
+const CHECKLIST_ITEMS = [
+  'Pack your Con Bag snacks the night before',
+  'Fill 2 electrolyte water bottles',
+  'Set phone alarms: eat every 2–3 hours',
+  'Download the convention map/app',
+  'Locate the quiet room on the floor map',
+  'Charge headphones or pack earplugs',
+  'Wear comfortable, loose clothing',
+  'Pack sunglasses (even for indoors)',
+  'Eat a full SIBO-safe breakfast before you go',
+  'Set a "check-in with yourself" alarm mid-day',
+];
+
+function renderConventionChecklist() {
+  const container = document.getElementById('conventionChecklist');
+  container.innerHTML = CHECKLIST_ITEMS.map((item, i) => `
+    <div class="pack-item" onclick="toggleCheck(this)" style="cursor:pointer;">
+      <span class="pack-item-emoji" id="check-${i}">⬜</span>
+      <div class="pack-item-text">
+        <div class="pack-item-name" id="checktext-${i}" style="text-decoration:none">${item}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleCheck(el) {
+  const emoji = el.querySelector('.pack-item-emoji');
+  const text = el.querySelector('.pack-item-name');
+  if (emoji.textContent === '⬜') {
+    emoji.textContent = '✅';
+    text.style.textDecoration = 'line-through';
+    text.style.color = 'var(--text-muted)';
+  } else {
+    emoji.textContent = '⬜';
+    text.style.textDecoration = 'none';
+    text.style.color = 'var(--text)';
+  }
+}
+
+// ── FOOD GUIDE ────────────────────────────────────────────────
+
+const FOOD_GUIDE = [
+  {
+    category: '🥦 Vegetables',
+    green:  ['Arugula', 'Carrot', 'Cucumber', 'Eggplant', 'Bok Choy (1c)', 'Broccoli (½c)', 'Brussels Sprouts (2)', 'Cabbage (1c)', 'Chives', 'Endive', 'Fennel (½c)', 'Green Beans (10)', 'Kale', 'Lettuce', 'Olives', 'Peas (¼c)', 'Bell Pepper', 'Radish', 'Tomato', 'Zucchini (¾c)'],
+    yellow: ['Asparagus (1 spear)', 'Butternut Squash (½c)', 'Parsnip', 'Peas (⅓c)', 'Spinach (>15 leaves)', 'Sun-dried Tomato (2T)'],
+    orange: ['Asparagus (4 spears)', 'Avocado', 'Cauliflower', 'Celery', 'Garlic', 'Mushrooms', 'Onions', 'Shallot'],
+    red:    ['Bean Sprouts', 'Corn', 'Okra', 'Potato', 'Sweet Potato', 'Starch Powders', 'Seaweed', 'Turnip', 'Canned Veg'],
+  },
+  {
+    category: '🍓 Fruits',
+    green:  ['Banana', 'Blueberry (<80)', 'Boysenberry', 'Strawberry', 'Raspberry (10)', 'Citrus (lemon, lime, orange)', 'Dragon Fruit', 'Grapes', 'Kiwi', 'Cantaloupe/Honeydew (½c)', 'Papaya', 'Pineapple', 'Prickly Pear', 'Rhubarb'],
+    yellow: ['Cranberry (1T)', 'Cherries (3)', 'Grapefruit (½)', 'Lychee (5)', 'Dried Pineapple (1 slice)'],
+    orange: ['Apple', 'Apricot', 'Blackberry', 'Mango', 'Nectarine', 'Peach', 'Pear', 'Plum', 'Watermelon'],
+    red:    ['Plantain', 'Commercial Jam/Jelly'],
+  },
+  {
+    category: '🥩 Proteins & Dairy',
+    green:  ['Beef', 'Eggs', 'Fish', 'Lamb', 'Pork', 'Poultry', 'Seafood', 'Game', 'Butter', 'Aged Cheese (1mo+)', 'Ghee', 'Homemade 24hr Yogurt', 'Homemade Sour Cream'],
+    yellow: ['Bacon w/sugar (1x/wk)', 'Lactose-Free Milk', 'Lactase-Treated Cream (¼c)'],
+    orange: ['Bone Broth (w/cartilage)', 'Lactose-Free Yogurt (commercial)'],
+    red:    ['Processed Deli Meats (w/additives)', 'Cream Cheese', 'Cottage Cheese', 'Feta', 'Ricotta', 'Kefir', 'Commercial Sour Cream', 'Commercial Yogurt'],
+  },
+  {
+    category: '🥜 Nuts & Seeds',
+    green:  ['Almonds (10)', 'Almond flour (2T)', 'Coconut flour/shredded (¼c)', 'Coconut milk (no thickeners)', 'Hazelnuts (10)', 'Macadamia (20)', 'Peanuts (32)', 'Peanut butter (4T)', 'Pecans (10)', 'Pine nuts (1T)', 'Pumpkin seeds (2T)', 'Sesame seeds (1T)', 'Walnuts (10)'],
+    yellow: ['Chestnuts', 'Flaxseed (<1T)', 'Hazelnuts (20)', 'Pecans (40)', 'Walnuts (100g)'],
+    orange: ['Cashews', 'Pistachios', 'Large amounts of any nut'],
+    red:    ['Chia seeds', 'Coconut milk w/thickeners (guar gum)', 'Seed flour'],
+  },
+  {
+    category: '🍯 Sweeteners',
+    green:  ['Glucose/Dextrose', 'Honey: alfalfa, clover, raspberry (2T)', 'Pure Stevia (no inulin)', 'Pure Saccharine'],
+    yellow: ['Honey: buckwheat, orange blossom (1T)'],
+    orange: ['Honey: acacia, sage, tupelo'],
+    red:    ['Agave', 'Brown Rice Syrup', 'Cane Sugar', 'Coconut Sugar', 'HFCS', 'Maple Syrup', 'Molasses', 'Sugar/Sucrose', 'Xylitol', 'Sorbitol', 'Erythritol'],
+  },
+  {
+    category: '🫒 Fats & Oils',
+    green:  ['Bacon fat', 'Butter', 'Coconut oil', 'Duck fat', 'Garlic-infused oil', 'Ghee', 'Lard & Tallow', 'MCT oil', 'Macadamia oil', 'Olive oil', 'Palm oil', 'Canola oil', 'Flaxseed oil', 'Sesame oil', 'Sunflower oil'],
+    yellow: [],
+    orange: [],
+    red:    ['Soybean oil'],
+  },
+  {
+    category: '☕ Drinks',
+    green:  ['Water', 'Weak coffee (1c/day)', 'Pure cranberry juice', 'Fresh OJ (½c)', 'Chamomile tea', 'Ginger tea', 'Peppermint tea', 'Rooibos tea', 'Black tea (weak)', 'Bourbon, Gin, Vodka, Whiskey, Wine (moderate)'],
+    yellow: ['Green tea (<2c/day)', 'Seltzer/Carbonated water'],
+    orange: ['Juice from high FODMAP fruits'],
+    red:    ['Soda (fructose/sucrose)', 'Chicory root tea', 'Licorice tea', 'Beer', 'Hard Cider', 'Dark Rum', 'Dessert Wine', 'Sparkling Wine'],
+  },
+  {
+    category: '🧂 Seasonings & Condiments',
+    green:  ['All spices (except onion & garlic)', 'Garlic-infused oil', 'Fresh & dried ginger', 'Homemade mayo / commercial w/honey', 'Mustard (no garlic)', 'Pickles (no sweetener/garlic)', 'Tabasco', 'Apple cider vinegar', 'White wine vinegar'],
+    yellow: [],
+    orange: [],
+    red:    ['Asafoetida powder', 'Cocoa/chocolate (unsweetened)', 'Gums & Carrageenan', 'Soy sauce/Tamari', 'Onion & Garlic powder', 'Balsamic vinegar'],
+  },
+];
+
+function renderFoodGuide() {
+  const container = document.getElementById('foodGuideContent');
+  container.innerHTML = FOOD_GUIDE.map(section => `
+    <div class="fodmap-section">
+      <div class="card-title">${section.category}</div>
+      <div class="fodmap-grid">
+        <div class="fodmap-col green">
+          <div class="fodmap-col-title">✅ Go Freely</div>
+          ${section.green.map(f => `<span class="food-pill">${f}</span>`).join('')}
+        </div>
+        <div class="fodmap-col yellow">
+          <div class="fodmap-col-title">⚠️ Limit (1/meal)</div>
+          ${section.yellow.length ? section.yellow.map(f => `<span class="food-pill">${f}</span>`).join('') : '<span style="font-size:0.75rem;color:#9A7200;font-weight:600;">None listed</span>'}
+        </div>
+        <div class="fodmap-col orange">
+          <div class="fodmap-col-title">🔶 Small Amounts</div>
+          ${section.orange.length ? section.orange.map(f => `<span class="food-pill">${f}</span>`).join('') : '<span style="font-size:0.75rem;color:var(--orange);font-weight:600;">None listed</span>'}
+        </div>
+        <div class="fodmap-col red">
+          <div class="fodmap-col-title">🚫 Avoid</div>
+          ${section.red.length ? section.red.map(f => `<span class="food-pill">${f}</span>`).join('') : '<span style="font-size:0.75rem;color:var(--red);font-weight:600;">None listed</span>'}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── GRAB & GO BREAKFAST ──────────────────────────────────────
+
+const BFAST_ITEMS = [
+  // ZERO PREP
+  {
+    name: 'Organic Hard-Boiled Eggs (2-pack)',
+    brand: 'Vital Farms or Organic Valley',
+    buy: "Trader Joe's, Whole Foods",
+    note: 'Grab straight from the fridge. Boil a batch Sunday and you\'re set for days. No citric acid — check label.',
+    time: 'Zero Prep',
+    cat: 'notouch',
+    emoji: '🥚',
+    tags: ['protein', 'no cook', 'portable'],
+    convention: true,
+  },
+  {
+    name: 'Chomps Grass-Fed Beef Stick + Freeze-Dried Blueberries',
+    brand: 'Chomps + Natierra',
+    buy: 'Whole Foods, Amazon, Thrive Market',
+    note: 'Protein + fruit combo. Throw both in your bag the night before. Totally shelf-stable, no fridge needed.',
+    time: 'Zero Prep',
+    cat: 'notouch',
+    emoji: '🥩',
+    tags: ['protein', 'fruit', 'no fridge'],
+    convention: true,
+  },
+  {
+    name: 'Applegate Turkey Slices + Santa Cruz Organic Applesauce Pouch',
+    brand: 'Applegate + Santa Cruz',
+    buy: 'Whole Foods, Sprouts, Target',
+    note: 'Clean deli turkey (no carrageenan) + squeezable applesauce. Eat the turkey cold, sip the applesauce — done.',
+    time: 'Zero Prep',
+    cat: 'notouch',
+    emoji: '🦃',
+    tags: ['protein', 'fruit'],
+    convention: false,
+  },
+  {
+    name: 'Moon Cheese (Cheddar) + Fresh Blueberries',
+    brand: 'Moon Cheese',
+    buy: 'Amazon, Target, Thrive Market',
+    note: 'Crunchy shelf-stable cheese puffs + a small container of blueberries. Good texture combo, no prep at all.',
+    time: 'Zero Prep',
+    cat: 'notouch',
+    emoji: '🧀',
+    tags: ['dairy', 'fruit'],
+    convention: true,
+  },
+  {
+    name: 'Macadamia Nuts + Banana (pre-portioned bag)',
+    brand: 'Any brand (pre-bag the nuts)',
+    buy: 'Grocery store, Thrive Market',
+    note: 'Bag 20 macadamias on Sunday. Grab a banana on the way out. Fat + carb, no prep, very filling.',
+    time: 'Zero Prep',
+    cat: 'notouch',
+    emoji: '🍌',
+    tags: ['nuts', 'fruit'],
+    convention: true,
+  },
+  {
+    name: 'EPIC Bison or Chicken Bar + Applesauce Pouch',
+    brand: 'EPIC Provisions + Santa Cruz',
+    buy: 'Whole Foods, Sprouts, Amazon',
+    note: 'Avoid pork/spicy flavors. Bison or chicken only. Pairs great with the applesauce pouch for a sweet + savory grab.',
+    time: 'Zero Prep',
+    cat: 'notouch',
+    emoji: '🦬',
+    tags: ['protein', 'fruit'],
+    convention: true,
+  },
+
+  // NIGHT BEFORE
+  {
+    name: 'Overnight Oats (jar)',
+    brand: 'Bob\'s Red Mill GF Oats + Almond Milk',
+    buy: 'Grocery store, Whole Foods, Amazon',
+    note: '5 minutes to prep Sunday night. Add blueberries + 1 tsp honey (alfalfa/clover only). Grab the jar from fridge and eat anywhere.',
+    time: 'Night Before',
+    cat: 'nightbefore',
+    emoji: '🫙',
+    tags: ['oats', 'fruit', 'prep-ahead'],
+    convention: false,
+    recipe: {
+      ingredients: ['½ cup GF oats (Bob\'s Red Mill)', '¾ cup almond milk (no thickeners)', '½ cup blueberries', '1 tsp alfalfa or clover honey (optional)', '¼ tsp cinnamon'],
+      steps: ['Combine oats, almond milk, and cinnamon in a mason jar or lidded container', 'Stir in blueberries', 'Cover and refrigerate overnight — minimum 6 hours', 'In the morning, grab and go — eat cold or at room temp', 'Stays good in fridge for up to 3 days'],
+    },
+  },
+  {
+    name: 'Coconut Chia Pudding (jar)',
+    brand: 'Using canned coconut milk (no guar gum)',
+    buy: 'Natural Grocers, Whole Foods, Amazon',
+    note: 'Use Thai Kitchen full-fat coconut milk (no guar gum version). Mix chia + coconut milk night before, top with mango in the morning.',
+    time: 'Night Before',
+    cat: 'nightbefore',
+    emoji: '🥥',
+    tags: ['prep-ahead', 'fruit'],
+    convention: false,
+    recipe: {
+      ingredients: ['3 tbsp chia seeds', '1 cup coconut milk (no thickeners — check label)', '½ cup diced mango or blueberries', '1 tsp alfalfa honey (optional)'],
+      steps: ['Mix chia seeds and coconut milk in a jar', 'Stir well, wait 10 minutes, then stir again to prevent clumping', 'Seal and refrigerate overnight', 'In the morning, top with fruit and honey', 'Grab the jar and go'],
+    },
+  },
+  {
+    name: 'Egg Muffin Bites (batch baked)',
+    brand: 'Homemade — prep Sunday, eat all week',
+    buy: 'Ingredients at any grocery store',
+    note: 'Bake 12 at once. Refrigerate. Grab 2–3 cold or microwave 30 sec. Add bell pepper and chives — no garlic/onion.',
+    time: 'Night Before',
+    cat: 'nightbefore',
+    emoji: '🧁',
+    tags: ['protein', 'batch cook', 'egg'],
+    convention: false,
+    recipe: {
+      ingredients: ['6 eggs', '¼ cup diced bell pepper', '2 tbsp fresh chives, chopped', '1 tbsp olive oil', 'Salt, pepper'],
+      steps: ['Preheat oven to 350°F (175°C)', 'Grease a muffin tin well with olive oil', 'Whisk eggs with salt and pepper', 'Divide bell pepper and chives evenly into muffin cups', 'Pour egg mixture over the fillings', 'Bake 18–20 minutes until set and lightly golden', 'Cool, then refrigerate in a container', 'Grab 2–3 each morning — eat cold or microwave 30 seconds'],
+    },
+  },
+  {
+    name: 'Simple Banana-Almond Overnight Oats',
+    brand: 'Bob\'s Red Mill + any almond milk',
+    buy: 'Grocery store',
+    note: 'Add ½ sliced banana in the morning (don\'t mix in night before — bananas brown). 4 ingredients, takes 3 minutes.',
+    time: 'Night Before',
+    cat: 'nightbefore',
+    emoji: '🍌',
+    tags: ['oats', 'fruit', 'prep-ahead'],
+    convention: false,
+    recipe: {
+      ingredients: ['½ cup GF rolled oats', '¾ cup almond milk', '1 tbsp peanut butter or macadamia nut butter', '½ banana (slice fresh in the morning)'],
+      steps: ['Mix oats, almond milk, and nut butter in a jar', 'Seal and refrigerate overnight', 'In the morning, slice ½ banana on top', 'Grab and go — eat within 15 min of adding banana'],
+    },
+  },
+
+  // 5 MIN
+  {
+    name: 'Scrambled Eggs in a Mug (microwave)',
+    brand: 'Just eggs + olive oil + salt',
+    buy: 'Any grocery store',
+    note: '2 minutes total. Crack 2 eggs into a mug, add a splash of almond milk, microwave 90 seconds, stir halfway. Add chives.',
+    time: '5 Min',
+    cat: '5min',
+    emoji: '☕',
+    tags: ['protein', 'egg', 'microwave'],
+    convention: false,
+    recipe: {
+      ingredients: ['2 eggs', '1 tbsp almond milk', 'Salt, pepper', '1 tsp fresh chives (optional)', '½ tsp olive oil (to grease mug)'],
+      steps: ['Lightly grease the inside of a large mug with olive oil', 'Crack in 2 eggs, add almond milk, salt and pepper', 'Microwave on high 45 seconds', 'Stir well with a fork', 'Microwave another 30–45 seconds until just set (don\'t overcook)', 'Sprinkle with chives, eat from the mug'],
+    },
+  },
+  {
+    name: 'Rice Cake + Peanut Butter + Banana Slices',
+    brand: 'Lundberg Farms Plain Rice Cakes + any natural PB',
+    buy: 'Grocery store, Whole Foods, Target',
+    note: 'Lundberg plain rice cakes are SCD-grey area but low-FODMAP safe. Use 4 tbsp peanut butter max. Very portable, no fridge after assembly.',
+    time: '5 Min',
+    cat: '5min',
+    emoji: '🍚',
+    tags: ['grain', 'nut butter', 'fruit'],
+    convention: false,
+  },
+  {
+    name: 'Almond Milk Yogurt Parfait (no cook)',
+    brand: 'Kite Hill Plain Almond Yogurt',
+    buy: 'Whole Foods, Sprouts, Target',
+    note: 'Layer yogurt + blueberries + 10 macadamia nuts. 3 minutes. Skip the granola — use macadamia nuts for crunch instead.',
+    time: '5 Min',
+    cat: '5min',
+    emoji: '🍓',
+    tags: ['dairy-free', 'fruit', 'nuts'],
+    convention: false,
+    recipe: {
+      ingredients: ['½ cup Kite Hill plain almond milk yogurt', '¼ cup blueberries', '10 macadamia nuts', '½ tsp alfalfa honey (optional)'],
+      steps: ['Spoon yogurt into a jar or bowl', 'Top with blueberries and macadamia nuts', 'Drizzle honey if desired', 'Eat immediately or seal jar and take to go'],
+    },
+  },
+  {
+    name: 'Bone Broth To-Go Cup + 2 Boiled Eggs',
+    brand: 'Kettle & Fire (plain turkey or chicken)',
+    buy: 'Amazon, Whole Foods',
+    note: 'Savory breakfast option for days when sweet feels like too much. Broth warms in 2 min. Eggs grab from fridge. Ultra gentle on gut.',
+    time: '5 Min',
+    cat: '5min',
+    emoji: '🍵',
+    tags: ['protein', 'savory', 'gut-gentle'],
+    convention: false,
+  },
+];
+
+let bfastFilter = 'all';
+
+function setBfastFilter(cat, btn) {
+  bfastFilter = cat;
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBfast();
+}
+
+function renderBfast() {
+  const container = document.getElementById('bfastList');
+  const filtered = bfastFilter === 'all' ? BFAST_ITEMS : BFAST_ITEMS.filter(b => b.cat === bfastFilter);
+
+  const timeBadgeColors = {
+    'Zero Prep': { bg: '#E8F7EE', color: '#2D8A55', icon: '🙌' },
+    'Night Before': { bg: '#EBF4FB', color: '#3A7AAF', icon: '🌙' },
+    '5 Min': { bg: '#FEF8E7', color: '#9A7200', icon: '⚡' },
+  };
+
+  container.innerHTML = filtered.map((b, i) => {
+    const badge = timeBadgeColors[b.time];
+    const recipeId = `bfast-recipe-${i}`;
+    const hasRecipe = !!b.recipe;
+    return `
+      <div class="snack-card" style="flex-direction:column; align-items:stretch; gap:0;">
+        <div style="display:flex; align-items:flex-start; gap:14px;">
+          <div class="snack-emoji" style="background:${badge.bg};">${b.emoji}</div>
+          <div class="snack-info">
+            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:4px;">
+              <span style="display:inline-flex;align-items:center;gap:3px;background:${badge.bg};color:${badge.color};font-size:0.68rem;font-weight:900;padding:2px 9px;border-radius:20px;">${badge.icon} ${b.time}</span>
+              ${b.convention ? '<span class="convention-badge">🎉 Con-Safe</span>' : ''}
+            </div>
+            <div class="snack-name">${b.name}</div>
+            <div class="snack-brand">${b.brand}</div>
+            <div class="snack-notes" style="margin-top:4px;">${b.note}</div>
+            <div class="snack-buy">🛒 ${b.buy}</div>
+          </div>
+        </div>
+        ${hasRecipe ? `
+          <button class="expand-btn" style="margin-top:10px;color:var(--pink);align-self:flex-start;" onclick="toggleBfastRecipe('${recipeId}', this)">📖 Show How To Prep</button>
+          <div class="recipe-detail" id="${recipeId}">
+            <p style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px;">Ingredients</p>
+            <ul class="ingredient-list">
+              ${b.recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
+            </ul>
+            <p style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px;margin-top:8px;">Steps</p>
+            <ol class="steps-list">
+              ${b.recipe.steps.map(s => `<li>${s}</li>`).join('')}
+            </ol>
+          </div>
+        ` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleBfastRecipe(id, btn) {
+  const el = document.getElementById(id);
+  const open = el.classList.toggle('open');
+  btn.textContent = open ? '📖 Hide Prep Steps' : '📖 Show How To Prep';
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────
+
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.bottom-btn').forEach(b => b.classList.remove('active'));
+
+  document.getElementById('screen-' + name).classList.add('active');
+  document.querySelectorAll(`[data-screen="${name}"]`).forEach(b => b.classList.add('active'));
+  document.querySelectorAll(`[data-bscreen="${name}"]`).forEach(b => b.classList.add('active'));
+}
+
+// ── GRAB & GO BREAKFASTS ──────────────────────────────────────
+
+const BREAKFASTS = [
+  // ── STORE-BOUGHT ──
+  {
+    name: 'Hard-Boiled Eggs (Store-Bought 2-pack)',
+    brand: 'Vital Farms or Organic Valley',
+    buy: "Trader Joe's, Whole Foods",
+    note: 'No citric acid. Complete protein, zero prep. Eat straight from the pack.',
+    cat: ['storebought','5min','norefrig'],
+    emoji: '🥚',
+    time: 'No prep',
+    badge: '🛒 Buy Ready',
+    highlight: 'Best pure protein option — already peeled and packed.',
+  },
+  {
+    name: 'Chomps Beef Stick + Freeze-Dried Blueberries',
+    brand: 'Chomps + Natierra',
+    buy: 'Whole Foods, Amazon, Thrive Market',
+    note: 'Protein + fruit in 30 seconds. No garlic, no onion, no cooking. Shelf-stable.',
+    cat: ['storebought','5min','norefrig'],
+    emoji: '🥩',
+    time: 'No prep',
+    badge: '🛒 Buy Ready',
+    highlight: 'The ultimate "I have 30 seconds" breakfast — throw both in your bag the night before.',
+  },
+  {
+    name: 'Santa Cruz Organic Applesauce Pouch + Beef Stick',
+    brand: 'Santa Cruz Organic + Chomps',
+    buy: 'Target, Sprouts, Amazon',
+    note: 'One-ingredient applesauce pouch (no sugar added). Pair with a beef stick for protein + carbs.',
+    cat: ['storebought','5min','norefrig'],
+    emoji: '🍎',
+    time: 'No prep',
+    badge: '🛒 Buy Ready',
+    highlight: 'Great for texture-sensitive days — soft, mild, predictable, and already portioned.',
+  },
+  {
+    name: 'Macadamia Nut Butter Packet + Apple',
+    brand: 'Various (single-serve nut butter pouches)',
+    buy: 'Whole Foods, Thrive Market, Amazon',
+    note: 'Pre-portioned single-serve macadamia butter packets. Pair with a sliced apple or eat straight from the pouch.',
+    cat: ['storebought','5min','norefrig'],
+    emoji: '🥜',
+    time: 'No prep',
+    badge: '🛒 Buy Ready',
+    highlight: 'Healthy fats + low-FODMAP fruit. Zero dishes. Pouch fits in a pocket.',
+  },
+  {
+    name: 'Dang Coconut Chips + Hard-Boiled Eggs',
+    brand: 'Dang Foods + Vital Farms',
+    buy: 'Sprouts, Thrive Market, Whole Foods',
+    note: 'Crunchy, satisfying, and filling. Good for sensory days when you want texture without effort.',
+    cat: ['storebought','5min','norefrig'],
+    emoji: '🥥',
+    time: 'No prep',
+    badge: '🛒 Buy Ready',
+    highlight: 'Full macro breakfast (fat + protein) with zero cooking.',
+  },
+  {
+    name: 'EPIC Bison or Chicken Bar',
+    brand: 'EPIC Provisions',
+    buy: 'Whole Foods, Sprouts, Amazon',
+    note: 'Avoid pork and spicy flavors. Bison or chicken bars are cleanest. No garlic or onion.',
+    cat: ['storebought','5min','norefrig'],
+    emoji: '🦬',
+    time: 'No prep',
+    badge: '🛒 Buy Ready',
+    highlight: 'More substantial than a slim stick — closer to a "real" breakfast bar.',
+  },
+
+  // ── PREP NIGHT BEFORE ──
+  {
+    name: 'Overnight Oats (Grab-From-Fridge)',
+    brand: 'DIY — Prep in 5 min the night before',
+    buy: 'GF oats from Sprouts/Target/Amazon',
+    note: 'Gluten-free oats + almond milk + blueberries + honey. Mix in a jar before bed, grab in the morning.',
+    cat: ['prepnight','5min'],
+    emoji: '🫙',
+    time: 'Prep: 5 min night before',
+    badge: '🌙 Prep Night Before',
+    highlight: 'Make 4 jars on Sunday — covered Mon–Thu with zero morning effort.',
+    recipe: {
+      ingredients: ['½ cup gluten-free oats','1 cup almond milk (no additives)','½ cup fresh blueberries','1 tsp honey (clover or alfalfa)','Optional: 10 macadamia nuts on top'],
+      steps: ['Add oats and almond milk to a jar and stir','Add blueberries and honey','Seal and refrigerate overnight','Grab straight from fridge — eat cold or let sit 5 min at room temp','Add macadamia nuts right before eating for crunch']
+    }
+  },
+  {
+    name: 'Coconut Chia Pudding (Grab-From-Fridge)',
+    brand: 'DIY — Prep in 5 min the night before',
+    buy: 'Chia seeds from Amazon/Sprouts, coconut milk (no guar gum)',
+    note: 'Mix and refrigerate overnight. Top with mango or blueberries in the morning.',
+    cat: ['prepnight'],
+    emoji: '🥥',
+    time: 'Prep: 5 min night before',
+    badge: '🌙 Prep Night Before',
+    highlight: 'Creamy, mild, zero cooking. Customize the toppings each time for variety.',
+    recipe: {
+      ingredients: ['¼ cup chia seeds','1 cup coconut milk (no thickeners — check label)','1 tsp honey','½ cup fresh mango or blueberries (add morning-of)'],
+      steps: ['Mix chia seeds, coconut milk, and honey in a jar','Stir well, wait 10 minutes, stir again (prevents clumping)','Seal and refrigerate overnight','Morning: top with fresh fruit and grab to go']
+    }
+  },
+  {
+    name: 'Egg Muffins (Batch-Baked, Grab From Freezer)',
+    brand: 'DIY — Batch prep Sunday, freeze',
+    buy: 'Eggs from any grocery, veggies from your meal plan',
+    note: 'Make 12 at once on Sunday. Freeze. Microwave 60 seconds each morning. Customize fillings: zucchini + chives, bell pepper + parsley, carrot + kale.',
+    cat: ['prepnight'],
+    emoji: '🧁',
+    time: 'Batch Sunday → 60 sec microwave',
+    badge: '🌙 Prep Night Before',
+    highlight: 'The single best SIBO breakfast hack. 12 muffins = 6 mornings. Reheat in 60 seconds.',
+    recipe: {
+      ingredients: ['6 eggs','½ cup zucchini diced small','2 tbsp chives chopped','1 tsp olive oil','Salt and pepper','Optional: small amount of aged cheddar (SCD legal)'],
+      steps: ['Preheat oven to 350°F (175°C)','Grease a muffin tin with olive oil or use silicone molds','Whisk eggs with salt and pepper','Divide zucchini and chives into each cup','Pour egg mixture over vegetables','Bake 18–22 minutes until set and golden on top','Cool completely before freezing in individual bags','Morning: microwave 60 seconds straight from frozen']
+    }
+  },
+  {
+    name: 'Rice Porridge (Prepped in Slow Cooker Overnight)',
+    brand: 'DIY — Set slow cooker before bed',
+    buy: 'White rice from any grocery',
+    note: 'Set it before bed, wake up to warm porridge. Add cinnamon and apple in the morning.',
+    cat: ['prepnight'],
+    emoji: '🍚',
+    time: 'Set & forget overnight',
+    badge: '🌙 Prep Night Before',
+    highlight: 'Wake up to a hot, comforting breakfast with zero morning effort. Perfect for cold days.',
+    recipe: {
+      ingredients: ['½ cup white rice','2 cups almond milk or water','½ tsp cinnamon','1 diced apple (add morning-of)','1 tsp honey'],
+      steps: ['Add rice and almond milk to slow cooker before bed','Set on LOW for 6–8 hours','Wake up to ready porridge','Stir in cinnamon and honey','Top with diced apple and serve']
+    }
+  },
+  {
+    name: 'Quinoa Porridge (Microwave, 5 Min)',
+    brand: 'DIY — Pre-rinsed quinoa + almond milk',
+    buy: 'Quinoa from Sprouts, Whole Foods, Target',
+    note: 'Cook quinoa and coconut milk in the microwave. Top with blueberries and a drizzle of honey.',
+    cat: ['prepnight','5min'],
+    emoji: '🫧',
+    time: '5 min microwave',
+    badge: '⚡ Under 5 Min',
+    highlight: 'Higher protein than oats. Works hot or cold. SIBO + low-histamine safe combo.',
+    recipe: {
+      ingredients: ['¼ cup pre-rinsed quinoa','½ cup coconut milk (no additives)','½ cup water','Fresh blueberries','1 tsp honey','Optional: 10 macadamia nuts'],
+      steps: ['Combine quinoa, coconut milk, and water in a microwave-safe bowl','Microwave on high 5 minutes, stir halfway','Rest 2 minutes — it will thicken','Top with blueberries, honey, and macadamia nuts if using']
+    }
+  },
+
+  // ── UNDER 5 MIN ──
+  {
+    name: 'Scrambled Eggs in a Mug (Microwave)',
+    brand: 'DIY — 2 minutes',
+    buy: 'Eggs from any store',
+    note: 'Beat 2 eggs in a microwave-safe mug with salt and a splash of water. Microwave 90 seconds, stirring at 45 sec. Done.',
+    cat: ['5min'],
+    emoji: '🥚',
+    time: '2 min microwave',
+    badge: '⚡ Under 5 Min',
+    highlight: 'Protein in under 2 minutes. One mug, one fork, done. Great for overwhelmed mornings.',
+    recipe: {
+      ingredients: ['2 eggs','1 tbsp water or almond milk','Salt and pepper','Optional: chives or parsley'],
+      steps: ['Crack eggs into a mug','Add water, salt, and pepper and beat with a fork','Microwave 45 seconds','Stir well','Microwave another 40–45 seconds until just set','Top with fresh chives if you have them']
+    }
+  },
+  {
+    name: 'Banana + Macadamia Nuts',
+    brand: 'Fresh banana + any macadamia brand',
+    buy: 'Any grocery store',
+    note: 'One ripe banana + 10–20 macadamia nuts. Fast, portable, and filling. Banana is low-FODMAP and low-histamine.',
+    cat: ['5min','norefrig'],
+    emoji: '🍌',
+    time: 'No prep',
+    badge: '⚡ Under 5 Min',
+    highlight: 'The lowest-barrier breakfast possible. Peel and eat. No kitchen needed.',
+  },
+  {
+    name: 'Blueberry + Coconut Milk Smoothie',
+    brand: 'DIY — 3 minutes in a blender',
+    buy: 'Fresh/frozen blueberries, coconut milk without guar gum',
+    note: 'Blend ½ cup blueberries + 1 cup coconut milk + 1 tsp honey. Optional: add a small handful of macadamia nuts for fat.',
+    cat: ['5min'],
+    emoji: '🫐',
+    time: '3 min blender',
+    badge: '⚡ Under 5 Min',
+    highlight: 'Cold, smooth, easy to drink on the go. Great for texture-sensitive mornings when solid food feels hard.',
+    recipe: {
+      ingredients: ['½ cup fresh or frozen blueberries','1 cup coconut milk (no guar gum)','1 tsp honey','Optional: 10 macadamia nuts for healthy fat','Optional: small piece of fresh ginger'],
+      steps: ['Add all ingredients to a blender','Blend 30–60 seconds until smooth','Pour into a travel cup to take on the go','Drink immediately — do not store as histamine forms quickly in blended foods']
+    }
+  },
+];
+
+let bfFilter = 'all';
+
+function setBfFilter(cat, btn) {
+  bfFilter = cat;
+  document.querySelectorAll('#screen-breakfast .filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBreakfasts();
+}
+
+function renderBreakfasts() {
+  const container = document.getElementById('bfList');
+  const filtered = BREAKFASTS.filter(b =>
+    bfFilter === 'all' || b.cat.includes(bfFilter)
+  );
+
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty"><span class="empty-icon">🌅</span>No options for that filter.</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map((b, idx) => {
+    const hasRecipe = b.recipe;
+    const rid = `bfrecipe-${idx}`;
+    return `
+      <div class="card" style="margin-bottom:12px;">
+        <div style="display:flex;align-items:flex-start;gap:14px;">
+          <div class="snack-emoji" style="background:var(--yellow-light)">${b.emoji}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="snack-name">${b.name}</div>
+            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:4px 0;">
+              <span class="convention-badge" style="background:var(--blue-light);color:var(--blue);">⏱️ ${b.time}</span>
+              <span class="convention-badge" style="background:var(--purple-light);color:var(--purple);">${b.badge}</span>
+            </div>
+            ${b.brand !== 'none' ? `<div class="snack-brand">${b.brand}</div>` : ''}
+            <div class="snack-buy">🛒 ${b.buy}</div>
+            <div class="snack-notes" style="margin-top:4px;">${b.note}</div>
+            <div style="margin-top:8px;padding:8px 10px;background:var(--pink-light);border-radius:10px;font-size:0.78rem;font-weight:700;color:var(--pink);">
+              💡 ${b.highlight}
+            </div>
+            ${hasRecipe ? `
+              <button class="expand-btn" onclick="toggleRecipe('${rid}',this)" style="margin-top:10px;color:var(--pink);">📖 Show Recipe</button>
+              <div class="recipe-detail" id="${rid}">
+                <p style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px;">Ingredients</p>
+                <ul class="ingredient-list">${b.recipe.ingredients.map(i=>`<li>${i}</li>`).join('')}</ul>
+                <p style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:8px 0 6px;">Steps</p>
+                <ol class="steps-list">${b.recipe.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+              </div>` : ''}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+
+renderDayView();
+renderSnacks();
+renderFoodGuide();
+renderConventionChecklist();
+renderBfast();
+renderBreakfasts();
+</script>
+</body>
+</html>
