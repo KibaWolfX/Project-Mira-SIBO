@@ -2046,7 +2046,7 @@ async function initNearby() {
   try {
     await loadNearby();
   } catch (err) {
-    container.innerHTML = `<div class="nearby-error">Could not get location: ${err.message}</div>`;
+    container.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
   }
 }
 
