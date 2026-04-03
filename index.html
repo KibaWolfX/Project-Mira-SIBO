@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mira's Toolkit">
 <meta name="format-detection" content="telephone=no">
-<title>🌿 My SIBO Toolkit</title>
+<link rel="apple-touch-icon" id="apple-touch-icon" href="">
+<title>🌿 Mira's SIBO Toolkit</title>
 <style>
   /* Import fonts with fallback - works offline too */
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
@@ -767,6 +769,8 @@
   <button class="more-item" onclick="showScreen('convention');closeMore()"><span class="more-icon">🎉</span><span>Convention Pack</span></button>
   <button class="more-item" onclick="showScreen('breakfast');closeMore()"><span class="more-icon">🌅</span><span>Grab & Go Breakfasts</span></button>
   <button class="more-item" onclick="showScreen('tips');closeMore()"><span class="more-icon">💜</span><span>Autism Tips</span></button>
+  <button class="more-item" onclick="initJournal();closeMore()"><span class="more-icon">📓</span><span>Journal & Symptoms</span></button>
+  <button class="more-item" onclick="showScreen('pantry');closeMore()"><span class="more-icon">🍳</span><span>Pantry & Crave</span></button>
 </div>
 
 <!-- ══════════════ MEAL PLAN SCREEN ══════════════ -->
@@ -861,6 +865,10 @@
       🟠 <strong>Orange</strong> = Higher FODMAP — eat small amounts, watch reactions<br>
       🔴 <strong>Red</strong> = SCD Illegal — avoid on SIBO diet
     </p>
+    <button id="histamine-toggle-btn" onclick="toggleHistamineFilter()"
+      style="margin-top:10px;width:100%;background:var(--orange-light);border:1.5px solid var(--orange);border-radius:12px;padding:9px;font-size:0.82rem;font-weight:900;color:var(--orange);cursor:pointer;font-family:inherit;">
+      ⚠️ Show High-Histamine Flags
+    </button>
   </div>
 
   <div id="foodGuideContent"></div>
@@ -906,51 +914,60 @@
       <div class="tip-title">Histamine Note on Leftovers</div>
       <div class="tip-body">Histamine builds up in proteins over time — even in the fridge. For low-histamine safety: cook eggs and meat fresh or freeze immediately after cooking. Don't leave cooked protein in the fridge for more than <strong>24 hours</strong> before eating. Freeze egg muffins the same day you make them.</div>
     </div>
+    <div class="sensory-card">
+      <span class="tip-icon">🛒</span>
+      <div class="tip-title">Watch Out For These in Packaged Breakfast</div>
+      <div class="tip-body">
+        <ul class="checklist">
+          <li>Honey (high FODMAP unless alfalfa/clover/raspberry type)</li>
+          <li>Inulin / chicory root fiber (common in protein bars — very high FODMAP)</li>
+          <li>Guar gum, carrageenan (SCD Illegal thickeners)</li>
+          <li>Onion/garlic powder in savory items</li>
+          <li>Sugar alcohols: xylitol, sorbitol, mannitol (big FODMAP triggers)</li>
+          <li>Vinegar (high histamine — avoid in morning when gut is empty)</li>
+          <li>Aged or processed cheese (high histamine)</li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ══════════════ GRAB & GO BREAKFAST SCREEN ══════════════ -->
-<div class="screen" id="screen-breakfast">
+<!-- ══════════════ JOURNAL SCREEN ══════════════ -->
+<div class="screen" id="screen-journal">
+  <div id="journal-content"></div>
+</div>
 
-  <div class="card" style="background: linear-gradient(135deg,#FEF8E7,#FFF4D6); border-color:#F9D87A; margin-bottom:16px;">
-    <p style="font-size:0.83rem; font-weight:700; line-height:1.7; color:var(--text)">
-      🌅 <strong>Samantha's Quick Breakfast Guide</strong><br>
-      On busy days, breakfast doesn't have to be cooked. These are store-bought, prep-free (or prep-the-night-before) options that are fully SIBO + low histamine safe. Grab one and go.
-    </p>
+<!-- ══════════════ PANTRY / CRAVE SCREEN ══════════════ -->
+<div class="screen" id="screen-pantry">
+  <div class="card" style="background:linear-gradient(135deg,#FFF5D6,#EEE5FF);border-color:#D4BBFF;margin-bottom:16px;">
+    <div style="font-size:1rem;font-weight:900;color:var(--text);margin-bottom:4px;">🍳 Pantry & Crave</div>
+    <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.5;">Tell me what's in your kitchen and what you're in the mood for — I'll suggest a SIBO-safe meal you can make tonight, or a short shopping list if you're missing a few things.</div>
   </div>
 
-  <!-- FILTER TABS -->
-  <div class="snack-filter" style="margin-bottom:16px;">
-    <button class="filter-chip active" onclick="setBfastFilter('all', this)">All</button>
-    <button class="filter-chip" onclick="setBfastFilter('notouch', this)">🙌 Zero Prep</button>
-    <button class="filter-chip" onclick="setBfastFilter('nightbefore', this)">🌙 Night Before</button>
-    <button class="filter-chip" onclick="setBfastFilter('5min', this)">⚡ 5 Min</button>
+  <div class="section-label">What's in your pantry right now?</div>
+  <textarea id="pantry-input" class="meal-log-notes" rows="4"
+    placeholder="e.g. chicken breast, white rice, zucchini, olive oil, eggs, carrots..."></textarea>
+
+  <div class="section-label">What are you craving?</div>
+  <div class="price-tier-chips" id="crave-chips">
+    <button class="price-tier-chip" data-crave="Asian" onclick="selectCrave(this)">🍜 Asian / Rice Bowl</button>
+    <button class="price-tier-chip" data-crave="Comfort" onclick="selectCrave(this)">🍲 Comfort / Warm</button>
+    <button class="price-tier-chip" data-crave="Light" onclick="selectCrave(this)">🥗 Light / Salad-ish</button>
+    <button class="price-tier-chip" data-crave="Protein" onclick="selectCrave(this)">🥩 Just Protein + Veg</button>
+    <button class="price-tier-chip" data-crave="Breakfast" onclick="selectCrave(this)">🍳 Breakfast for Dinner</button>
+    <button class="price-tier-chip" data-crave="Surprise" onclick="selectCrave(this)">🎲 Surprise me</button>
   </div>
 
-  <div id="bfastList"></div>
-
-  <!-- BATCH PREP TIP -->
-  <div class="pack-tip" style="margin-top: 6px;">
-    <strong>💡 Sunday Batch Tip for Samantha</strong><br>
-    Spend 20 minutes on Sunday: boil a batch of eggs, portion out nuts + blueberries into zip bags, and prep 2–3 overnight oat jars. That covers Mon–Wed with zero morning effort.
+  <div class="section-label">How much effort?</div>
+  <div class="distance-chips" style="margin-bottom:16px;">
+    <button class="dist-chip active" data-effort="quick" onclick="selectEffort(this)">⚡ Quick (15 min)</button>
+    <button class="dist-chip" data-effort="medium" onclick="selectEffort(this)">🍳 Medium (30 min)</button>
+    <button class="dist-chip" data-effort="full" onclick="selectEffort(this)">👨‍🍳 Full Recipe</button>
   </div>
 
-  <!-- WHAT TO AVOID NOTE -->
-  <div class="tip-card" style="margin-top:4px;">
-    <span class="tip-icon">⚠️</span>
-    <div class="tip-title">Watch Out For These in Packaged Breakfast</div>
-    <div class="tip-body">
-      <ul class="checklist">
-        <li>Honey (high FODMAP unless alfalfa/clover/raspberry type)</li>
-        <li>Inulin / chicory root fiber (common in protein bars — very high FODMAP)</li>
-        <li>Guar gum, carrageenan (SCD Illegal thickeners)</li>
-        <li>Onion/garlic powder in savory items</li>
-        <li>Sugar alcohols: xylitol, sorbitol, mannitol (big FODMAP triggers)</li>
-        <li>Vinegar (high histamine — avoid in morning when gut is empty)</li>
-        <li>Aged or processed cheese (high histamine)</li>
-      </ul>
-    </div>
-  </div>
+  <button class="search-submit-btn" onclick="runPantryCrave()">✨ Find me something to eat</button>
+
+  <div id="pantry-result"></div>
 </div>
 
 <!-- ══════════════ AUTISM TIPS SCREEN ══════════════ -->
@@ -1392,30 +1409,44 @@ const CHECKLIST_ITEMS = [
   'Set a "check-in with yourself" alarm mid-day',
 ];
 
-function renderConventionChecklist() {
-  const container = document.getElementById('conventionChecklist');
-  container.innerHTML = CHECKLIST_ITEMS.map((item, i) => `
-    <div class="pack-item" onclick="toggleCheck(this)" style="cursor:pointer;">
-      <span class="pack-item-emoji" id="check-${i}">⬜</span>
-      <div class="pack-item-text">
-        <div class="pack-item-name" id="checktext-${i}" style="text-decoration:none">${item}</div>
-      </div>
-    </div>
-  `).join('');
+function loadChecklist() {
+  try { return JSON.parse(localStorage.getItem('mira_checklist') || '{}'); } catch { return {}; }
+}
+function saveChecklist(state) {
+  localStorage.setItem('mira_checklist', JSON.stringify(state));
 }
 
-function toggleCheck(el) {
+function renderConventionChecklist() {
+  const container = document.getElementById('conventionChecklist');
+  const state = loadChecklist();
+  container.innerHTML = CHECKLIST_ITEMS.map((item, i) => {
+    const checked = !!state[i];
+    return `
+    <div class="pack-item" onclick="toggleCheck(this, ${i})" style="cursor:pointer;">
+      <span class="pack-item-emoji">${checked ? '✅' : '⬜'}</span>
+      <div class="pack-item-text">
+        <div class="pack-item-name" style="text-decoration:${checked ? 'line-through' : 'none'};opacity:${checked ? '0.5' : '1'}">${item}</div>
+      </div>
+    </div>`;
+  }).join('') + `
+  <button onclick="resetChecklist()" style="margin-top:12px;width:100%;background:none;border:1.5px solid var(--border);border-radius:12px;padding:10px;font-size:0.8rem;font-weight:800;color:var(--text-muted);cursor:pointer;font-family:inherit;">🔄 Reset Checklist</button>`;
+}
+
+function toggleCheck(el, i) {
+  const state = loadChecklist();
+  state[i] = !state[i];
+  saveChecklist(state);
   const emoji = el.querySelector('.pack-item-emoji');
   const text = el.querySelector('.pack-item-name');
-  if (emoji.textContent === '⬜') {
-    emoji.textContent = '✅';
-    text.style.textDecoration = 'line-through';
-    text.style.color = 'var(--text-muted)';
-  } else {
-    emoji.textContent = '⬜';
-    text.style.textDecoration = 'none';
-    text.style.color = 'var(--text)';
-  }
+  const checked = state[i];
+  emoji.textContent = checked ? '✅' : '⬜';
+  text.style.textDecoration = checked ? 'line-through' : 'none';
+  text.style.opacity = checked ? '0.5' : '1';
+}
+
+function resetChecklist() {
+  saveChecklist({});
+  renderConventionChecklist();
 }
 
 // ── FOOD GUIDE ────────────────────────────────────────────────
@@ -1479,34 +1510,71 @@ const FOOD_GUIDE = [
   },
 ];
 
+let histamineFilter = false;
+
+// Substrings that indicate a high-histamine or histamine-liberating item
+const HISTAMINE_FLAGS = [
+  'Aged Cheese','Yogurt','Sour Cream','Kefir','Bacon','Bone Broth','Processed Deli',
+  'Citrus','Strawberry','Raspberry','Kiwi','Pineapple','Tomato','Eggplant','Spinach',
+  'Wine','Beer','Rum','Cider','Bourbon','Gin','Vodka','Whiskey',
+  'vinegar','Soy sauce','Tamari','Tabasco','Pickle',
+  'Walnuts','Peanut','Fish','Seafood',
+];
+
+function isHighHistamine(item) {
+  return HISTAMINE_FLAGS.some(flag => item.toLowerCase().includes(flag.toLowerCase()));
+}
+
+function toggleHistamineFilter() {
+  histamineFilter = !histamineFilter;
+  const btn = document.getElementById('histamine-toggle-btn');
+  if (btn) {
+    btn.style.background = histamineFilter ? 'var(--orange)' : 'var(--orange-light)';
+    btn.style.color = histamineFilter ? 'white' : 'var(--orange)';
+    btn.textContent = histamineFilter ? '⚠️ Hiding High-Histamine Flags — Tap to Clear' : '⚠️ Show High-Histamine Flags';
+  }
+  renderFoodGuide();
+}
+
 function renderFoodGuide() {
   const container = document.getElementById('foodGuideContent');
+  const pillHtml = (items, fallbackColor) => {
+    if (!items.length) return `<span style="font-size:0.75rem;color:${fallbackColor};font-weight:600;">None listed</span>`;
+    return items.map(f => {
+      const flag = histamineFilter && isHighHistamine(f);
+      return `<span class="food-pill" ${flag ? 'style="background:#FF6B7A;color:white;border:none;"' : ''}>${flag ? '⚠️ ' : ''}${f}</span>`;
+    }).join('');
+  };
+
   container.innerHTML = FOOD_GUIDE.map(section => `
     <div class="fodmap-section">
       <div class="card-title">${section.category}</div>
       <div class="fodmap-grid">
         <div class="fodmap-col green">
           <div class="fodmap-col-title">✅ Go Freely</div>
-          ${section.green.map(f => `<span class="food-pill">${f}</span>`).join('')}
+          ${pillHtml(section.green, 'var(--green)')}
         </div>
         <div class="fodmap-col yellow">
           <div class="fodmap-col-title">⚠️ Limit (1/meal)</div>
-          ${section.yellow.length ? section.yellow.map(f => `<span class="food-pill">${f}</span>`).join('') : '<span style="font-size:0.75rem;color:#9A7200;font-weight:600;">None listed</span>'}
+          ${pillHtml(section.yellow, '#9A7200')}
         </div>
         <div class="fodmap-col orange">
           <div class="fodmap-col-title">🔶 Small Amounts</div>
-          ${section.orange.length ? section.orange.map(f => `<span class="food-pill">${f}</span>`).join('') : '<span style="font-size:0.75rem;color:var(--orange);font-weight:600;">None listed</span>'}
+          ${pillHtml(section.orange, 'var(--orange)')}
         </div>
         <div class="fodmap-col red">
           <div class="fodmap-col-title">🚫 Avoid</div>
-          ${section.red.length ? section.red.map(f => `<span class="food-pill">${f}</span>`).join('') : '<span style="font-size:0.75rem;color:var(--red);font-weight:600;">None listed</span>'}
+          ${pillHtml(section.red, 'var(--red)')}
         </div>
       </div>
     </div>
   `).join('');
+  if (histamineFilter) {
+    container.innerHTML += `<div style="font-size:0.74rem;color:var(--orange);font-weight:700;padding:8px 4px;text-align:center;">⚠️ Red pills = high-histamine or histamine-liberating — use extra caution</div>`;
+  }
 }
 
-// ── GRAB & GO BREAKFAST ──────────────────────────────────────
+// ── GRAB & GO BREAKFAST (legacy — dead screen removed, data kept for reference) ──
 
 const BFAST_ITEMS = [
   // ZERO PREP
@@ -1766,7 +1834,7 @@ function showScreen(name) {
 
   // Highlight the correct bottom nav button
   const directMap = { meal: 'meal', snacks: 'snacks', nearby: 'nearby', favorites: 'favorites' };
-  const moreScreens = ['convention', 'foods', 'breakfast', 'tips'];
+  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'journal', 'pantry'];
   const bscreen = directMap[name] || (moreScreens.includes(name) ? 'more' : null);
   if (bscreen) {
     const btn = document.querySelector(`[data-bscreen="${bscreen}"]`);
@@ -2037,8 +2105,255 @@ renderDayView();
 renderSnacks();
 renderFoodGuide();
 renderConventionChecklist();
-renderBfast();
 renderBreakfasts();
+
+// ── JOURNAL ──────────────────────────────────────────────────
+const SYMPTOMS = ['Bloating','Gas','Cramping','Nausea','Fatigue','Brain Fog','Constipation','Diarrhea','Acid Reflux','Headache'];
+
+function loadJournalLog() {
+  try { return JSON.parse(localStorage.getItem('mira_journal') || '[]'); } catch { return []; }
+}
+function saveJournalLog(log) { localStorage.setItem('mira_journal', JSON.stringify(log)); }
+
+function initJournal() {
+  showScreen('journal');
+  renderJournalScreen();
+}
+
+function renderJournalScreen() {
+  const container = document.getElementById('journal-content');
+  const log = loadJournalLog();
+  const today = new Date().toISOString().slice(0,10);
+  const todayEntry = log.find(e => e.date === today);
+
+  const severityDot = s => {
+    if (!s) return '';
+    const color = s <= 2 ? 'var(--green)' : s <= 3 ? 'var(--yellow)' : s <= 4 ? 'var(--orange)' : 'var(--red)';
+    return `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};margin-right:6px;vertical-align:middle;"></span>`;
+  };
+
+  const pastHtml = log.length ? `
+    <div class="section-label" style="margin-top:20px;">Past Entries</div>
+    ${log.slice(0,30).map(e => {
+      const mealNames = getMealLogForRestaurant ? [] : [];
+      const sympList = (e.symptoms||[]).join(', ') || 'No symptoms logged';
+      return `
+      <div class="restaurant-card" onclick="openJournalEntry('${e.date}')">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:0.88rem;font-weight:800;color:var(--text);">${e.date}</div>
+          <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);">${severityDot(e.severity)}Severity ${e.severity||'—'}/5</div>
+        </div>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">${sympList}</div>
+        ${e.notes ? `<div style="font-size:0.78rem;color:var(--text);margin-top:4px;font-style:italic;">"${e.notes.slice(0,80)}${e.notes.length>80?'…':''}"</div>` : ''}
+      </div>`;
+    }).join('')}
+  ` : '<div class="fav-empty" style="margin-top:20px;">No journal entries yet. Log today\'s symptoms to get started.</div>';
+
+  container.innerHTML = `
+    <div class="card" style="background:linear-gradient(135deg,#FFF5D6,#D6FAF0);border-color:var(--green-mid);margin-bottom:16px;">
+      <div style="font-size:1rem;font-weight:900;color:var(--text);margin-bottom:4px;">📓 Journal & Symptoms</div>
+      <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;">Track how you feel each day. Tap today's entry to log or update it.</div>
+    </div>
+    <button class="search-submit-btn" style="margin-bottom:16px;" onclick="openJournalEntry('${today}')">
+      ${todayEntry ? '✏️ Edit Today\'s Entry' : '+ Log Today'}
+    </button>
+    ${pastHtml}
+  `;
+}
+
+function openJournalEntry(date) {
+  const log = loadJournalLog();
+  const entry = log.find(e => e.date === date) || { date, symptoms: [], severity: 3, notes: '', meals: [] };
+  const mealLog = loadMealLog().filter(m => m.date === date);
+
+  const container = document.getElementById('journal-content');
+  container.innerHTML = `
+    <button class="back-btn" onclick="renderJournalScreen()">← Back</button>
+    <div style="font-size:1rem;font-weight:900;color:var(--text);margin-bottom:16px;">📓 ${date}</div>
+
+    <div class="section-label">How severe were your symptoms today?</div>
+    <div class="distance-chips" style="margin-bottom:16px;">
+      ${[1,2,3,4,5].map(n => `
+        <button class="dist-chip ${(entry.severity||3) === n ? 'active' : ''}" data-sev="${n}"
+          onclick="document.querySelectorAll('.dist-chip[data-sev]').forEach(b=>b.classList.remove('active'));this.classList.add('active');">
+          ${n}${n===1?' 😊':n===5?' 😰':''}
+        </button>`).join('')}
+    </div>
+
+    <div class="section-label">Symptoms experienced</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+      ${SYMPTOMS.map(s => `
+        <button class="post-filter-chip ${(entry.symptoms||[]).includes(s) ? 'active' : ''}"
+          onclick="this.classList.toggle('active')">${s}</button>
+      `).join('')}
+    </div>
+
+    ${mealLog.length ? `
+      <div class="section-label">Meals logged today</div>
+      <div style="background:var(--card);border-radius:12px;padding:10px 14px;margin-bottom:16px;font-size:0.82rem;color:var(--text-muted);line-height:1.7;">
+        ${mealLog.map(m => `<strong>${m.restaurant_name}</strong>: ${m.items.map(i=>i.name).join(', ')}`).join('<br>')}
+      </div>` : ''}
+
+    <div class="section-label">Notes</div>
+    <textarea id="journal-notes" class="meal-log-notes" rows="4"
+      placeholder="How did you feel overall? Any foods that seemed to cause issues? Stress, sleep, activity level...">${entry.notes||''}</textarea>
+
+    <button class="meal-log-save-btn" onclick="saveJournalEntry('${date}')">Save Entry</button>
+    ${entry.symptoms?.length || entry.notes ? `<button class="meal-log-cancel-btn" style="margin-top:8px;" onclick="deleteJournalEntry('${date}')">🗑️ Delete Entry</button>` : ''}
+  `;
+}
+
+function saveJournalEntry(date) {
+  const severity = parseInt(document.querySelector('.dist-chip[data-sev].active')?.dataset.sev || '3');
+  const symptoms = [...document.querySelectorAll('.post-filter-chip.active')].map(b => b.textContent);
+  const notes = document.getElementById('journal-notes')?.value.trim() || '';
+  const log = loadJournalLog();
+  const idx = log.findIndex(e => e.date === date);
+  const entry = { date, severity, symptoms, notes };
+  if (idx >= 0) log[idx] = entry; else log.unshift(entry);
+  log.sort((a,b) => b.date.localeCompare(a.date));
+  saveJournalLog(log);
+  renderJournalScreen();
+}
+
+function deleteJournalEntry(date) {
+  const log = loadJournalLog().filter(e => e.date !== date);
+  saveJournalLog(log);
+  renderJournalScreen();
+}
+
+// ── PANTRY / CRAVE ────────────────────────────────────────────
+let selectedCrave = null;
+let selectedEffort = 'quick';
+
+function selectCrave(btn) {
+  document.querySelectorAll('#crave-chips .price-tier-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedCrave = btn.dataset.crave;
+}
+
+function selectEffort(btn) {
+  document.querySelectorAll('[data-effort]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedEffort = btn.dataset.effort;
+}
+
+async function runPantryCrave() {
+  const pantry = document.getElementById('pantry-input')?.value.trim();
+  if (!pantry) {
+    document.getElementById('pantry-result').innerHTML = '<div class="nearby-error">Tell me what you have in your pantry first.</div>';
+    return;
+  }
+  const crave = selectedCrave || 'anything SIBO-safe';
+  const effort = { quick: 'quick (under 15 minutes)', medium: 'medium effort (about 30 minutes)', full: 'a full recipe (any length)' }[selectedEffort];
+  const result = document.getElementById('pantry-result');
+  result.innerHTML = '<div class="nearby-loading">Thinking of something delicious and safe...</div>';
+
+  const prompt = `Mira has SIBO + low-histamine + low-FODMAP dietary restrictions. Her strict rules:
+- NO garlic, onion, leeks, shallots (any form)
+- NO fermented foods, vinegar, soy sauce, aged cheese, alcohol
+- NO high-histamine: canned fish, processed meats with additives, smoked foods
+- NO high-FODMAP: wheat, rye, apples (large), pears, mushrooms, cauliflower (large), asparagus, cashews
+- SAFE: plain grilled meats, white rice, quinoa, zucchini, spinach, kale, bell peppers, carrots, eggs, olive oil, ghee, blueberries, strawberries, macadamia nuts
+
+What she has in her pantry: ${pantry}
+
+She is craving: ${crave}
+Effort level: ${effort}
+
+Suggest 1–2 specific meals she can make RIGHT NOW using mostly what she has. For each meal:
+- Name it
+- List which pantry items it uses
+- Note any 1–2 items she'd need to grab if missing
+- Give simple step-by-step instructions (${selectedEffort === 'quick' ? '3–5 steps max' : 'as detailed as needed'})
+- Confirm why it fits her protocol
+
+Return as JSON:
+{
+  "meals": [
+    {
+      "name": "string",
+      "uses_from_pantry": ["string"],
+      "need_to_buy": ["string"],
+      "steps": ["string"],
+      "why_safe": "string"
+    }
+  ],
+  "tip": "One short encouragement or practical tip for Mira."
+}`;
+
+  try {
+    const res = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 1500, thinkingConfig: { thinkingBudget: 0 } }
+      })
+    });
+    const data = await res.json();
+    const text = data.candidates[0].content.parts.filter(p => !p.thought).map(p => p.text||'').join('');
+    const json = JSON.parse(fixJson(text));
+    renderPantryResult(json);
+  } catch(err) {
+    result.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
+  }
+}
+
+function renderPantryResult(json) {
+  const result = document.getElementById('pantry-result');
+  result.innerHTML = `
+    ${(json.meals||[]).map(m => `
+      <div class="restaurant-card" style="margin-top:16px;">
+        <div style="font-size:1rem;font-weight:900;color:var(--text);margin-bottom:8px;">🍽️ ${m.name}</div>
+        ${m.uses_from_pantry?.length ? `
+          <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:0.8px;color:var(--green);margin-bottom:4px;">✅ Using from pantry</div>
+          <div style="font-size:0.8rem;color:var(--text);margin-bottom:10px;">${m.uses_from_pantry.join(' · ')}</div>` : ''}
+        ${m.need_to_buy?.length ? `
+          <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:0.8px;color:var(--orange);margin-bottom:4px;">🛒 Need to grab</div>
+          <div style="font-size:0.8rem;color:var(--text);margin-bottom:10px;">${m.need_to_buy.join(' · ')}</div>` : ''}
+        <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-bottom:6px;">Steps</div>
+        <ol style="margin:0;padding-left:18px;font-size:0.84rem;line-height:1.7;color:var(--text);">
+          ${(m.steps||[]).map(s => `<li>${s}</li>`).join('')}
+        </ol>
+        <div style="margin-top:10px;padding:8px 12px;background:var(--green-light);border-radius:10px;font-size:0.76rem;font-weight:700;color:var(--green);">✅ ${m.why_safe}</div>
+      </div>
+    `).join('')}
+    ${json.tip ? `<div style="margin-top:16px;padding:12px 14px;background:var(--purple-light);border-radius:14px;font-size:0.84rem;font-weight:700;color:var(--purple);line-height:1.6;">💜 ${json.tip}</div>` : ''}
+  `;
+}
+
+// ── iOS HOME SCREEN ICON ──────────────────────────────────────
+(function generateAppIcon() {
+  try {
+    const c = document.createElement('canvas');
+    c.width = 180; c.height = 180;
+    const ctx = c.getContext('2d');
+    // Rounded rect background
+    const r = 36;
+    ctx.beginPath();
+    ctx.moveTo(r, 0); ctx.lineTo(180-r, 0);
+    ctx.quadraticCurveTo(180, 0, 180, r);
+    ctx.lineTo(180, 180-r);
+    ctx.quadraticCurveTo(180, 180, 180-r, 180);
+    ctx.lineTo(r, 180);
+    ctx.quadraticCurveTo(0, 180, 0, 180-r);
+    ctx.lineTo(0, r);
+    ctx.quadraticCurveTo(0, 0, r, 0);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, 0, 180, 180);
+    grad.addColorStop(0, '#1FBF80');
+    grad.addColorStop(1, '#FF7EB3');
+    ctx.fillStyle = grad;
+    ctx.fill();
+    // Leaf emoji centered
+    ctx.font = '90px serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🌿', 90, 95);
+    document.getElementById('apple-touch-icon').href = c.toDataURL('image/png');
+  } catch(e) {}
+})();
 
 // ── NEARBY RESTAURANTS FUNCTIONS ─────────────────────────────
 
