@@ -1954,7 +1954,7 @@ Sort results by safety_score descending. Set chain: true if it is a known nation
     body: JSON.stringify({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       tools: [{ googleSearch: {} }],
-      generationConfig: { maxOutputTokens: 8192 }
+      generationConfig: { maxOutputTokens: 8192, thinkingConfig: { thinkingBudget: 0 } }
     })
   });
 
@@ -2011,7 +2011,7 @@ confidence values: "high" (full menu + ingredients found), "medium" (partial men
     body: JSON.stringify({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
       tools: [{ googleSearch: {} }],
-      generationConfig: { maxOutputTokens: 8192 }
+      generationConfig: { maxOutputTokens: 8192, thinkingConfig: { thinkingBudget: 0 } }
     })
   });
 
