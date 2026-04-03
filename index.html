@@ -9,6 +9,7 @@
 <meta name="format-detection" content="telephone=no">
 <link rel="apple-touch-icon" id="apple-touch-icon" href="">
 <title>🌿 Mira's SIBO Toolkit</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   /* Import fonts with fallback - works offline too */
   @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
@@ -753,9 +754,211 @@
   .fav-remove-btn { background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 4px 6px; min-width: 36px; min-height: 36px; display: flex; align-items: center; justify-content: center; }
   .fav-cached-badge { font-size: 0.7rem; color: var(--green); font-weight: 700; margin-top: 6px; }
   .fav-empty { text-align: center; padding: 70px 20px 40px; color: var(--text-muted); font-weight: 700; font-size: 0.9rem; line-height: 2; }
+
+  /* ── AUTH OVERLAY ───────────────────────────────────────────── */
+  .auth-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: linear-gradient(145deg, #FFF0F7 0%, #F0E8FF 60%, #E8F4FF 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 32px 24px; overflow-y: auto;
+  }
+  .auth-overlay.hidden { display: none; }
+  .auth-logo-wrap { text-align: center; margin-bottom: 28px; }
+  .auth-big-logo { font-size: 4.5rem; display: block; line-height: 1; }
+  .auth-brand-title {
+    font-family: 'Fredoka One', 'SF Pro Rounded', sans-serif;
+    font-size: 2rem; color: var(--pink); margin: 8px 0 4px; text-align: center;
+  }
+  .auth-brand-sub { color: var(--text-muted); font-size: 0.82rem; font-weight: 600; letter-spacing: 0.3px; text-align: center; }
+  .auth-card {
+    background: var(--card); border-radius: 24px;
+    padding: 28px 24px; width: 100%; max-width: 380px;
+    box-shadow: 0 8px 40px rgba(255,126,179,0.18); border: 1.5px solid var(--border);
+  }
+  .auth-section-label { font-size: 0.72rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .auth-email-input {
+    width: 100%; padding: 14px 16px;
+    border: 2px solid var(--border); border-radius: 14px;
+    font-family: inherit; font-size: 1rem; font-weight: 600;
+    color: var(--text); background: white; transition: border-color 0.2s;
+  }
+  .auth-email-input:focus { outline: none; border-color: var(--pink); }
+  .auth-primary-btn {
+    width: 100%; padding: 15px; margin-top: 12px;
+    background: linear-gradient(135deg, #FF7EB3, #B388FF);
+    color: white; border: none; border-radius: 14px;
+    font-family: inherit; font-size: 1rem; font-weight: 800; transition: opacity 0.2s;
+  }
+  .auth-primary-btn:active { opacity: 0.85; }
+  .auth-primary-btn:disabled { opacity: 0.45; }
+  .auth-or-divider {
+    text-align: center; color: var(--text-muted);
+    font-size: 0.78rem; font-weight: 700; margin: 14px 0; position: relative;
+  }
+  .auth-or-divider::before, .auth-or-divider::after {
+    content: ''; position: absolute; top: 50%; width: calc(50% - 20px); height: 1px; background: var(--border);
+  }
+  .auth-or-divider::before { left: 0; }
+  .auth-or-divider::after { right: 0; }
+  .auth-google-btn {
+    width: 100%; padding: 13px 16px;
+    background: white; color: var(--text);
+    border: 2px solid var(--border); border-radius: 14px;
+    font-family: inherit; font-size: 0.9rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.15s;
+  }
+  .auth-google-btn:active { background: #f9f9f9; }
+  .auth-footer-note { text-align: center; font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin-top: 16px; line-height: 1.5; }
+  .auth-sent-state { display: none; text-align: center; padding: 8px 0; }
+  .auth-sent-state.visible { display: block; }
+  .auth-sent-emoji { font-size: 3rem; display: block; }
+  .auth-sent-title { font-family: 'Fredoka One', sans-serif; font-size: 1.5rem; color: var(--green); margin: 10px 0 6px; }
+  .auth-sent-body { color: var(--text-muted); font-size: 0.88rem; font-weight: 600; line-height: 1.6; }
+  .auth-resend-btn {
+    background: none; border: 2px solid var(--border); border-radius: 30px;
+    padding: 8px 20px; margin-top: 14px;
+    font-family: inherit; font-weight: 700; font-size: 0.82rem; color: var(--text-muted);
+  }
+
+  /* ── ONBOARDING OVERLAY ──────────────────────────────────────── */
+  .onboard-overlay { position: fixed; inset: 0; z-index: 999; background: var(--bg); display: none; flex-direction: column; }
+  .onboard-overlay.visible { display: flex; }
+  .onboard-top-bar {
+    background: linear-gradient(135deg, #FF7EB3 0%, #C96EE8 100%);
+    padding: 14px 18px; padding-top: calc(14px + env(safe-area-inset-top));
+    display: flex; align-items: center; gap: 12px;
+  }
+  .ob-back-btn {
+    background: rgba(255,255,255,0.22); border: none; width: 34px; height: 34px; border-radius: 50%;
+    color: white; font-size: 1rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  }
+  .ob-back-btn.invisible { visibility: hidden; pointer-events: none; }
+  .ob-progress-wrap { flex: 1; height: 5px; background: rgba(255,255,255,0.28); border-radius: 3px; overflow: hidden; }
+  .ob-progress-fill { height: 100%; background: white; border-radius: 3px; transition: width 0.4s ease; }
+  .ob-step-count { color: rgba(255,255,255,0.82); font-size: 0.72rem; font-weight: 800; white-space: nowrap; }
+  .onboard-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 28px 20px 140px; }
+  .ob-emoji { font-size: 3.2rem; display: block; margin-bottom: 12px; }
+  .ob-title { font-family: 'Fredoka One', sans-serif; font-size: 1.75rem; color: var(--text); margin-bottom: 6px; line-height: 1.2; }
+  .ob-sub { color: var(--text-muted); font-size: 0.88rem; font-weight: 600; line-height: 1.55; margin-bottom: 24px; }
+  .ob-label { font-size: 0.7rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-top: 22px; }
+  .ob-label:first-of-type { margin-top: 0; }
+  .ob-text-input {
+    width: 100%; padding: 14px 16px;
+    border: 2px solid var(--border); border-radius: 14px;
+    font-family: inherit; font-size: 1rem; font-weight: 600; color: var(--text); background: white;
+  }
+  .ob-text-input:focus { outline: none; border-color: var(--pink); }
+  .ob-role-row { display: flex; gap: 10px; }
+  .ob-role-btn {
+    flex: 1; padding: 15px 8px; border: 2px solid var(--border); border-radius: 16px;
+    background: white; font-family: inherit; font-weight: 700; font-size: 0.88rem; color: var(--text-muted);
+    display: flex; flex-direction: column; align-items: center; gap: 6px; transition: all 0.2s;
+  }
+  .ob-role-btn span:first-child { font-size: 2rem; }
+  .ob-role-btn.selected { border-color: var(--pink); background: var(--pink-light); color: var(--pink); }
+  .ob-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .ob-chip {
+    padding: 8px 14px; border: 2px solid var(--border); border-radius: 30px;
+    background: white; font-family: inherit; font-weight: 700; font-size: 0.8rem; color: var(--text-muted); transition: all 0.2s;
+  }
+  .ob-chip.selected { border-color: var(--pink); background: var(--pink-light); color: var(--pink); }
+  .ob-textarea {
+    width: 100%; padding: 13px 15px; border: 2px solid var(--border); border-radius: 14px;
+    font-family: inherit; font-size: 0.88rem; font-weight: 600; color: var(--text);
+    background: white; resize: none; min-height: 80px; line-height: 1.5;
+  }
+  .ob-textarea:focus { outline: none; border-color: var(--pink); }
+  .onboard-footer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: white; border-top: 1px solid var(--border);
+    padding: 14px 20px calc(14px + env(safe-area-inset-bottom)); z-index: 10;
+  }
+  .ob-next-btn {
+    width: 100%; padding: 15px; background: linear-gradient(135deg, #FF7EB3, #B388FF);
+    color: white; border: none; border-radius: 14px;
+    font-family: inherit; font-size: 1rem; font-weight: 800;
+  }
+  .ob-next-btn:active { opacity: 0.85; }
+  .ob-skip-btn {
+    background: none; border: none; color: var(--text-muted);
+    font-family: inherit; font-size: 0.82rem; font-weight: 700;
+    text-align: center; width: 100%; padding: 9px; margin-top: 4px; display: none;
+  }
+
+  /* ── PROFILE SCREEN ──────────────────────────────────────────── */
+  .profile-header-card {
+    background: linear-gradient(135deg, #FF7EB3 0%, #C96EE8 100%);
+    border-radius: 20px; padding: 22px 20px; margin-bottom: 16px; color: white;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .profile-avatar { font-size: 2.8rem; width: 64px; height: 64px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .profile-header-info { flex: 1; min-width: 0; }
+  .profile-header-name { font-family: 'Fredoka One', sans-serif; font-size: 1.5rem; line-height: 1.2; }
+  .profile-header-role { font-size: 0.78rem; opacity: 0.82; font-weight: 700; letter-spacing: 0.3px; }
+  .profile-tag-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+  .profile-tag { padding: 5px 11px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+  .profile-tag.pink { background: var(--pink-light); color: var(--pink); }
+  .profile-tag.green { background: var(--green-light); color: var(--green); }
+  .profile-tag.purple { background: var(--purple-light); color: var(--purple); }
+  .profile-action-btn {
+    width: 100%; padding: 14px; border-radius: 14px;
+    font-family: inherit; font-size: 0.95rem; font-weight: 800; margin-bottom: 10px;
+  }
+  .profile-action-btn.edit { background: linear-gradient(135deg, #FF7EB3, #B388FF); color: white; border: none; }
+  .profile-action-btn.signout { background: white; color: var(--red); border: 2px solid var(--red); }
 </style>
 </head>
 <body>
+
+<!-- ══════════════ AUTH OVERLAY ══════════════ -->
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-logo-wrap">
+    <span class="auth-big-logo">🌿</span>
+    <div class="auth-brand-title">Mira's Toolkit</div>
+    <div class="auth-brand-sub">SIBO · Low Histamine · Autism-Friendly</div>
+  </div>
+  <div class="auth-card">
+    <div id="auth-form-state">
+      <div class="auth-section-label">Sign in with your email</div>
+      <input class="auth-email-input" type="email" id="auth-email-input" placeholder="your@email.com" autocomplete="email">
+      <button class="auth-primary-btn" id="auth-magic-btn" onclick="sendMagicLink()">✉️ Send Magic Link</button>
+      <div class="auth-or-divider">or</div>
+      <button class="auth-google-btn" onclick="signInWithGoogle()">
+        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
+          <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/>
+          <path d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
+          <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 6.29C4.672 4.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+      <p class="auth-footer-note">Free · Secure · Just you and your caregiver<br>No password needed with magic link</p>
+    </div>
+    <div class="auth-sent-state" id="auth-sent-state">
+      <span class="auth-sent-emoji">📬</span>
+      <div class="auth-sent-title">Check your inbox!</div>
+      <div class="auth-sent-body">We sent a magic link to<br><strong id="auth-sent-to"></strong><br><br>Tap the link in the email to sign in — no password needed.</div>
+      <button class="auth-resend-btn" onclick="resetAuthForm()">← Use a different email</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ ONBOARDING OVERLAY ══════════════ -->
+<div class="onboard-overlay" id="onboard-overlay">
+  <div class="onboard-top-bar">
+    <button class="ob-back-btn invisible" id="ob-back-btn" onclick="prevOnboardStep()">←</button>
+    <div class="ob-progress-wrap">
+      <div class="ob-progress-fill" id="ob-progress-fill" style="width:25%"></div>
+    </div>
+    <div class="ob-step-count" id="ob-step-count">Step 1 of 4</div>
+  </div>
+  <div class="onboard-body" id="ob-body"></div>
+  <div class="onboard-footer">
+    <button class="ob-next-btn" id="ob-next-btn" onclick="nextOnboardStep()">Continue →</button>
+    <button class="ob-skip-btn" id="ob-skip-btn" onclick="skipOnboardStep()">Skip this step</button>
+  </div>
+</div>
 
 <!-- HEADER -->
 <div class="header">
@@ -776,6 +979,7 @@
   <button class="more-item" onclick="showScreen('tips');closeMore()"><span class="more-icon">💜</span><span>Autism Tips</span></button>
   <button class="more-item" onclick="initJournal();closeMore()"><span class="more-icon">📓</span><span>Journal & Symptoms</span></button>
   <button class="more-item" onclick="showScreen('pantry');closeMore()"><span class="more-icon">🍳</span><span>Pantry & Crave</span></button>
+  <button class="more-item" onclick="showProfile();closeMore()"><span class="more-icon">👤</span><span>My Profile</span></button>
 </div>
 
 <!-- ══════════════ MEAL PLAN SCREEN ══════════════ -->
@@ -1113,6 +1317,13 @@
 <!-- ══════════════ FAVORITES SCREEN ══════════════ -->
 <div class="screen" id="screen-favorites">
   <div id="favorites-content"></div>
+</div>
+
+<!-- ══════════════ PROFILE SCREEN ══════════════ -->
+<div class="screen" id="screen-profile">
+  <div id="profile-screen-content">
+    <div style="text-align:center;padding:60px 20px;color:var(--text-muted);font-weight:700;">Loading profile...</div>
+  </div>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -1853,7 +2064,7 @@ function showScreen(name) {
 
   // Highlight the correct bottom nav button
   const directMap = { meal: 'meal', snacks: 'snacks', nearby: 'nearby', favorites: 'favorites' };
-  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'journal', 'pantry'];
+  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'journal', 'pantry', 'profile'];
   const bscreen = directMap[name] || (moreScreens.includes(name) ? 'more' : null);
   if (bscreen) {
     const btn = document.querySelector(`[data-bscreen="${bscreen}"]`);
@@ -2118,13 +2329,382 @@ function renderBreakfasts() {
   }).join('');
 }
 
+// ── SUPABASE AUTH & PROFILE ───────────────────────────────────
+
+const SUPABASE_URL      = 'https://pysgcrnjjotplltcwrav.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5c2djcm5qam90cGxsdGN3cmF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMDQ4OTgsImV4cCI6MjA5MDc4MDg5OH0.N6P6ikQaxprIPgGxVJB_lF-rs5vs_3tGQlu_5_g1XPk';
+
+let _sbClient      = null;
+let currentUser    = null;
+let currentProfile = null;
+let authConfigured = false;
+
+function getSB() {
+  if (!_sbClient && window.supabase && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
+    _sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  return _sbClient;
+}
+
+// ── AUTH OVERLAY ─────────────────────────────────────────────
+function showAuthOverlay() { document.getElementById('auth-overlay').classList.remove('hidden'); }
+function hideAuthOverlay() { document.getElementById('auth-overlay').classList.add('hidden'); }
+
+function resetAuthForm() {
+  document.getElementById('auth-form-state').style.display = '';
+  document.getElementById('auth-sent-state').classList.remove('visible');
+  document.getElementById('auth-email-input').value = '';
+  const btn = document.getElementById('auth-magic-btn');
+  btn.textContent = '✉️ Send Magic Link';
+  btn.disabled = false;
+}
+
+async function sendMagicLink() {
+  const emailEl = document.getElementById('auth-email-input');
+  const email   = emailEl.value.trim();
+  if (!email || !email.includes('@')) {
+    emailEl.focus(); emailEl.style.borderColor = 'var(--red)'; return;
+  }
+  emailEl.style.borderColor = '';
+  const btn = document.getElementById('auth-magic-btn');
+  btn.textContent = 'Sending...'; btn.disabled = true;
+  const sb = getSB();
+  if (sb) {
+    const { error } = await sb.auth.signInWithOtp({
+      email, options: { emailRedirectTo: window.location.href }
+    });
+    if (error) {
+      btn.textContent = '✉️ Send Magic Link'; btn.disabled = false;
+      alert('Could not send magic link: ' + error.message); return;
+    }
+  }
+  document.getElementById('auth-form-state').style.display = 'none';
+  document.getElementById('auth-sent-to').textContent = email;
+  document.getElementById('auth-sent-state').classList.add('visible');
+}
+
+async function signInWithGoogle() {
+  const sb = getSB();
+  if (!sb) return;
+  await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+}
+
+async function signOut() {
+  const sb = getSB();
+  if (sb && currentUser) await sb.auth.signOut();
+  currentUser = null; currentProfile = null;
+  localStorage.removeItem('mira_profile');
+  resetAuthForm(); showAuthOverlay(); showScreen('meal');
+}
+
+// ── PROFILE ───────────────────────────────────────────────────
+async function loadProfileFromSupabase() {
+  const cached = localStorage.getItem('mira_profile');
+  let profile = null;
+  if (cached) { try { profile = JSON.parse(cached); } catch {} }
+  const sb = getSB();
+  if (sb && currentUser) {
+    const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+    if (data) { profile = data; localStorage.setItem('mira_profile', JSON.stringify(data)); }
+  }
+  return profile;
+}
+
+async function saveProfileData(profileData) {
+  currentProfile = { ...profileData, updated_at: new Date().toISOString() };
+  localStorage.setItem('mira_profile', JSON.stringify(currentProfile));
+  const sb = getSB();
+  if (sb && currentUser) {
+    await sb.from('profiles').upsert({ id: currentUser.id, ...currentProfile });
+  }
+}
+
+function buildSystemContext(profile) {
+  if (!profile) return MIRA_PROTOCOL;
+  const name         = profile.name || 'The user';
+  const conditions   = (profile.conditions  || []).length ? profile.conditions.join(', ')   : 'SIBO';
+  const restrictions = (profile.restrictions|| []).length ? profile.restrictions.join(', ') : 'Low-FODMAP, Low-Histamine';
+  let extra = '';
+  if ((profile.texture_aversions || []).length)
+    extra += `\nTexture aversions — flag any dish with these: ${profile.texture_aversions.join(', ')}`;
+  if ((profile.flavor_aversions || []).length)
+    extra += `\nFlavor aversions: ${profile.flavor_aversions.join(', ')}`;
+  if (profile.always_avoid)
+    extra += `\nPersonal always-avoid (highest priority): ${profile.always_avoid}`;
+  if (profile.safe_foods)
+    extra += `\nPersonal trusted safe foods: ${profile.safe_foods}`;
+  return `PATIENT PROFILE:\nName: ${name} | Conditions: ${conditions} | Dietary restrictions: ${restrictions}${extra}\n\nDIETARY PROTOCOL:\n${MIRA_PROTOCOL}`.trim();
+}
+
+function getMiraProtocol() { return buildSystemContext(currentProfile); }
+
+function updateHeaderForProfile(profile) {
+  const sub = document.querySelector('.header-sub');
+  if (!sub) return;
+  if (profile && profile.name) {
+    sub.textContent = `Hi, ${profile.name}! · Your personalized toolkit`;
+  } else {
+    sub.textContent = 'SIBO · Low Histamine · Autism-Friendly';
+  }
+}
+
+// ── PROFILE SCREEN ────────────────────────────────────────────
+function showProfile() {
+  showScreen('profile');
+  renderProfileScreen();
+}
+
+function renderProfileScreen() {
+  const container = document.getElementById('profile-screen-content');
+  const p = currentProfile;
+  if (!p) {
+    container.innerHTML = `
+      <div class="card" style="text-align:center;padding:32px;">
+        <div style="font-size:2.5rem;margin-bottom:12px;">👤</div>
+        <div style="font-weight:800;font-size:1.1rem;margin-bottom:8px;">No profile yet</div>
+        <div style="color:var(--text-muted);font-size:0.88rem;margin-bottom:20px;line-height:1.5;">Set up your profile to personalize all suggestions to your exact conditions and restrictions.</div>
+        <button class="profile-action-btn edit" onclick="showOnboarding()">Set Up My Profile</button>
+      </div>`;
+    return;
+  }
+  const roleEmoji = p.role === 'caregiver' ? '💜' : '🌿';
+  const roleLabel = p.role === 'caregiver' ? 'Caregiver' : 'Patient';
+  const condTags   = (p.conditions   || []).map(c => `<span class="profile-tag pink">${c}</span>`).join('');
+  const restrTags  = (p.restrictions || []).map(r => `<span class="profile-tag green">${r}</span>`).join('');
+  const senseTags  = [...(p.texture_aversions||[]), ...(p.flavor_aversions||[])].map(t => `<span class="profile-tag purple">${t}</span>`).join('');
+  container.innerHTML = `
+    <div class="profile-header-card">
+      <div class="profile-avatar">${roleEmoji}</div>
+      <div class="profile-header-info">
+        <div class="profile-header-name">${p.name || 'Your Profile'}</div>
+        <div class="profile-header-role">${roleLabel}</div>
+      </div>
+    </div>
+    ${condTags  ? `<div class="card"><div class="card-title">🏥 Conditions</div><div class="profile-tag-row">${condTags}</div></div>` : ''}
+    ${restrTags ? `<div class="card"><div class="card-title">🚫 Dietary Restrictions</div><div class="profile-tag-row">${restrTags}</div></div>` : ''}
+    ${senseTags ? `<div class="card"><div class="card-title">✨ Sensory Preferences</div><div class="profile-tag-row">${senseTags}</div></div>` : ''}
+    ${p.always_avoid ? `<div class="card"><div class="card-title">⛔ Always Avoid</div><div style="font-size:0.88rem;font-weight:600;line-height:1.6;color:var(--text-muted);">${p.always_avoid}</div></div>` : ''}
+    ${p.safe_foods   ? `<div class="card"><div class="card-title">✅ Safe Foods</div><div style="font-size:0.88rem;font-weight:600;line-height:1.6;color:var(--text-muted);">${p.safe_foods}</div></div>` : ''}
+    <button class="profile-action-btn edit" onclick="editProfile()">✏️ Edit My Profile</button>
+    ${authConfigured ? `<button class="profile-action-btn signout" onclick="signOut()">Sign Out</button>` : ''}
+  `;
+}
+
+function editProfile() {
+  if (currentProfile) {
+    onboardData = {
+      name:              currentProfile.name || '',
+      role:              currentProfile.role || 'patient',
+      conditions:        [...(currentProfile.conditions        || [])],
+      restrictions:      [...(currentProfile.restrictions      || [])],
+      texture_aversions: [...(currentProfile.texture_aversions || [])],
+      flavor_aversions:  [...(currentProfile.flavor_aversions  || [])],
+      always_avoid:      currentProfile.always_avoid || '',
+      safe_foods:        currentProfile.safe_foods   || ''
+    };
+  }
+  showOnboarding();
+}
+
+// ── ONBOARDING ────────────────────────────────────────────────
+const ONBOARD_CONDITIONS = [
+  'SIBO','IBS','Crohn\'s Disease','Ulcerative Colitis',
+  'Celiac Disease','Gluten Sensitivity','MCAS','EDS / Hypermobility',
+  'POTS / Dysautonomia','Fibromyalgia','Lupus','Hashimoto\'s / Thyroid',
+  'Autism / SPD','ADHD','Anxiety','Other'
+];
+const ONBOARD_RESTRICTIONS = [
+  'Low-FODMAP','Low-Histamine','Low-Sulfur','Gluten-Free',
+  'Dairy-Free','Egg-Free','Soy-Free','Nut-Free',
+  'Low-Fat','Low-Fiber','Soft Foods Only','Vegetarian','Vegan'
+];
+const ONBOARD_TEXTURES = ['Mushy','Very Crunchy','Chewy / Rubbery','Slimy','Gritty','Mixed Textures'];
+const ONBOARD_FLAVORS  = ['Spicy','Very Sour','Bitter','Strong Umami','Pungent / Fishy'];
+const ONBOARD_STEPS    = 4;
+
+let onboardStep = 1;
+let onboardData = { name:'', role:'patient', conditions:[], restrictions:[], texture_aversions:[], flavor_aversions:[], always_avoid:'', safe_foods:'' };
+
+function showOnboarding() {
+  onboardStep = 1;
+  document.getElementById('onboard-overlay').classList.add('visible');
+  renderOnboardStep();
+}
+function hideOnboardOverlay() { document.getElementById('onboard-overlay').classList.remove('visible'); }
+
+function escHtml(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderOnboardStep() {
+  document.getElementById('ob-progress-fill').style.width = ((onboardStep / ONBOARD_STEPS) * 100) + '%';
+  document.getElementById('ob-step-count').textContent = `Step ${onboardStep} of ${ONBOARD_STEPS}`;
+  document.getElementById('ob-back-btn').classList.toggle('invisible', onboardStep === 1);
+  document.getElementById('ob-skip-btn').style.display = onboardStep >= 3 ? 'block' : 'none';
+  document.getElementById('ob-next-btn').textContent = onboardStep === ONBOARD_STEPS ? '🌿 Save My Profile' : 'Continue →';
+
+  const body = document.getElementById('ob-body');
+
+  if (onboardStep === 1) {
+    body.innerHTML = `
+      <span class="ob-emoji">👋</span>
+      <div class="ob-title">Welcome! Let's personalize your toolkit.</div>
+      <div class="ob-sub">Your profile shapes every suggestion — restaurant safety ratings, recipes, and tips will all be tailored specifically to you.</div>
+      <div class="ob-label">What should we call you?</div>
+      <input class="ob-text-input" type="text" id="ob-name-input" placeholder="Your name" value="${escHtml(onboardData.name)}" oninput="onboardData.name=this.value">
+      <div class="ob-label" style="margin-top:18px;">Your role</div>
+      <div class="ob-role-row">
+        <button class="ob-role-btn ${onboardData.role==='patient'?'selected':''}" onclick="selectObRole('patient',this)">
+          <span>🌿</span><span>I'm the patient</span>
+        </button>
+        <button class="ob-role-btn ${onboardData.role==='caregiver'?'selected':''}" onclick="selectObRole('caregiver',this)">
+          <span>💜</span><span>I'm the caregiver</span>
+        </button>
+      </div>`;
+  } else if (onboardStep === 2) {
+    body.innerHTML = `
+      <span class="ob-emoji">🏥</span>
+      <div class="ob-title">Your Conditions</div>
+      <div class="ob-sub">Select everything that applies. This calibrates safety ratings and flags specific triggers for your situation.</div>
+      <div class="ob-label">Conditions you manage</div>
+      <div class="ob-chips">${ONBOARD_CONDITIONS.map(c =>
+        `<button class="ob-chip ${onboardData.conditions.includes(c)?'selected':''}" onclick="toggleObChip(this,'conditions',${JSON.stringify(c)})">${c}</button>`
+      ).join('')}</div>`;
+  } else if (onboardStep === 3) {
+    body.innerHTML = `
+      <span class="ob-emoji">🚫</span>
+      <div class="ob-title">Dietary Restrictions</div>
+      <div class="ob-sub">What do you need to avoid? These get injected into every restaurant search and recipe suggestion.</div>
+      <div class="ob-label">Active restrictions</div>
+      <div class="ob-chips">${ONBOARD_RESTRICTIONS.map(r =>
+        `<button class="ob-chip ${onboardData.restrictions.includes(r)?'selected':''}" onclick="toggleObChip(this,'restrictions',${JSON.stringify(r)})">${r}</button>`
+      ).join('')}</div>
+      <div class="ob-label">Anything else to always avoid?</div>
+      <textarea class="ob-textarea" placeholder="e.g. tree nuts, corn syrup, shellfish..." oninput="onboardData.always_avoid=this.value">${escHtml(onboardData.always_avoid)}</textarea>`;
+  } else if (onboardStep === 4) {
+    body.innerHTML = `
+      <span class="ob-emoji">✨</span>
+      <div class="ob-title">Sensory Preferences</div>
+      <div class="ob-sub">Optional — especially helpful for autism-friendly suggestions. Skip if not relevant.</div>
+      <div class="ob-label">Texture aversions (flag dishes with these)</div>
+      <div class="ob-chips">${ONBOARD_TEXTURES.map(t =>
+        `<button class="ob-chip ${onboardData.texture_aversions.includes(t)?'selected':''}" onclick="toggleObChip(this,'texture_aversions',${JSON.stringify(t)})">${t}</button>`
+      ).join('')}</div>
+      <div class="ob-label">Flavor aversions</div>
+      <div class="ob-chips">${ONBOARD_FLAVORS.map(f =>
+        `<button class="ob-chip ${onboardData.flavor_aversions.includes(f)?'selected':''}" onclick="toggleObChip(this,'flavor_aversions',${JSON.stringify(f)})">${f}</button>`
+      ).join('')}</div>
+      <div class="ob-label">Your trusted safe foods</div>
+      <textarea class="ob-textarea" placeholder="e.g. plain white rice, grilled chicken, blueberries..." oninput="onboardData.safe_foods=this.value">${escHtml(onboardData.safe_foods)}</textarea>`;
+  }
+  body.scrollTop = 0;
+}
+
+function selectObRole(role, btn) {
+  onboardData.role = role;
+  document.querySelectorAll('.ob-role-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function toggleObChip(btn, field, value) {
+  const arr = onboardData[field];
+  const idx = arr.indexOf(value);
+  if (idx >= 0) arr.splice(idx, 1); else arr.push(value);
+  btn.classList.toggle('selected', arr.includes(value));
+}
+
+function nextOnboardStep() {
+  if (onboardStep === 1) {
+    const nameEl = document.getElementById('ob-name-input');
+    if (nameEl) onboardData.name = nameEl.value.trim();
+    if (!onboardData.name) {
+      if (nameEl) { nameEl.style.borderColor = 'var(--red)'; nameEl.focus(); }
+      return;
+    }
+  }
+  if (onboardStep < ONBOARD_STEPS) { onboardStep++; renderOnboardStep(); }
+  else completeOnboarding();
+}
+
+function prevOnboardStep() {
+  if (onboardStep > 1) { onboardStep--; renderOnboardStep(); }
+}
+
+function skipOnboardStep() {
+  if (onboardStep < ONBOARD_STEPS) { onboardStep++; renderOnboardStep(); }
+  else completeOnboarding();
+}
+
+async function completeOnboarding() {
+  const profileData = {
+    name:              onboardData.name.trim(),
+    role:              onboardData.role,
+    conditions:        [...onboardData.conditions],
+    restrictions:      [...onboardData.restrictions],
+    texture_aversions: [...onboardData.texture_aversions],
+    flavor_aversions:  [...onboardData.flavor_aversions],
+    always_avoid:      onboardData.always_avoid.trim(),
+    safe_foods:        onboardData.safe_foods.trim(),
+    created_at:        currentProfile?.created_at || new Date().toISOString()
+  };
+  await saveProfileData(profileData);
+  hideOnboardOverlay();
+  updateHeaderForProfile(currentProfile);
+  if (document.getElementById('screen-profile').classList.contains('active')) renderProfileScreen();
+  else showScreen('meal');
+}
+
+// ── APP ENTRY POINT ───────────────────────────────────────────
+async function initApp() {
+  initMainApp();
+
+  const sb = getSB();
+  if (!sb) {
+    // Supabase not configured — bypass auth, use localStorage profile
+    const stored = localStorage.getItem('mira_profile');
+    if (stored) { try { currentProfile = JSON.parse(stored); } catch {} }
+    updateHeaderForProfile(currentProfile);
+    hideAuthOverlay();
+    return;
+  }
+
+  authConfigured = true;
+
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (session) {
+      currentUser = session.user;
+      const profile = await loadProfileFromSupabase();
+      if (!profile) {
+        hideAuthOverlay();
+        showOnboarding();
+      } else {
+        currentProfile = profile;
+        updateHeaderForProfile(currentProfile);
+        hideAuthOverlay();
+        hideOnboardOverlay();
+      }
+    } else {
+      currentUser = null; currentProfile = null;
+      showAuthOverlay();
+    }
+  });
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) showAuthOverlay();
+}
+
 // ── INIT ──────────────────────────────────────────────────────
 
-renderDayView();
-renderSnacks();
-renderFoodGuide();
-renderConventionChecklist();
-renderBreakfasts();
+function initMainApp() {
+  renderDayView();
+  renderSnacks();
+  renderFoodGuide();
+  renderConventionChecklist();
+  renderBreakfasts();
+}
+
+initApp(); // Entry point: auth check → profile check → app
 
 // ── JOURNAL ──────────────────────────────────────────────────
 const SYMPTOMS = ['Bloating','Gas','Cramping','Nausea','Fatigue','Brain Fog','Constipation','Diarrhea','Acid Reflux','Headache'];
@@ -2268,24 +2848,20 @@ async function runPantryCrave() {
   const result = document.getElementById('pantry-result');
   result.innerHTML = '<div class="nearby-loading">Thinking of something delicious and safe...</div>';
 
-  const prompt = `Mira has SIBO + low-histamine + low-FODMAP dietary restrictions. Her strict rules:
-- NO garlic, onion, leeks, shallots (any form)
-- NO fermented foods, vinegar, soy sauce, aged cheese, alcohol
-- NO high-histamine: canned fish, processed meats with additives, smoked foods
-- NO high-FODMAP: wheat, rye, apples (large), pears, mushrooms, cauliflower (large), asparagus, cashews
-- SAFE: plain grilled meats, white rice, quinoa, zucchini, spinach, kale, bell peppers, carrots, eggs, olive oil, ghee, blueberries, strawberries, macadamia nuts
+  const userName = currentProfile?.name || 'The user';
+  const prompt = `${getMiraProtocol()}
 
-What she has in her pantry: ${pantry}
+What ${userName} has in their pantry: ${pantry}
 
-She is craving: ${crave}
+They are craving: ${crave}
 Effort level: ${effort}
 
-Suggest 1–2 specific meals she can make RIGHT NOW using mostly what she has. For each meal:
+Suggest 1–2 specific meals they can make RIGHT NOW using mostly what they have. For each meal:
 - Name it
 - List which pantry items it uses
-- Note any 1–2 items she'd need to grab if missing
+- Note any 1–2 items they'd need to grab if missing
 - Give simple step-by-step instructions (${selectedEffort === 'quick' ? '3–5 steps max' : 'as detailed as needed'})
-- Confirm why it fits her protocol
+- Confirm why it fits their protocol
 
 Return as JSON:
 {
@@ -2298,7 +2874,7 @@ Return as JSON:
       "why_safe": "string"
     }
   ],
-  "tip": "One short encouragement or practical tip for Mira."
+  "tip": "One short encouragement or practical tip for ${userName}."
 }`;
 
   try {
@@ -2422,12 +2998,16 @@ async function runPass1(location, distance, priceTier) {
     ? `\nIMPORTANT: Only include restaurants that are primarily ${tierDesc[priceTier]} per person. Set price_tier to ${priceTier} for all results.`
     : '';
 
+  const profileLine = currentProfile
+    ? `The user (${currentProfile.name || 'patient'}) has: ${(currentProfile.conditions||['SIBO']).join(', ')}. Restrictions: ${(currentProfile.restrictions||['Low-FODMAP','Low-Histamine']).join(', ')}.`
+    : 'The user has SIBO and follows a strict low-FODMAP, low-histamine diet.';
+
   const prompt = `
-You are a dietary safety assistant. The user wants to find restaurants near ${locationStr}.
+You are a dietary safety assistant. ${profileLine} They want to find restaurants near ${locationStr}.
 
 Use web search to find up to 20 restaurants within approximately ${distance} mile${distance !== 1 ? 's' : ''} of that location that are currently open or commonly open for meals.
 
-For each restaurant, assess how safe it is for someone following a strict SIBO + low-histamine diet based on the cuisine type and what you know about their menu.${priceInstruction}
+For each restaurant, assess how safe it is for someone with their conditions based on the cuisine type and what you know about their menu.${priceInstruction}
 
 Return ONLY a valid JSON array. No preamble, no markdown, no explanation. Each object must have exactly these fields:
 {
@@ -2485,7 +3065,7 @@ Use web search to find their current menu including ingredients where available.
 
 Then classify every menu item against this dietary protocol:
 
-${MIRA_PROTOCOL}
+${getMiraProtocol()}
 
 Return ONLY a valid JSON object. No preamble, no markdown, no explanation:
 {
@@ -3075,9 +3655,10 @@ async function getVarietySuggestion(restaurantName, forceRefresh) {
   const pastItems = [...new Set(logs.flatMap(e => e.items.map(i => i.name)))];
   const safeItems = (fav?.menu?.safe_items || currentDetailData?.safe_items || []).map(i => i.item);
 
-  const prompt = `Mira has visited ${restaurantName} before. She usually orders: ${pastItems.join(', ')}.
-Safe menu items she hasn't tried recently: ${safeItems.filter(i => !pastItems.includes(i)).join(', ')}.
-Suggest 1–2 specific dishes she could try something new today. Keep it warm, friendly, and under 3 sentences.`;
+  const userName = currentProfile?.name || 'This person';
+  const prompt = `${userName} has visited ${restaurantName} before. They usually order: ${pastItems.join(', ')}.
+Safe menu items they haven't tried recently: ${safeItems.filter(i => !pastItems.includes(i)).join(', ')}.
+Suggest 1–2 specific dishes they could try something new today. Keep it warm, personal, and under 3 sentences. Address them as ${userName}.`;
 
   try {
     const res = await fetch(PROXY_URL, {
