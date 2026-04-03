@@ -602,6 +602,51 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
   .spinning { animation: spin 0.4s ease; }
+
+  /* ── NEARBY SCREEN ── */
+  .restaurant-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+  .restaurant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+  }
+  .restaurant-name { font-size: 0.95rem; font-weight: 800; color: var(--text); }
+  .safety-badge { font-size: 0.75rem; font-weight: 900; }
+  .restaurant-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; }
+  .restaurant-reason { font-size: 0.8rem; color: var(--text); line-height: 1.5; }
+  .chain-warning { font-size: 0.72rem; color: var(--orange); margin-top: 6px; font-weight: 700; }
+  .tap-hint { font-size: 0.7rem; color: var(--text-muted); margin-top: 8px; text-align: right; }
+
+  .detail-header { margin-bottom: 16px; }
+  .detail-name { font-size: 1.1rem; font-weight: 900; color: var(--text); }
+  .confidence-badge { font-size: 0.75rem; font-weight: 900; margin-top: 4px; }
+  .confidence-reason { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+  .detail-item { padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; }
+  .detail-item.safe { background: rgba(31,191,128,0.08); border-left: 3px solid var(--green); }
+  .detail-item.caution { background: rgba(255,140,105,0.08); border-left: 3px solid var(--orange); }
+  .detail-item.avoid { background: rgba(255,107,122,0.08); border-left: 3px solid var(--red); }
+  .item-name { font-size: 0.85rem; font-weight: 800; color: var(--text); }
+  .item-note, .item-flag, .item-reason { font-size: 0.75rem; color: var(--text-muted); margin-top: 3px; }
+
+  .ask-staff-block { background: var(--card); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
+  .ask-item { font-size: 0.82rem; color: var(--text); font-style: italic; padding: 4px 0; border-bottom: 1px solid var(--border); }
+  .ask-item:last-child { border-bottom: none; }
+
+  .source-link { font-size: 0.72rem; color: var(--text-muted); margin-top: 12px; }
+  .source-link a { color: var(--green); }
+
+  .nearby-loading { text-align: center; padding: 40px 20px; color: var(--text-muted); font-weight: 700; font-size: 0.9rem; }
+  .nearby-error { text-align: center; padding: 40px 20px; color: var(--red); font-weight: 700; font-size: 0.9rem; }
+  .back-btn { background: none; border: none; color: var(--green); font-weight: 800; font-size: 0.85rem; cursor: pointer; padding: 0 0 14px 0; }
 </style>
 </head>
 <body>
@@ -634,6 +679,9 @@
   </button>
   <button class="nav-btn" onclick="showScreen('tips')" data-screen="tips">
     <span class="nav-icon">💜</span> Autism Tips
+  </button>
+  <button class="nav-btn" onclick="initNearby()" data-screen="nearby">
+    <span class="nav-icon">📍</span> Nearby
   </button>
 </div>
 
@@ -937,6 +985,11 @@
 
 </div>
 
+<!-- ══════════════ NEARBY RESTAURANTS SCREEN ══════════════ -->
+<div class="screen" id="screen-nearby">
+  <div id="nearby-content"></div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button class="bottom-btn active" onclick="showScreen('meal')" data-bscreen="meal">
@@ -959,6 +1012,9 @@
   </button>
   <button class="bottom-btn" onclick="showScreen('tips')" data-bscreen="tips">
     <span class="b-icon">💜</span>Tips
+  </button>
+  <button class="bottom-btn" onclick="initNearby()" data-bscreen="nearby">
+    <span class="b-icon">📍</span>Nearby
   </button>
 </div>
 
@@ -1016,6 +1072,46 @@ let weekMeals = {
 };
 
 let selectedDay = 0;
+
+// ── NEARBY RESTAURANTS ────────────────────────────────────────
+const PROXY_URL = 'https://pysgcrnjjotplltcwrav.supabase.co/functions/v1/mira-proxy';
+
+const MIRA_PROTOCOL = `
+Mira follows a strict SIBO + low-histamine + low-FODMAP diet. Rules:
+
+ALWAYS AVOID:
+- Garlic, onion, leeks, shallots (all forms including powder)
+- Fermented foods: vinegar, soy sauce, kimchi, kombucha, aged cheeses, alcohol
+- High-histamine foods: canned fish, processed meats with additives, smoked foods
+- High-FODMAP: wheat, rye, barley, apples (large amounts), pears, watermelon, mushrooms, cauliflower (large amounts), asparagus, cashews, pistachios
+- Artificial sweeteners, high-fructose corn syrup, agave
+- Seed oils: canola, soybean, vegetable oil
+
+SAFE TO EAT:
+- Plain grilled meats (chicken, beef, lamb, fish) with no marinades or sauces
+- White rice, quinoa (well-rinsed)
+- Most vegetables: zucchini, spinach, kale, bell peppers, cucumber, carrots, green beans
+- Safe fruits: blueberries, strawberries, grapes, lemon, lime, cantaloupe
+- Olive oil, ghee, avocado oil
+- Aged hard cheeses (cheddar, parmesan) in small amounts
+- Eggs (plain preparation)
+- Macadamia nuts, walnuts, pecans
+
+CAUTION (small amounts only, flag with reason):
+- Broccoli, beets, eggplant — moderate FODMAP, limit per meal
+- Coconut milk — check for thickeners/additives on label
+- Banana (unripe only), mango, pineapple — moderate, limit
+- Almond flour products — small portions only
+
+ALWAYS FLAG:
+- Any dish described as "seasoned," "marinated," "house sauce," "special sauce," or "seasoning blend" — likely contains garlic/onion powder
+- Fried foods (batter usually contains wheat/gluten)
+- Anything with "contains soy" or "contains wheat" in allergen info
+`;
+
+let lastResults = [];
+const pass1Cache = {};
+const pass2Cache = {};
 
 function shuffleMeals() {
   const icon = document.getElementById('shuffleIcon');
@@ -1801,6 +1897,252 @@ renderFoodGuide();
 renderConventionChecklist();
 renderBfast();
 renderBreakfasts();
+
+// ── NEARBY RESTAURANTS FUNCTIONS ─────────────────────────────
+
+function getLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('GPS not supported on this device'));
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      err => reject(err),
+      { timeout: 10000, maximumAge: 60000 }
+    );
+  });
+}
+
+function coordKey(lat, lng) {
+  return `${lat.toFixed(3)},${lng.toFixed(3)}`;
+}
+
+async function runPass1(lat, lng) {
+  const prompt = `
+You are a dietary safety assistant. The user is currently at coordinates: ${lat}, ${lng}.
+
+Use web search to find 5-8 restaurants within approximately 1 mile of those coordinates that are currently open or commonly open for meals.
+
+For each restaurant, assess how safe it is for someone following a strict SIBO + low-histamine diet based on the cuisine type and what you know about their menu.
+
+Return ONLY a valid JSON array. No preamble, no markdown, no explanation. Each object must have exactly these fields:
+{
+  "name": "Restaurant Name",
+  "cuisine": "Cuisine type",
+  "address": "Street address",
+  "distance": "~0.3 miles",
+  "safety_score": 4,
+  "safety_reason": "One sentence: why this cuisine is safe or risky",
+  "chain": true,
+  "notes": "Any specific known safe dishes or warnings"
+}
+
+safety_score is 1-5 where:
+5 = Excellent (plain grilled meats, rice bowls, simple proteins — very easy to eat safe here)
+4 = Good (mostly safe options available, easy to customize)
+3 = Moderate (safe options exist but require careful ordering)
+2 = Risky (most dishes contain triggers, requires significant modification)
+1 = Avoid (heavily sauce/ferment/wheat-based, very hard to eat safely)
+
+Sort results by safety_score descending. Set chain: true if it is a known national or regional chain.
+  `;
+
+  const response = await fetch(PROXY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      tools: [{ googleSearch: {} }],
+      generationConfig: { maxOutputTokens: 8192 }
+    })
+  });
+
+  const data = await response.json();
+  const text = data.candidates[0].content.parts
+    .filter(p => !p.thought)
+    .map(p => p.text || '')
+    .join('');
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+async function runPass2(restaurant) {
+  const prompt = `
+You are a dietary safety assistant. Analyze the menu for this restaurant:
+
+Name: ${restaurant.name}
+Address: ${restaurant.address}
+Cuisine: ${restaurant.cuisine}
+
+Use web search to find their current menu including ingredients where available. Also search for "[restaurant name] allergen menu" or "[restaurant name] gluten free options" to get additional detail.
+
+Then classify every menu item against this dietary protocol:
+
+${MIRA_PROTOCOL}
+
+Return ONLY a valid JSON object. No preamble, no markdown, no explanation:
+{
+  "restaurant": "${restaurant.name}",
+  "confidence": "high",
+  "confidence_reason": "Full menu with ingredients found on official website",
+  "source_url": "https://...",
+  "safe_items": [
+    { "item": "Grilled Chicken Bowl", "notes": "Order plain, no sauce" }
+  ],
+  "caution_items": [
+    { "item": "Caesar Salad", "flag": "Dressing contains vinegar and anchovies (histamine)" }
+  ],
+  "avoid_items": [
+    { "item": "Beef Burrito", "reason": "Contains garlic, onion, wheat tortilla" }
+  ],
+  "ask_staff": [
+    "Can the chicken be prepared with no seasoning blend?",
+    "Is the rice cooked in plain water or with added garlic/onion?"
+  ]
+}
+
+confidence values: "high" (full menu + ingredients found), "medium" (partial menu found), "low" (limited info, independent restaurant)
+  `;
+
+  const response = await fetch(PROXY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      tools: [{ googleSearch: {} }],
+      generationConfig: { maxOutputTokens: 8192 }
+    })
+  });
+
+  const data = await response.json();
+  const text = data.candidates[0].content.parts
+    .filter(p => !p.thought)
+    .map(p => p.text || '')
+    .join('');
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+async function loadNearby() {
+  const container = document.getElementById('nearby-content');
+  container.innerHTML = '<div class="nearby-loading">Searching nearby restaurants...</div>';
+
+  const { lat, lng } = await getLocation();
+  const key = coordKey(lat, lng);
+
+  if (!pass1Cache[key]) {
+    pass1Cache[key] = await runPass1(lat, lng);
+  }
+  lastResults = pass1Cache[key];
+  renderRestaurantCards(lastResults);
+}
+
+async function initNearby() {
+  showScreen('nearby');
+  const container = document.getElementById('nearby-content');
+  container.innerHTML = '<div class="nearby-loading">Finding your location...</div>';
+
+  try {
+    await loadNearby();
+  } catch (err) {
+    container.innerHTML = `<div class="nearby-error">Could not get location: ${err.message}</div>`;
+  }
+}
+
+function renderRestaurantCards(restaurants) {
+  const container = document.getElementById('nearby-content');
+
+  const scoreColor = s => s >= 4 ? 'var(--green)' : s === 3 ? 'var(--orange)' : 'var(--red)';
+  const scoreLabel = s => s >= 4 ? 'Good' : s === 3 ? 'Moderate' : 'Risky';
+
+  container.innerHTML = restaurants.map(r => `
+    <div class="restaurant-card" onclick="openRestaurantDetail('${r.name.replace(/'/g, "\\'")}')">
+      <div class="restaurant-header">
+        <div class="restaurant-name">${r.name}</div>
+        <div class="safety-badge" style="color:${scoreColor(r.safety_score)}">
+          ${scoreLabel(r.safety_score)} (${r.safety_score}/5)
+        </div>
+      </div>
+      <div class="restaurant-meta">${r.cuisine} · ${r.distance}</div>
+      <div class="restaurant-reason">${r.safety_reason}</div>
+      ${r.chain ? '' : '<div class="chain-warning">Independent restaurant — menu data may be limited</div>'}
+      <div class="tap-hint">Tap for full menu analysis →</div>
+    </div>
+  `).join('');
+}
+
+async function openRestaurantDetail(restaurantName) {
+  const container = document.getElementById('nearby-content');
+  const restaurant = lastResults.find(r => r.name === restaurantName);
+  if (!restaurant) return;
+
+  container.innerHTML = '<div class="nearby-loading">Analyzing menu against Mira\'s protocol...</div>';
+
+  try {
+    if (!pass2Cache[restaurant.name]) {
+      pass2Cache[restaurant.name] = await runPass2(restaurant);
+    }
+    renderDetailCard(pass2Cache[restaurant.name], restaurant);
+  } catch (err) {
+    container.innerHTML = `<div class="nearby-error">Menu analysis failed: ${err.message}</div>`;
+  }
+}
+
+function renderDetailCard(detail, restaurant) {
+  const container = document.getElementById('nearby-content');
+
+  const confidenceColor = { high: 'var(--green)', medium: 'var(--orange)', low: 'var(--red)' };
+
+  container.innerHTML = `
+    <button class="back-btn" onclick="renderRestaurantCards(lastResults)">← Back to results</button>
+
+    <div class="detail-header">
+      <div class="detail-name">${detail.restaurant}</div>
+      <div class="confidence-badge" style="color:${confidenceColor[detail.confidence]}">
+        ${detail.confidence.charAt(0).toUpperCase() + detail.confidence.slice(1)} confidence
+      </div>
+      <div class="confidence-reason">${detail.confidence_reason}</div>
+    </div>
+
+    <div class="section-label">✅ Safe to eat</div>
+    ${(detail.safe_items || []).map(i => `
+      <div class="detail-item safe">
+        <div class="item-name">${i.item}</div>
+        ${i.notes ? `<div class="item-note">${i.notes}</div>` : ''}
+      </div>
+    `).join('')}
+
+    <div class="section-label">⚠️ Caution — small amounts / ask staff</div>
+    ${(detail.caution_items || []).map(i => `
+      <div class="detail-item caution">
+        <div class="item-name">${i.item}</div>
+        <div class="item-flag">${i.flag}</div>
+      </div>
+    `).join('')}
+
+    <div class="section-label">🚫 Avoid</div>
+    ${(detail.avoid_items || []).map(i => `
+      <div class="detail-item avoid">
+        <div class="item-name">${i.item}</div>
+        <div class="item-reason">${i.reason}</div>
+      </div>
+    `).join('')}
+
+    ${detail.ask_staff && detail.ask_staff.length ? `
+      <div class="section-label">💬 Ask staff</div>
+      <div class="ask-staff-block">
+        ${detail.ask_staff.map(q => `<div class="ask-item">"${q}"</div>`).join('')}
+      </div>
+    ` : ''}
+
+    ${detail.source_url ? `
+      <div class="source-link">
+        Menu source: <a href="${detail.source_url}" target="_blank">${detail.source_url}</a>
+      </div>
+    ` : ''}
+  `;
+}
 </script>
 </body>
 </html>
