@@ -648,6 +648,17 @@
   .nearby-error { text-align: center; padding: 40px 20px; color: var(--red); font-weight: 700; font-size: 0.9rem; }
   .back-btn { background: none; border: none; color: var(--green); font-weight: 800; font-size: 0.85rem; cursor: pointer; padding: 0 0 14px 0; }
   .refresh-btn { display: block; width: 100%; background: none; border: 1px solid var(--border); border-radius: 10px; color: var(--text-muted); font-weight: 700; font-size: 0.8rem; padding: 8px; margin-bottom: 12px; cursor: pointer; }
+  .search-bar { display: flex; gap: 8px; margin-bottom: 10px; }
+  .zip-input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.9rem; font-family: inherit; color: var(--text); background: var(--card); outline: none; }
+  .zip-input:focus { border-color: var(--green); }
+  .gps-btn { background: var(--green); color: white; border: none; border-radius: 12px; padding: 10px 14px; font-weight: 800; font-size: 0.85rem; white-space: nowrap; }
+  .distance-chips { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .dist-chip { background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; padding: 6px 14px; font-size: 0.8rem; font-weight: 700; color: var(--text-muted); cursor: pointer; }
+  .dist-chip.active { background: var(--green-light); border-color: var(--green); color: var(--green); }
+  .search-submit-btn { width: 100%; background: var(--green); color: white; border: none; border-radius: 12px; padding: 12px; font-weight: 900; font-size: 0.9rem; margin-bottom: 16px; cursor: pointer; }
+  .pagination { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 4px; }
+  .pagination button { background: none; border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; font-weight: 700; font-size: 0.82rem; color: var(--green); cursor: pointer; }
+  .pagination span { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -1113,6 +1124,9 @@ ALWAYS FLAG:
 let lastResults = [];
 const pass1Cache = {};
 const pass2Cache = {};
+let selectedDistance = 1;
+let currentPage = 0;
+let currentSearch = null;
 
 function shuffleMeals() {
   const icon = document.getElementById('shuffleIcon');
@@ -1931,11 +1945,20 @@ function fixJson(text) {
   return s.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*):/g, '$1"$2"$3:');
 }
 
-async function runPass1(lat, lng) {
-  const prompt = `
-You are a dietary safety assistant. The user is currently at coordinates: ${lat}, ${lng}.
+function searchKey(search, distance) {
+  if (search.type === 'zip') return `zip_${search.zipcode}_${distance}mi`;
+  return `gps_${search.lat.toFixed(3)}_${search.lng.toFixed(3)}_${distance}mi`;
+}
 
-Use web search to find 5-8 restaurants within approximately 1 mile of those coordinates that are currently open or commonly open for meals.
+async function runPass1(location, distance) {
+  const locationStr = location.type === 'zip'
+    ? `ZIP code ${location.zipcode}`
+    : `coordinates: ${location.lat}, ${location.lng}`;
+
+  const prompt = `
+You are a dietary safety assistant. The user wants to find restaurants near ${locationStr}.
+
+Use web search to find up to 20 restaurants within approximately ${distance} mile${distance !== 1 ? 's' : ''} of that location that are currently open or commonly open for meals.
 
 For each restaurant, assess how safe it is for someone following a strict SIBO + low-histamine diet based on the cuisine type and what you know about their menu.
 
@@ -2037,45 +2060,79 @@ confidence values: "high" (full menu + ingredients found), "medium" (partial men
   return JSON.parse(clean);
 }
 
-async function refreshNearby() {
+function setDistance(d) {
+  selectedDistance = d;
+  document.querySelectorAll('.dist-chip').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.dist-chip[data-d="${d}"]`).classList.add('active');
+}
+
+function renderSearchUI() {
   const container = document.getElementById('nearby-content');
-  container.innerHTML = '<div class="nearby-loading">Refreshing restaurants...</div>';
+  container.innerHTML = `
+    <div class="search-bar">
+      <input type="text" id="zip-input" placeholder="Enter ZIP code..." class="zip-input" inputmode="numeric" maxlength="10">
+      <button class="gps-btn" onclick="searchByGPS()">📍 GPS</button>
+    </div>
+    <div class="distance-chips">
+      ${[0.5, 1, 2, 5, 10].map(d => `
+        <button class="dist-chip ${d === selectedDistance ? 'active' : ''}" data-d="${d}" onclick="setDistance(${d})">${d} mi</button>
+      `).join('')}
+    </div>
+    <button class="search-submit-btn" onclick="searchByZip()">Search</button>
+  `;
+}
+
+async function searchByZip() {
+  const zip = document.getElementById('zip-input').value.trim();
+  if (!zip) return;
+  currentSearch = { type: 'zip', zipcode: zip };
+  currentPage = 0;
+  await runSearch();
+}
+
+async function searchByGPS() {
   try {
     const { lat, lng } = await getLocation();
-    const key = coordKey(lat, lng);
-    delete pass1Cache[key];
-    pass1Cache[key] = await runPass1(lat, lng);
+    currentSearch = { type: 'gps', lat, lng };
+    currentPage = 0;
+    await runSearch();
+  } catch (err) {
+    document.getElementById('nearby-content').innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
+  }
+}
+
+async function runSearch() {
+  const container = document.getElementById('nearby-content');
+  container.innerHTML = '<div class="nearby-loading">Searching restaurants...</div>';
+  try {
+    const key = searchKey(currentSearch, selectedDistance);
+    if (!pass1Cache[key]) {
+      pass1Cache[key] = await runPass1(currentSearch, selectedDistance);
+    }
     lastResults = pass1Cache[key];
+    currentPage = 0;
     renderRestaurantCards(lastResults);
   } catch (err) {
     container.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
   }
 }
 
-async function loadNearby() {
-  const container = document.getElementById('nearby-content');
-  container.innerHTML = '<div class="nearby-loading">Searching nearby restaurants...</div>';
-
-  const { lat, lng } = await getLocation();
-  const key = coordKey(lat, lng);
-
-  if (!pass1Cache[key]) {
-    pass1Cache[key] = await runPass1(lat, lng);
-  }
-  lastResults = pass1Cache[key];
-  renderRestaurantCards(lastResults);
+async function refreshNearby() {
+  if (!currentSearch) { initNearby(); return; }
+  const key = searchKey(currentSearch, selectedDistance);
+  delete pass1Cache[key];
+  await runSearch();
 }
 
-async function initNearby() {
-  showScreen('nearby');
-  const container = document.getElementById('nearby-content');
-  container.innerHTML = '<div class="nearby-loading">Finding your location...</div>';
+function goToPage(n) {
+  currentPage = n;
+  renderRestaurantCards(lastResults);
+  document.getElementById('nearby-content').scrollTop = 0;
+}
 
-  try {
-    await loadNearby();
-  } catch (err) {
-    container.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
-  }
+function initNearby() {
+  showScreen('nearby');
+  renderSearchUI();
 }
 
 function renderRestaurantCards(restaurants) {
@@ -2084,8 +2141,21 @@ function renderRestaurantCards(restaurants) {
   const scoreColor = s => s >= 4 ? 'var(--green)' : s === 3 ? 'var(--orange)' : 'var(--red)';
   const scoreLabel = s => s >= 4 ? 'Good' : s === 3 ? 'Moderate' : 'Risky';
 
-  container.innerHTML = `<button class="refresh-btn" onclick="refreshNearby()">🔄 Refresh results</button>` +
-    restaurants.map(r => `
+  const pageSize = 10;
+  const totalPages = Math.ceil(restaurants.length / pageSize);
+  const page = restaurants.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+
+  const paginationHtml = totalPages > 1 ? `
+    <div class="pagination">
+      ${currentPage > 0 ? `<button onclick="goToPage(${currentPage - 1})">← Prev</button>` : '<span></span>'}
+      <span>Page ${currentPage + 1} of ${totalPages}</span>
+      ${currentPage < totalPages - 1 ? `<button onclick="goToPage(${currentPage + 1})">Next →</button>` : '<span></span>'}
+    </div>
+  ` : '';
+
+  container.innerHTML =
+    `<button class="refresh-btn" onclick="refreshNearby()">🔄 Refresh · ${selectedDistance} mi</button>` +
+    page.map(r => `
     <div class="restaurant-card" onclick="openRestaurantDetail('${r.name.replace(/'/g, "\\'")}')">
       <div class="restaurant-header">
         <div class="restaurant-name">${r.name}</div>
@@ -2098,7 +2168,7 @@ function renderRestaurantCards(restaurants) {
       ${r.chain ? '' : '<div class="chain-warning">Independent restaurant — menu data may be limited</div>'}
       <div class="tap-hint">Tap for full menu analysis →</div>
     </div>
-  `).join('');
+  `).join('') + paginationHtml;
 }
 
 async function openRestaurantDetail(restaurantName) {
