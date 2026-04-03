@@ -2370,8 +2370,11 @@ async function sendMagicLink() {
   btn.textContent = 'Sending...'; btn.disabled = true;
   const sb = getSB();
   if (sb) {
+    const redirectTo = window.location.hostname === 'localhost'
+      ? 'https://kibawolfx.github.io/Project-Mira-SIBO/'
+      : window.location.href;
     const { error } = await sb.auth.signInWithOtp({
-      email, options: { emailRedirectTo: window.location.href }
+      email, options: { emailRedirectTo: redirectTo }
     });
     if (error) {
       btn.textContent = '✉️ Send Magic Link'; btn.disabled = false;
