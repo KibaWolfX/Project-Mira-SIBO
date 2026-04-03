@@ -1918,6 +1918,13 @@ function coordKey(lat, lng) {
   return `${lat.toFixed(3)},${lng.toFixed(3)}`;
 }
 
+function fixJson(text) {
+  return text
+    .replace(/```json|```/g, '')
+    .trim()
+    .replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*):/g, '$1"$2"$3:');
+}
+
 async function runPass1(lat, lng) {
   const prompt = `
 You are a dietary safety assistant. The user is currently at coordinates: ${lat}, ${lng}.
@@ -1963,7 +1970,7 @@ Sort results by safety_score descending. Set chain: true if it is a known nation
     .filter(p => !p.thought)
     .map(p => p.text || '')
     .join('');
-  const clean = text.replace(/```json|```/g, '').trim();
+  const clean = fixJson(text);
   return JSON.parse(clean);
 }
 
