@@ -726,6 +726,11 @@
   .variety-suggestion { font-size: 0.86rem; color: var(--text); line-height: 1.6; }
   .variety-loading { font-size: 0.82rem; color: var(--purple); font-style: italic; }
 
+  /* ── CRAVE CHIPS ── */
+  .crave-chip { background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; padding: 7px 14px; font-size: 0.8rem; font-weight: 800; color: var(--text); cursor: pointer; font-family: inherit; min-height: 36px; transition: all 0.15s; white-space: nowrap; }
+  .crave-chip.active { background: var(--purple-light); border-color: var(--purple); color: var(--purple); }
+  .crave-chip:active { opacity: 0.7; }
+
   /* ── LOG BUTTONS ── */
   .log-meal-btn { width: 100%; background: none; border: 1.5px solid var(--pink); border-radius: 14px; color: var(--pink); font-weight: 800; font-size: 0.88rem; padding: 11px; cursor: pointer; font-family: inherit; margin-top: 12px; min-height: 44px; }
   .fav-log-btn { background: none; border: 1.5px solid var(--pink); border-radius: 10px; color: var(--pink); font-size: 0.76rem; font-weight: 800; padding: 6px 12px; cursor: pointer; font-family: inherit; min-height: 36px; white-space: nowrap; }
@@ -949,13 +954,27 @@
     placeholder="e.g. chicken breast, white rice, zucchini, olive oil, eggs, carrots..."></textarea>
 
   <div class="section-label">What are you craving?</div>
-  <div class="price-tier-chips" id="crave-chips">
-    <button class="price-tier-chip" data-crave="Asian" onclick="selectCrave(this)">🍜 Asian / Rice Bowl</button>
-    <button class="price-tier-chip" data-crave="Comfort" onclick="selectCrave(this)">🍲 Comfort / Warm</button>
-    <button class="price-tier-chip" data-crave="Light" onclick="selectCrave(this)">🥗 Light / Salad-ish</button>
-    <button class="price-tier-chip" data-crave="Protein" onclick="selectCrave(this)">🥩 Just Protein + Veg</button>
-    <button class="price-tier-chip" data-crave="Breakfast" onclick="selectCrave(this)">🍳 Breakfast for Dinner</button>
-    <button class="price-tier-chip" data-crave="Surprise" onclick="selectCrave(this)">🎲 Surprise me</button>
+  <div id="crave-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+    <button class="crave-chip" data-crave="Mexican" onclick="selectCrave(this)">🌮 Mexican</button>
+    <button class="crave-chip" data-crave="Italian" onclick="selectCrave(this)">🍝 Italian</button>
+    <button class="crave-chip" data-crave="Asian" onclick="selectCrave(this)">🍜 Asian</button>
+    <button class="crave-chip" data-crave="Japanese" onclick="selectCrave(this)">🍱 Japanese</button>
+    <button class="crave-chip" data-crave="Thai" onclick="selectCrave(this)">🥘 Thai</button>
+    <button class="crave-chip" data-crave="Indian" onclick="selectCrave(this)">🫙 Indian</button>
+    <button class="crave-chip" data-crave="Mediterranean" onclick="selectCrave(this)">🫒 Mediterranean</button>
+    <button class="crave-chip" data-crave="American" onclick="selectCrave(this)">🍔 American</button>
+    <button class="crave-chip" data-crave="BBQ" onclick="selectCrave(this)">🔥 BBQ</button>
+    <button class="crave-chip" data-crave="Greek" onclick="selectCrave(this)">🥙 Greek</button>
+    <button class="crave-chip" data-crave="Chinese" onclick="selectCrave(this)">🥡 Chinese</button>
+    <button class="crave-chip" data-crave="Korean" onclick="selectCrave(this)">🍖 Korean</button>
+    <button class="crave-chip" data-crave="Middle Eastern" onclick="selectCrave(this)">🧆 Middle Eastern</button>
+    <button class="crave-chip" data-crave="Seafood" onclick="selectCrave(this)">🐟 Seafood</button>
+    <button class="crave-chip" data-crave="Comfort" onclick="selectCrave(this)">🍲 Comfort / Warm</button>
+    <button class="crave-chip" data-crave="Light" onclick="selectCrave(this)">🥗 Light / Salad-ish</button>
+    <button class="crave-chip" data-crave="Protein" onclick="selectCrave(this)">🥩 Protein + Veg</button>
+    <button class="crave-chip" data-crave="Breakfast" onclick="selectCrave(this)">🍳 Breakfast for Dinner</button>
+    <button class="crave-chip" data-crave="Soup" onclick="selectCrave(this)">🍜 Soup / Stew</button>
+    <button class="crave-chip" data-crave="Surprise" onclick="selectCrave(this)">🎲 Surprise me</button>
   </div>
 
   <div class="section-label">How much effort?</div>
@@ -2227,7 +2246,7 @@ let selectedCrave = null;
 let selectedEffort = 'quick';
 
 function selectCrave(btn) {
-  document.querySelectorAll('#crave-chips .price-tier-chip').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#crave-chips .crave-chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   selectedCrave = btn.dataset.crave;
 }
