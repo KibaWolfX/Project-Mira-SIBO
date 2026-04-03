@@ -676,6 +676,59 @@
   .card-header-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
   .manual-search-btn { background: none; border: 1.5px solid var(--border); border-radius: 14px; padding: 0 13px; font-size: 1rem; cursor: pointer; color: var(--text-muted); min-height: 44px; display: flex; align-items: center; }
 
+  /* ── SEARCH MODE TABS ── */
+  .search-mode-tabs { display: flex; gap: 0; margin-bottom: 14px; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 4px; }
+  .mode-tab { flex: 1; background: none; border: none; border-radius: 10px; padding: 9px 4px; font-size: 0.78rem; font-weight: 800; color: var(--text-muted); cursor: pointer; font-family: inherit; transition: all 0.15s; min-height: 40px; }
+  .mode-tab.active { background: var(--green); color: white; }
+
+  /* ── PRICE TIER CHIPS ── */
+  .price-tier-chips { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+  .price-tier-chip { background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; padding: 11px 14px; font-size: 0.82rem; font-weight: 800; color: var(--text); cursor: pointer; font-family: inherit; text-align: left; transition: all 0.15s; min-height: 44px; }
+  .price-tier-chip.active { background: var(--yellow-light); border-color: var(--yellow); color: #a07000; }
+
+  /* ── POST-FILTER STRIP ── */
+  .post-filter-strip { display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; scrollbar-width: none; }
+  .post-filter-strip::-webkit-scrollbar { display: none; }
+  .post-filter-chip { background: var(--card); border: 1.5px solid var(--border); border-radius: 20px; padding: 6px 14px; font-size: 0.76rem; font-weight: 800; color: var(--text-muted); cursor: pointer; white-space: nowrap; min-height: 34px; font-family: inherit; }
+  .post-filter-chip.active { background: var(--yellow-light); border-color: var(--yellow); color: #a07000; }
+
+  /* ── PRICE BADGE & ITEM PRICE ── */
+  .price-badge { font-size: 0.72rem; font-weight: 900; color: #a07000; background: var(--yellow-light); border-radius: 7px; padding: 2px 6px; margin-left: 6px; vertical-align: middle; }
+  .item-price { font-size: 0.72rem; font-weight: 700; color: #a07000; background: var(--yellow-light); border-radius: 6px; padding: 1px 6px; margin-left: 6px; }
+
+  /* ── MEAL LOG SHEET ── */
+  .meal-log-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 300; display: none; }
+  .meal-log-overlay.open { display: block; }
+  .meal-log-sheet { position: fixed; bottom: 0; left: 0; right: 0; background: var(--bg); border-radius: 22px 22px 0 0; padding: 20px 20px 40px; max-height: 85vh; overflow-y: auto; z-index: 301; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.32,0.72,0,1); }
+  .meal-log-sheet.open { transform: translateY(0); }
+  .meal-log-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 20px; }
+  .meal-log-title { font-size: 1.05rem; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+  .meal-log-date { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 18px; }
+  .meal-log-section-label { font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 8px; margin-top: 16px; }
+  .meal-log-item { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: 12px; padding: 10px 14px; margin-bottom: 6px; cursor: pointer; }
+  .meal-log-item input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--green); flex-shrink: 0; }
+  .meal-log-item.safe-item { border-left: 3px solid var(--green); }
+  .meal-log-item.caution-item { border-left: 3px solid var(--orange); }
+  .meal-log-item-name { font-size: 0.85rem; font-weight: 700; color: var(--text); }
+  .meal-log-notes { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 0.88rem; font-family: inherit; color: var(--text); background: var(--card); outline: none; resize: none; margin-bottom: 8px; box-sizing: border-box; }
+  .meal-log-notes:focus { border-color: var(--green); }
+  .meal-log-save-btn { width: 100%; background: var(--green); color: white; border: none; border-radius: 14px; padding: 13px; font-weight: 900; font-size: 0.9rem; cursor: pointer; font-family: inherit; min-height: 44px; margin-bottom: 8px; }
+  .meal-log-cancel-btn { width: 100%; background: none; border: 1.5px solid var(--border); border-radius: 14px; padding: 11px; font-weight: 800; font-size: 0.88rem; color: var(--text-muted); cursor: pointer; font-family: inherit; }
+
+  /* ── VARIETY CARD ── */
+  .variety-card { background: var(--purple-light); border: 1px solid var(--purple); border-radius: 18px; padding: 14px 16px; margin-bottom: 16px; }
+  .variety-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .variety-card-title { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--purple); }
+  .variety-regen-btn { background: none; border: 1.5px solid var(--purple); border-radius: 10px; color: var(--purple); font-size: 0.74rem; font-weight: 800; padding: 5px 10px; cursor: pointer; font-family: inherit; }
+  .variety-past-orders { font-size: 0.76rem; color: var(--text-muted); margin-bottom: 8px; line-height: 1.45; }
+  .variety-suggestion { font-size: 0.86rem; color: var(--text); line-height: 1.6; }
+  .variety-loading { font-size: 0.82rem; color: var(--purple); font-style: italic; }
+
+  /* ── LOG BUTTONS ── */
+  .log-meal-btn { width: 100%; background: none; border: 1.5px solid var(--pink); border-radius: 14px; color: var(--pink); font-weight: 800; font-size: 0.88rem; padding: 11px; cursor: pointer; font-family: inherit; margin-top: 12px; min-height: 44px; }
+  .fav-log-btn { background: none; border: 1.5px solid var(--pink); border-radius: 10px; color: var(--pink); font-size: 0.76rem; font-weight: 800; padding: 6px 12px; cursor: pointer; font-family: inherit; min-height: 36px; white-space: nowrap; }
+  .fav-card-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+
   /* ── MOOD BAR ── */
   .mood-bar { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(255,126,179,0.06); }
   .mood-label { font-size: 0.68rem; font-weight: 900; color: var(--text-muted); display: block; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.8px; }
@@ -1145,6 +1198,9 @@ let currentSearch = null;
 let currentDetailRestaurant = null;
 let currentDetailData = null;
 let currentDetailMood = 'good';
+let currentSearchMode = 'location'; // 'location' | 'name' | 'price'
+let selectedPriceTier = null;       // null | 1 | 2 | 3 (pre-filter, sent to Gemini)
+let activePriceTierFilter = null;   // null | 1 | 2 | 3 (post-filter on loaded results)
 
 // ── FAVORITES ─────────────────────────────────────────────────
 function loadFavorites() {
@@ -2016,22 +2072,28 @@ function fixJson(text) {
   return s.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*):/g, '$1"$2"$3:');
 }
 
-function searchKey(search, distance) {
-  if (search.type === 'zip') return `zip_${search.zipcode}_${distance}mi`;
-  return `gps_${search.lat.toFixed(3)}_${search.lng.toFixed(3)}_${distance}mi`;
+function searchKey(search, distance, priceTier) {
+  const tier = priceTier ? `_t${priceTier}` : '';
+  if (search.type === 'zip') return `zip_${search.zipcode}_${distance}mi${tier}`;
+  return `gps_${search.lat.toFixed(3)}_${search.lng.toFixed(3)}_${distance}mi${tier}`;
 }
 
-async function runPass1(location, distance) {
+async function runPass1(location, distance, priceTier) {
   const locationStr = location.type === 'zip'
     ? `ZIP code ${location.zipcode}`
     : `coordinates: ${location.lat}, ${location.lng}`;
+
+  const tierDesc = { 1: 'budget ($10–$25/plate)', 2: 'mid-range ($25–$50/plate)', 3: 'upscale ($50+/plate)' };
+  const priceInstruction = priceTier
+    ? `\nIMPORTANT: Only include restaurants that are primarily ${tierDesc[priceTier]} per person. Set price_tier to ${priceTier} for all results.`
+    : '';
 
   const prompt = `
 You are a dietary safety assistant. The user wants to find restaurants near ${locationStr}.
 
 Use web search to find up to 20 restaurants within approximately ${distance} mile${distance !== 1 ? 's' : ''} of that location that are currently open or commonly open for meals.
 
-For each restaurant, assess how safe it is for someone following a strict SIBO + low-histamine diet based on the cuisine type and what you know about their menu.
+For each restaurant, assess how safe it is for someone following a strict SIBO + low-histamine diet based on the cuisine type and what you know about their menu.${priceInstruction}
 
 Return ONLY a valid JSON array. No preamble, no markdown, no explanation. Each object must have exactly these fields:
 {
@@ -2042,7 +2104,8 @@ Return ONLY a valid JSON array. No preamble, no markdown, no explanation. Each o
   "safety_score": 4,
   "safety_reason": "One sentence: why this cuisine is safe or risky",
   "chain": true,
-  "notes": "Any specific known safe dishes or warnings"
+  "notes": "Any specific known safe dishes or warnings",
+  "price_tier": 2
 }
 
 safety_score is 1-5 where:
@@ -2051,6 +2114,8 @@ safety_score is 1-5 where:
 3 = Moderate (safe options exist but require careful ordering)
 2 = Risky (most dishes contain triggers, requires significant modification)
 1 = Avoid (heavily sauce/ferment/wheat-based, very hard to eat safely)
+
+price_tier: 1 = budget $10–25/plate, 2 = mid-range $25–50/plate, 3 = upscale $50+/plate, null = unknown
 
 Sort results by safety_score descending. Set chain: true if it is a known national or regional chain.
   `;
@@ -2095,10 +2160,10 @@ Return ONLY a valid JSON object. No preamble, no markdown, no explanation:
   "confidence_reason": "Full menu with ingredients found on official website",
   "source_url": "https://...",
   "safe_items": [
-    { "item": "Grilled Chicken Bowl", "notes": "Order plain, no sauce" }
+    { "item": "Grilled Chicken Bowl", "notes": "Order plain, no sauce", "price_est": "$14" }
   ],
   "caution_items": [
-    { "item": "Caesar Salad", "flag": "Dressing contains vinegar and anchovies (histamine)" }
+    { "item": "Caesar Salad", "flag": "Dressing contains vinegar and anchovies (histamine)", "price_est": "$12" }
   ],
   "avoid_items": [
     { "item": "Beef Burrito", "reason": "Contains garlic, onion, wheat tortilla" }
@@ -2134,7 +2199,33 @@ confidence values: "high" (full menu + ingredients found), "medium" (partial men
 function setDistance(d) {
   selectedDistance = d;
   document.querySelectorAll('.dist-chip').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.dist-chip[data-d="${d}"]`).classList.add('active');
+  const chip = document.querySelector(`.dist-chip[data-d="${d}"]`);
+  if (chip) chip.classList.add('active');
+}
+
+function setSearchMode(mode) {
+  currentSearchMode = mode;
+  // Only rewrite the form area — results stay untouched
+  renderSearchForm();
+}
+
+function selectPriceTierPreFilter(tier) {
+  selectedPriceTier = selectedPriceTier === tier ? null : tier;
+  document.querySelectorAll('.price-tier-chip').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.tier) === selectedPriceTier);
+  });
+}
+
+function setActivePriceTierFilter(tier) {
+  activePriceTierFilter = activePriceTierFilter === tier ? null : tier;
+  const filtered = activePriceTierFilter === null
+    ? lastResults
+    : lastResults.filter(r => r.price_tier === activePriceTierFilter);
+  renderRestaurantCards(filtered);
+  // Restore active chip after re-render
+  document.querySelectorAll('.post-filter-chip').forEach(b => {
+    b.classList.toggle('active', b.dataset.tier === String(activePriceTierFilter ?? 'all'));
+  });
 }
 
 function renderSearchUI() {
@@ -2155,48 +2246,105 @@ function renderSearchUI() {
 
   container.innerHTML = `
     ${favStripHtml}
-    <div class="search-bar">
-      <input type="text" id="zip-input" placeholder="Enter ZIP code..." class="zip-input" inputmode="numeric" maxlength="10">
-      <button class="gps-btn" onclick="searchByGPS()">📍 GPS</button>
-      <button class="manual-search-btn" onclick="toggleManualSearch()" title="Search by name">🔍</button>
-    </div>
-    <div id="manual-search-row" style="display:none; margin-bottom:10px;">
-      <input type="text" id="name-input" placeholder="Restaurant name..." class="zip-input">
-      <button class="search-submit-btn" style="margin-top:8px;" onclick="doManualSearch()">Analyze this restaurant</button>
-    </div>
+    <div id="search-form-area"></div>
+    <div id="results-area"></div>
+  `;
+  renderSearchForm();
+}
+
+function renderSearchForm() {
+  const el = document.getElementById('search-form-area');
+  if (!el) return;
+
+  const tabs = `
+    <div class="search-mode-tabs">
+      <button class="mode-tab ${currentSearchMode === 'location' ? 'active' : ''}" onclick="setSearchMode('location')">📍 Location</button>
+      <button class="mode-tab ${currentSearchMode === 'name' ? 'active' : ''}" onclick="setSearchMode('name')">🔍 Restaurant</button>
+      <button class="mode-tab ${currentSearchMode === 'price' ? 'active' : ''}" onclick="setSearchMode('price')">💰 By Price</button>
+    </div>`;
+
+  const distChips = `
     <div class="distance-chips">
       ${[0.5, 1, 2, 5, 10].map(d => `
         <button class="dist-chip ${d === selectedDistance ? 'active' : ''}" data-d="${d}" onclick="setDistance(${d})">${d} mi</button>
       `).join('')}
-    </div>
-    <button class="search-submit-btn" onclick="searchByZip()">Search</button>
-  `;
+    </div>`;
+
+  const priceTierChipsHtml = `
+    <div class="price-tier-chips">
+      <button class="price-tier-chip ${selectedPriceTier === 1 ? 'active' : ''}" data-tier="1" onclick="selectPriceTierPreFilter(1)">💸 I'm fucking poor <span style="font-size:0.72rem;font-weight:600;opacity:0.7">($10–$25/plate)</span></button>
+      <button class="price-tier-chip ${selectedPriceTier === 2 ? 'active' : ''}" data-tier="2" onclick="selectPriceTierPreFilter(2)">🍾 Screw it I'm treating myself <span style="font-size:0.72rem;font-weight:600;opacity:0.7">($25–$50/plate)</span></button>
+      <button class="price-tier-chip ${selectedPriceTier === 3 ? 'active' : ''}" data-tier="3" onclick="selectPriceTierPreFilter(3)">🎰 Fuck it we BALL <span style="font-size:0.72rem;font-weight:600;opacity:0.7">($50+/plate)</span></button>
+    </div>`;
+
+  let formHtml = '';
+  if (currentSearchMode === 'location') {
+    formHtml = `
+      <div class="search-bar">
+        <input type="text" id="zip-input" placeholder="Enter ZIP code..." class="zip-input" inputmode="numeric" maxlength="10">
+        <button class="gps-btn" onclick="searchByGPS()">📍 GPS</button>
+      </div>
+      ${distChips}
+      <button class="search-submit-btn" onclick="searchByZip()">Search</button>`;
+  } else if (currentSearchMode === 'name') {
+    formHtml = `
+      <div class="search-bar">
+        <input type="text" id="name-input" placeholder="Restaurant name..." class="zip-input">
+      </div>
+      <button class="search-submit-btn" onclick="doNameSearch()">Analyze this restaurant</button>`;
+  } else if (currentSearchMode === 'price') {
+    formHtml = `
+      ${priceTierChipsHtml}
+      <div class="search-bar">
+        <input type="text" id="zip-input-price" placeholder="ZIP code (optional)..." class="zip-input" inputmode="numeric" maxlength="10">
+        <button class="gps-btn" onclick="searchByPriceGPS()">📍 GPS</button>
+      </div>
+      ${distChips}
+      <button class="search-submit-btn" onclick="searchByPriceZip()">Search</button>`;
+  }
+
+  el.innerHTML = tabs + formHtml;
 }
 
-function toggleManualSearch() {
-  const row = document.getElementById('manual-search-row');
-  if (row) row.style.display = row.style.display === 'none' ? 'block' : 'none';
-}
-
-async function doManualSearch() {
+async function doNameSearch() {
   const name = document.getElementById('name-input')?.value.trim();
   if (!name) return;
-  const container = document.getElementById('nearby-content');
-  container.innerHTML = `<div class="nearby-loading">Analyzing ${name}...</div>`;
+  const resultsArea = document.getElementById('results-area');
+  if (resultsArea) resultsArea.innerHTML = `<div class="nearby-loading">Analyzing ${name}...</div>`;
   try {
-    const restaurant = { name, cuisine: 'Unknown', address: 'See menu analysis' };
+    const restaurant = { name, cuisine: 'Unknown', address: 'See menu analysis', price_tier: null };
     currentDetailRestaurant = restaurant;
     const detail = await runPass2(restaurant);
     currentDetailData = detail;
     if (isFavorite(name)) updateFavoriteMenu(name, detail);
-    renderDetailCard(detail, restaurant, { backAction: 'initNearby()' });
+    renderDetailCard(detail, restaurant, { backAction: 'renderSearchUI()' });
   } catch (err) {
-    container.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
+    if (resultsArea) resultsArea.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
+  }
+}
+
+async function searchByPriceZip() {
+  const zip = document.getElementById('zip-input-price')?.value.trim();
+  if (!zip) { searchByPriceGPS(); return; }
+  currentSearch = { type: 'zip', zipcode: zip };
+  currentPage = 0;
+  await runSearch();
+}
+
+async function searchByPriceGPS() {
+  try {
+    const { lat, lng } = await getLocation();
+    currentSearch = { type: 'gps', lat, lng };
+    currentPage = 0;
+    await runSearch();
+  } catch (err) {
+    const resultsArea = document.getElementById('results-area');
+    if (resultsArea) resultsArea.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
   }
 }
 
 async function searchByZip() {
-  const zip = document.getElementById('zip-input').value.trim();
+  const zip = document.getElementById('zip-input')?.value.trim();
   if (!zip) return;
   currentSearch = { type: 'zip', zipcode: zip };
   currentPage = 0;
@@ -2210,29 +2358,31 @@ async function searchByGPS() {
     currentPage = 0;
     await runSearch();
   } catch (err) {
-    document.getElementById('nearby-content').innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
+    const resultsArea = document.getElementById('results-area');
+    if (resultsArea) resultsArea.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
   }
 }
 
 async function runSearch() {
-  const container = document.getElementById('nearby-content');
-  container.innerHTML = '<div class="nearby-loading">Searching restaurants...</div>';
+  const resultsArea = document.getElementById('results-area');
+  if (resultsArea) resultsArea.innerHTML = '<div class="nearby-loading">Searching restaurants...</div>';
   try {
-    const key = searchKey(currentSearch, selectedDistance);
+    const key = searchKey(currentSearch, selectedDistance, selectedPriceTier);
     if (!pass1Cache[key]) {
-      pass1Cache[key] = await runPass1(currentSearch, selectedDistance);
+      pass1Cache[key] = await runPass1(currentSearch, selectedDistance, selectedPriceTier);
     }
     lastResults = pass1Cache[key];
+    activePriceTierFilter = null;
     currentPage = 0;
     renderRestaurantCards(lastResults);
   } catch (err) {
-    container.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
+    if (resultsArea) resultsArea.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
   }
 }
 
 async function refreshNearby() {
   if (!currentSearch) { initNearby(); return; }
-  const key = searchKey(currentSearch, selectedDistance);
+  const key = searchKey(currentSearch, selectedDistance, selectedPriceTier);
   delete pass1Cache[key];
   await runSearch();
 }
@@ -2240,7 +2390,8 @@ async function refreshNearby() {
 function goToPage(n) {
   currentPage = n;
   renderRestaurantCards(lastResults);
-  document.getElementById('nearby-content').scrollTop = 0;
+  const ra = document.getElementById('results-area');
+  if (ra) ra.scrollTop = 0;
 }
 
 function initNearby() {
@@ -2249,10 +2400,12 @@ function initNearby() {
 }
 
 function renderRestaurantCards(restaurants) {
-  const container = document.getElementById('nearby-content');
+  const container = document.getElementById('results-area') || document.getElementById('nearby-content');
 
   const scoreColor = s => s >= 4 ? 'var(--green)' : s === 3 ? 'var(--orange)' : 'var(--red)';
   const scoreLabel = s => s >= 4 ? 'Good' : s === 3 ? 'Moderate' : 'Risky';
+  const priceBadge = t => t === 1 ? '$' : t === 2 ? '$$' : t === 3 ? '$$$' : null;
+  const tierLabel = t => t === 1 ? '💸 Budget' : t === 2 ? '🍾 Mid' : t === 3 ? '🎰 Upscale' : null;
 
   const pageSize = 10;
   const totalPages = Math.ceil(restaurants.length / pageSize);
@@ -2266,35 +2419,47 @@ function renderRestaurantCards(restaurants) {
     </div>
   ` : '';
 
+  const postFilterHtml = `
+    <div class="post-filter-strip">
+      <button class="post-filter-chip ${activePriceTierFilter === null ? 'active' : ''}" data-tier="all" onclick="setActivePriceTierFilter(null)">All</button>
+      <button class="post-filter-chip ${activePriceTierFilter === 1 ? 'active' : ''}" data-tier="1" onclick="setActivePriceTierFilter(1)">💸 Budget</button>
+      <button class="post-filter-chip ${activePriceTierFilter === 2 ? 'active' : ''}" data-tier="2" onclick="setActivePriceTierFilter(2)">🍾 Mid</button>
+      <button class="post-filter-chip ${activePriceTierFilter === 3 ? 'active' : ''}" data-tier="3" onclick="setActivePriceTierFilter(3)">🎰 Upscale</button>
+    </div>`;
+
   container.innerHTML =
     `<button class="refresh-btn" onclick="refreshNearby()">🔄 Refresh · ${selectedDistance} mi</button>` +
-    page.map(r => `
-    <div class="restaurant-card" onclick="openRestaurantDetail('${r.name.replace(/'/g, "\\'")}')">
-      <div class="restaurant-header">
-        <div class="restaurant-name">${r.name}</div>
-        <div class="card-header-right">
-          <div class="safety-badge" style="color:${scoreColor(r.safety_score)}">${scoreLabel(r.safety_score)} (${r.safety_score}/5)</div>
-          <button class="fav-btn" data-name="${r.name}" onclick="event.stopPropagation();toggleFavorite('${r.name.replace(/'/g,"\\'")}')">
-            ${isFavorite(r.name) ? '⭐' : '☆'}
-          </button>
+    postFilterHtml +
+    page.map(r => {
+      const badge = priceBadge(r.price_tier);
+      return `
+      <div class="restaurant-card" onclick="openRestaurantDetail('${r.name.replace(/'/g, "\\'")}')">
+        <div class="restaurant-header">
+          <div class="restaurant-name">${r.name}</div>
+          <div class="card-header-right">
+            <div class="safety-badge" style="color:${scoreColor(r.safety_score)}">${scoreLabel(r.safety_score)} (${r.safety_score}/5)</div>
+            <button class="fav-btn" data-name="${r.name}" onclick="event.stopPropagation();toggleFavorite('${r.name.replace(/'/g,"\\'")}')">
+              ${isFavorite(r.name) ? '⭐' : '☆'}
+            </button>
+          </div>
         </div>
-      </div>
-      <div class="restaurant-meta">${r.cuisine} · ${r.distance}</div>
-      <div class="restaurant-reason">${r.safety_reason}</div>
-      ${r.chain ? '' : '<div class="chain-warning">Independent restaurant — menu data may be limited</div>'}
-      <div class="tap-hint">Tap for full menu analysis →</div>
-    </div>
-  `).join('') + paginationHtml;
+        <div class="restaurant-meta">${r.cuisine} · ${r.distance}${badge ? ` <span class="price-badge">${badge}</span>` : ''}</div>
+        <div class="restaurant-reason">${r.safety_reason}</div>
+        ${r.chain ? '' : '<div class="chain-warning">Independent restaurant — menu data may be limited</div>'}
+        <div class="tap-hint">Tap for full menu analysis →</div>
+      </div>`;
+    }).join('') + paginationHtml;
 }
 
 async function openRestaurantDetail(restaurantName) {
-  const container = document.getElementById('nearby-content');
   const restaurant = lastResults.find(r => r.name === restaurantName);
   if (!restaurant) return;
 
   currentDetailRestaurant = restaurant;
   currentDetailMood = 'good';
-  container.innerHTML = '<div class="nearby-loading">Analyzing menu against Mira\'s protocol...</div>';
+
+  const resultsArea = document.getElementById('results-area');
+  if (resultsArea) resultsArea.innerHTML = '<div class="nearby-loading">Analyzing menu against Mira\'s protocol...</div>';
 
   try {
     if (!pass2Cache[restaurant.name]) {
@@ -2304,7 +2469,7 @@ async function openRestaurantDetail(restaurantName) {
     if (isFavorite(restaurant.name)) updateFavoriteMenu(restaurant.name, currentDetailData);
     renderDetailCard(currentDetailData, restaurant, { backAction: 'renderRestaurantCards(lastResults)' });
   } catch (err) {
-    container.innerHTML = `<div class="nearby-error">Menu analysis failed: ${err.message}</div>`;
+    if (resultsArea) resultsArea.innerHTML = `<div class="nearby-error">Menu analysis failed: ${err.message}</div>`;
   }
 }
 
@@ -2315,9 +2480,9 @@ async function openFavoriteDetail(name, origin) {
 
   currentDetailRestaurant = fav;
   currentDetailMood = 'good';
-  const containerId = origin === 'nearby' ? 'nearby-content' : 'favorites-content';
-  const backAction = origin === 'nearby' ? 'initNearby()' : 'renderFavoritesScreen()';
-  const container = document.getElementById(containerId);
+  const containerId = origin === 'nearby' ? 'results-area' : 'favorites-content';
+  const backAction = origin === 'nearby' ? 'renderSearchUI()' : 'renderFavoritesScreen()';
+  const container = document.getElementById(containerId) || document.getElementById('nearby-content');
 
   if (fav.menu) {
     currentDetailData = fav.menu;
@@ -2343,14 +2508,14 @@ function renderMenuSections(detail, mood) {
     <div class="section-label">✅ Safe to eat</div>
     ${(detail.safe_items || []).map(i => `
       <div class="detail-item safe">
-        <div class="item-name">${i.item}</div>
+        <div class="item-name">${i.item}${i.price_est ? `<span class="item-price">${i.price_est}</span>` : ''}</div>
         ${i.notes ? `<div class="item-note">${i.notes}</div>` : ''}
       </div>`).join('')}
     ${showCaution ? `
       <div class="section-label">⚠️ Caution — small amounts / ask staff</div>
       ${(detail.caution_items || []).map(i => `
         <div class="detail-item caution">
-          <div class="item-name">${i.item}</div>
+          <div class="item-name">${i.item}${i.price_est ? `<span class="item-price">${i.price_est}</span>` : ''}</div>
           <div class="item-flag">${i.flag || ''}</div>
         </div>`).join('')}` : ''}
     ${showAvoid ? `
@@ -2406,9 +2571,9 @@ Give a warm, friendly 2–3 sentence "order this today" recommendation based on 
 }
 
 function renderDetailCard(detail, restaurant, opts = {}) {
-  const containerId = opts.containerId || 'nearby-content';
+  const containerId = opts.containerId || 'results-area';
   const backAction = opts.backAction || 'renderRestaurantCards(lastResults)';
-  const container = document.getElementById(containerId);
+  const container = document.getElementById(containerId) || document.getElementById('nearby-content');
   const confidenceColor = { high: 'var(--green)', medium: 'var(--orange)', low: 'var(--red)' };
   const favd = isFavorite(restaurant.name);
 
@@ -2428,6 +2593,8 @@ function renderDetailCard(detail, restaurant, opts = {}) {
       <div class="confidence-reason">${detail.confidence_reason || ''}</div>
     </div>
 
+    <div id="variety-card-area"></div>
+
     <div class="mood-bar">
       <span class="mood-label">How are you feeling?</span>
       <div class="mood-btns">
@@ -2442,7 +2609,158 @@ function renderDetailCard(detail, restaurant, opts = {}) {
     <div id="menu-sections">
       ${renderMenuSections(detail, currentDetailMood)}
     </div>
+
+    <button class="log-meal-btn" onclick="openMealLog('${restaurant.name.replace(/'/g,"\\'")}', currentDetailData)">📝 Log a meal here</button>
   `;
+
+  maybeRenderVarietyCard(restaurant.name);
+}
+
+// ── MEAL LOG ─────────────────────────────────────────────────
+function loadMealLog() {
+  try { return JSON.parse(localStorage.getItem('mira_meal_log') || '[]'); } catch { return []; }
+}
+function saveMealLog(log) {
+  localStorage.setItem('mira_meal_log', JSON.stringify(log));
+}
+function getMealLogForRestaurant(name) {
+  return loadMealLog().filter(e => e.restaurant_name === name);
+}
+
+function openMealLog(restaurantName, detail) {
+  const overlay = document.getElementById('meal-log-overlay');
+  const sheet = document.getElementById('meal-log-sheet');
+  const content = document.getElementById('meal-log-content');
+  const d = detail || currentDetailData;
+  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+  const safeItems = (d?.safe_items || []).map(i => `
+    <label class="meal-log-item safe-item">
+      <input type="checkbox" name="log-item" value="${i.item.replace(/"/g,'&quot;')}" data-safety="safe">
+      <span class="meal-log-item-name">${i.item}</span>
+    </label>`).join('');
+
+  const cautionItems = (d?.caution_items || []).map(i => `
+    <label class="meal-log-item caution-item">
+      <input type="checkbox" name="log-item" value="${i.item.replace(/"/g,'&quot;')}" data-safety="caution">
+      <span class="meal-log-item-name">${i.item}</span>
+    </label>`).join('');
+
+  content.innerHTML = `
+    <div class="meal-log-title">📝 Log a meal at ${restaurantName}</div>
+    <div class="meal-log-date">${today}</div>
+    ${safeItems ? `<div class="meal-log-section-label">✅ What did you eat?</div>${safeItems}` : ''}
+    ${cautionItems ? `<div class="meal-log-section-label">⚠️ Caution items</div>${cautionItems}` : ''}
+    <div class="meal-log-section-label">Anything else?</div>
+    <input type="text" id="log-extra" class="meal-log-notes" placeholder="e.g. plain rice, water..." style="height:44px;">
+    <div class="meal-log-section-label">Notes</div>
+    <textarea id="log-notes" class="meal-log-notes" rows="3" placeholder="How did you feel? Any reactions?"></textarea>
+    <button class="meal-log-save-btn" onclick="saveMealEntry('${restaurantName.replace(/'/g,"\\'")}')">Save</button>
+    <button class="meal-log-cancel-btn" onclick="closeMealLog()">Cancel</button>
+  `;
+
+  overlay.classList.add('open');
+  sheet.classList.add('open');
+}
+
+function closeMealLog() {
+  document.getElementById('meal-log-overlay').classList.remove('open');
+  document.getElementById('meal-log-sheet').classList.remove('open');
+}
+
+function saveMealEntry(restaurantName) {
+  const checked = [...document.querySelectorAll('input[name="log-item"]:checked')];
+  const items = checked.map(cb => ({ name: cb.value, safety: cb.dataset.safety }));
+  const extra = document.getElementById('log-extra')?.value.trim();
+  if (extra) items.push({ name: extra, safety: 'unknown' });
+  const notes = document.getElementById('log-notes')?.value.trim();
+  const fav = loadFavorites().find(f => f.name === restaurantName);
+
+  const entry = {
+    id: crypto.randomUUID(),
+    restaurant_name: restaurantName,
+    restaurant_id: fav?.id || null,
+    date: new Date().toISOString().slice(0, 10),
+    items,
+    notes
+  };
+
+  const log = loadMealLog();
+  log.unshift(entry);
+  saveMealLog(log);
+  closeMealLog();
+
+  // Refresh variety card if visible
+  const varArea = document.getElementById('variety-card-area');
+  if (varArea) maybeRenderVarietyCard(restaurantName, true);
+}
+
+// ── VARIETY SUGGESTIONS ──────────────────────────────────────
+const varietyCache = {};
+
+function maybeRenderVarietyCard(restaurantName, forceRefresh) {
+  const el = document.getElementById('variety-card-area');
+  if (!el) return;
+  const fav = loadFavorites().find(f => f.name === restaurantName);
+  if (!fav) return;
+  const logs = getMealLogForRestaurant(restaurantName);
+  if (!logs.length) return;
+
+  const pastSummary = logs.slice(0, 5).map(e =>
+    `${e.date}: ${e.items.map(i => i.name).join(', ')}`
+  ).join(' | ');
+
+  el.innerHTML = `
+    <div class="variety-card">
+      <div class="variety-card-header">
+        <span class="variety-card-title">🔀 Try Something Different</span>
+        <button class="variety-regen-btn" onclick="getVarietySuggestion('${restaurantName.replace(/'/g,"\\'")}', true)">🔀 Regenerate</button>
+      </div>
+      <div class="variety-past-orders">Past visits: ${pastSummary}</div>
+      <div id="variety-text" class="variety-loading">Thinking...</div>
+    </div>`;
+
+  getVarietySuggestion(restaurantName, forceRefresh);
+}
+
+async function getVarietySuggestion(restaurantName, forceRefresh) {
+  const el = document.getElementById('variety-text');
+  if (!el) return;
+
+  if (!forceRefresh && varietyCache[restaurantName]) {
+    el.className = 'variety-suggestion';
+    el.textContent = varietyCache[restaurantName];
+    return;
+  }
+
+  el.className = 'variety-loading';
+  el.textContent = 'Thinking...';
+
+  const fav = loadFavorites().find(f => f.name === restaurantName);
+  const logs = getMealLogForRestaurant(restaurantName);
+  const pastItems = [...new Set(logs.flatMap(e => e.items.map(i => i.name)))];
+  const safeItems = (fav?.menu?.safe_items || currentDetailData?.safe_items || []).map(i => i.item);
+
+  const prompt = `Mira has visited ${restaurantName} before. She usually orders: ${pastItems.join(', ')}.
+Safe menu items she hasn't tried recently: ${safeItems.filter(i => !pastItems.includes(i)).join(', ')}.
+Suggest 1–2 specific dishes she could try something new today. Keep it warm, friendly, and under 3 sentences.`;
+
+  try {
+    const res = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 200, thinkingConfig: { thinkingBudget: 0 } }
+      })
+    });
+    const data = await res.json();
+    const text = data.candidates[0].content.parts.filter(p => !p.thought).map(p => p.text || '').join('').trim();
+    varietyCache[restaurantName] = text;
+    if (el) { el.className = 'variety-suggestion'; el.textContent = text; }
+  } catch (err) {
+    if (el) { el.className = 'variety-suggestion'; el.textContent = '⚠️ Could not load suggestion.'; }
+  }
 }
 
 function initFavorites() {
@@ -2462,7 +2780,9 @@ function renderFavoritesScreen() {
 
   container.innerHTML = `
     <div class="fav-screen-header">⭐ Your Favorites <span class="fav-count">${favs.length}</span></div>
-    ${favs.map(f => `
+    ${favs.map(f => {
+      const logCount = getMealLogForRestaurant(f.name).length;
+      return `
       <div class="restaurant-card" onclick="openFavoriteDetail('${f.name.replace(/'/g,"\\'")}','favorites')">
         <div class="restaurant-header">
           <div class="restaurant-name">${f.name}</div>
@@ -2473,9 +2793,12 @@ function renderFavoritesScreen() {
         </div>
         <div class="restaurant-meta">${f.cuisine || ''} ${f.address ? '· ' + f.address : ''}</div>
         <div class="restaurant-reason">${f.safety_reason || ''}</div>
-        ${f.menu ? '<div class="fav-cached-badge">Menu cached · tap to open instantly</div>' : '<div class="tap-hint">Tap to load menu →</div>'}
-      </div>
-    `).join('')}
+        <div class="fav-card-actions">
+          ${f.menu ? '<div class="fav-cached-badge">Menu cached · tap to open</div>' : '<div class="tap-hint">Tap to load menu →</div>'}
+          <button class="fav-log-btn" onclick="event.stopPropagation();openFavLogVisit('${f.name.replace(/'/g,"\\'")}')">📝 Log visit${logCount ? ` (${logCount})` : ''}</button>
+        </div>
+      </div>`;
+    }).join('')}
   `;
 }
 
@@ -2484,6 +2807,18 @@ function removeFavoriteAndRefresh(name) {
   saveFavorites(favs);
   renderFavoritesScreen();
 }
+
+function openFavLogVisit(name) {
+  const fav = loadFavorites().find(f => f.name === name);
+  openMealLog(name, fav?.menu || null);
+}
 </script>
+
+<!-- Meal Log Sheet -->
+<div class="meal-log-overlay" id="meal-log-overlay" onclick="closeMealLog()"></div>
+<div class="meal-log-sheet" id="meal-log-sheet">
+  <div class="meal-log-handle"></div>
+  <div id="meal-log-content"></div>
+</div>
 </body>
 </html>
