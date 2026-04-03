@@ -647,6 +647,7 @@
   .nearby-loading { text-align: center; padding: 40px 20px; color: var(--text-muted); font-weight: 700; font-size: 0.9rem; }
   .nearby-error { text-align: center; padding: 40px 20px; color: var(--red); font-weight: 700; font-size: 0.9rem; }
   .back-btn { background: none; border: none; color: var(--green); font-weight: 800; font-size: 0.85rem; cursor: pointer; padding: 0 0 14px 0; }
+  .refresh-btn { display: block; width: 100%; background: none; border: 1px solid var(--border); border-radius: 10px; color: var(--text-muted); font-weight: 700; font-size: 0.8rem; padding: 8px; margin-bottom: 12px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -1919,10 +1920,15 @@ function coordKey(lat, lng) {
 }
 
 function fixJson(text) {
-  return text
-    .replace(/```json|```/g, '')
-    .trim()
-    .replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*):/g, '$1"$2"$3:');
+  let s = text.replace(/```json|```/g, '').trim();
+  // Extract just the JSON block — strip any preamble/postamble text
+  const start = s.search(/[{\[]/);
+  const lastCurly = s.lastIndexOf('}');
+  const lastBracket = s.lastIndexOf(']');
+  const end = Math.max(lastCurly, lastBracket);
+  if (start !== -1 && end > start) s = s.slice(start, end + 1);
+  // Fix unquoted property names
+  return s.replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)(\s*):/g, '$1"$2"$3:');
 }
 
 async function runPass1(lat, lng) {
@@ -2031,6 +2037,21 @@ confidence values: "high" (full menu + ingredients found), "medium" (partial men
   return JSON.parse(clean);
 }
 
+async function refreshNearby() {
+  const container = document.getElementById('nearby-content');
+  container.innerHTML = '<div class="nearby-loading">Refreshing restaurants...</div>';
+  try {
+    const { lat, lng } = await getLocation();
+    const key = coordKey(lat, lng);
+    delete pass1Cache[key];
+    pass1Cache[key] = await runPass1(lat, lng);
+    lastResults = pass1Cache[key];
+    renderRestaurantCards(lastResults);
+  } catch (err) {
+    container.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
+  }
+}
+
 async function loadNearby() {
   const container = document.getElementById('nearby-content');
   container.innerHTML = '<div class="nearby-loading">Searching nearby restaurants...</div>';
@@ -2063,7 +2084,8 @@ function renderRestaurantCards(restaurants) {
   const scoreColor = s => s >= 4 ? 'var(--green)' : s === 3 ? 'var(--orange)' : 'var(--red)';
   const scoreLabel = s => s >= 4 ? 'Good' : s === 3 ? 'Moderate' : 'Risky';
 
-  container.innerHTML = restaurants.map(r => `
+  container.innerHTML = `<button class="refresh-btn" onclick="refreshNearby()">🔄 Refresh results</button>` +
+    restaurants.map(r => `
     <div class="restaurant-card" onclick="openRestaurantDetail('${r.name.replace(/'/g, "\\'")}')">
       <div class="restaurant-header">
         <div class="restaurant-name">${r.name}</div>
