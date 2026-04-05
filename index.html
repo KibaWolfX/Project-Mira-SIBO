@@ -7,12 +7,17 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Mira's Toolkit">
 <meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#FF7EB3">
 <link rel="apple-touch-icon" id="apple-touch-icon" href="">
+<meta name="description" content="Mira's SIBO Toolkit — personalized PWA for SIBO, low-histamine, and autism-friendly diet management with AI-powered restaurant safety ratings and meal planning.">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap">
 <title>🌿 Mira's SIBO Toolkit</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
-  /* Import fonts with fallback - works offline too */
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
+  /* Fonts loaded via <link> tags in <head> for non-blocking render */
   :root {
     --green: #1FBF80;
     --green-light: #D6FAF0;
@@ -551,7 +556,7 @@
   .bottom-btn.active .b-icon { transform: scale(1.12); }
 
   /* ── SEARCH ── */
-  .search-bar {
+  .search-input-standalone {
     background: var(--pink-light);
     border: 2px solid #F9C0DC;
     border-radius: 14px;
@@ -564,7 +569,7 @@
     outline: none;
     margin-bottom: 14px;
   }
-  .search-bar::placeholder { color: var(--text-muted); }
+  .search-input-standalone::placeholder { color: var(--text-muted); }
 
   /* ── SECTION LABEL ── */
   .section-label {
@@ -912,7 +917,7 @@
 <body>
 
 <!-- ══════════════ AUTH OVERLAY ══════════════ -->
-<div class="auth-overlay" id="auth-overlay">
+<div class="auth-overlay" id="auth-overlay" role="dialog" aria-modal="true" aria-label="Sign in">
   <div class="auth-logo-wrap">
     <span class="auth-big-logo">🌿</span>
     <div class="auth-brand-title">Mira's Toolkit</div>
@@ -945,7 +950,7 @@
 </div>
 
 <!-- ══════════════ ONBOARDING OVERLAY ══════════════ -->
-<div class="onboard-overlay" id="onboard-overlay">
+<div class="onboard-overlay" id="onboard-overlay" role="dialog" aria-modal="true" aria-label="Profile setup">
   <div class="onboard-top-bar">
     <button class="ob-back-btn invisible" id="ob-back-btn" onclick="prevOnboardStep()">←</button>
     <div class="ob-progress-wrap">
@@ -961,16 +966,18 @@
 </div>
 
 <!-- HEADER -->
-<div class="header">
+<header class="header" role="banner">
   <div class="header-inner">
     <div class="header-title">🌿 My SIBO Toolkit</div>
     <div class="header-sub">SIBO · Low Histamine · Autism-Friendly</div>
   </div>
-</div>
+</header>
+
+<main id="main-content">
 
 <!-- MORE SHEET OVERLAY -->
 <div class="more-overlay" id="moreOverlay" onclick="closeMore()"></div>
-<div class="more-sheet" id="moreSheet">
+<div class="more-sheet" id="moreSheet" role="dialog" aria-modal="true" aria-label="More options">
   <div class="more-handle"></div>
   <div class="more-title">More</div>
   <button class="more-item" onclick="showScreen('foods');closeMore()"><span class="more-icon">📋</span><span>Food Guide</span></button>
@@ -995,7 +1002,7 @@
 
 <!-- ══════════════ SNACKS SCREEN ══════════════ -->
 <div class="screen" id="screen-snacks">
-  <input class="search-bar" type="text" placeholder="🔍 Search snacks..." oninput="filterSnacks(this.value)">
+  <input class="search-input-standalone" type="text" placeholder="🔍 Search snacks..." oninput="filterSnacks(this.value)">
 
   <div class="snack-filter">
     <button class="filter-chip active" onclick="setSnackFilter('all', this)">All</button>
@@ -1336,24 +1343,26 @@
   </div>
 </div>
 
+</main><!-- /main-content -->
+
 <!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <button class="bottom-btn active" onclick="showScreen('meal')" data-bscreen="meal">
-    <span class="b-icon">🍽️</span>Meals
+<nav class="bottom-nav" role="navigation" aria-label="Main navigation">
+  <button class="bottom-btn active" onclick="showScreen('meal')" data-bscreen="meal" aria-label="Meals">
+    <span class="b-icon" aria-hidden="true">🍽️</span>Meals
   </button>
-  <button class="bottom-btn" onclick="showScreen('snacks')" data-bscreen="snacks">
-    <span class="b-icon">🎒</span>Snacks
+  <button class="bottom-btn" onclick="showScreen('snacks')" data-bscreen="snacks" aria-label="Snacks">
+    <span class="b-icon" aria-hidden="true">🎒</span>Snacks
   </button>
-  <button class="bottom-btn" onclick="initNearby()" data-bscreen="nearby">
-    <span class="b-icon">📍</span>Nearby
+  <button class="bottom-btn" onclick="initNearby()" data-bscreen="nearby" aria-label="Nearby restaurants">
+    <span class="b-icon" aria-hidden="true">📍</span>Nearby
   </button>
-  <button class="bottom-btn" onclick="initFavorites()" data-bscreen="favorites">
-    <span class="b-icon">⭐</span>Saved
+  <button class="bottom-btn" onclick="initFavorites()" data-bscreen="favorites" aria-label="Saved favorites">
+    <span class="b-icon" aria-hidden="true">⭐</span>Saved
   </button>
-  <button class="bottom-btn" onclick="openMore()" data-bscreen="more">
-    <span class="b-icon">☰</span>More
+  <button class="bottom-btn" onclick="openMore()" data-bscreen="more" aria-label="More options">
+    <span class="b-icon" aria-hidden="true">☰</span>More
   </button>
-</div>
+</nav>
 
 <script>
 // ── DATA ──────────────────────────────────────────────────────
@@ -1459,12 +1468,22 @@ let currentSearchMode = 'location'; // 'location' | 'name' | 'price'
 let selectedPriceTier = null;       // null | 1 | 2 | 3 (pre-filter, sent to Gemini)
 let activePriceTierFilter = null;   // null | 1 | 2 | 3 (post-filter on loaded results)
 
-// ── FAVORITES ─────────────────────────────────────────────────
+// ── SAFE LOCALSTORAGE ────────────────────────────────────────
+function safeSetItem(key, value) {
+  try { localStorage.setItem(key, value); }
+  catch (e) { console.warn('localStorage full — could not save', key, e); }
+}
+
+// ── FAVORITES (in-memory cache, write-through) ───────────────
+let _favCache = null;
 function loadFavorites() {
-  try { return JSON.parse(localStorage.getItem('mira_favorites') || '[]'); } catch { return []; }
+  if (_favCache) return _favCache;
+  try { _favCache = JSON.parse(localStorage.getItem('mira_favorites') || '[]'); } catch { _favCache = []; }
+  return _favCache;
 }
 function saveFavorites(favs) {
-  localStorage.setItem('mira_favorites', JSON.stringify(favs));
+  _favCache = favs;
+  safeSetItem('mira_favorites', JSON.stringify(favs));
 }
 function isFavorite(name) {
   return loadFavorites().some(f => f.name === name);
@@ -1653,7 +1672,7 @@ function loadChecklist() {
   try { return JSON.parse(localStorage.getItem('mira_checklist') || '{}'); } catch { return {}; }
 }
 function saveChecklist(state) {
-  localStorage.setItem('mira_checklist', JSON.stringify(state));
+  safeSetItem('mira_checklist', JSON.stringify(state));
 }
 
 function renderConventionChecklist() {
@@ -1814,255 +1833,6 @@ function renderFoodGuide() {
   }
 }
 
-// ── GRAB & GO BREAKFAST (legacy — dead screen removed, data kept for reference) ──
-
-const BFAST_ITEMS = [
-  // ZERO PREP
-  {
-    name: 'Organic Hard-Boiled Eggs (2-pack)',
-    brand: 'Vital Farms or Organic Valley',
-    buy: "Trader Joe's, Whole Foods",
-    note: 'Grab straight from the fridge. Boil a batch Sunday and you\'re set for days. No citric acid — check label.',
-    time: 'Zero Prep',
-    cat: 'notouch',
-    emoji: '🥚',
-    tags: ['protein', 'no cook', 'portable'],
-    convention: true,
-  },
-  {
-    name: 'Chomps Grass-Fed Beef Stick + Freeze-Dried Blueberries',
-    brand: 'Chomps + Natierra',
-    buy: 'Whole Foods, Amazon, Thrive Market',
-    note: 'Protein + fruit combo. Throw both in your bag the night before. Totally shelf-stable, no fridge needed.',
-    time: 'Zero Prep',
-    cat: 'notouch',
-    emoji: '🥩',
-    tags: ['protein', 'fruit', 'no fridge'],
-    convention: true,
-  },
-  {
-    name: 'Applegate Turkey Slices + Santa Cruz Organic Applesauce Pouch',
-    brand: 'Applegate + Santa Cruz',
-    buy: 'Whole Foods, Sprouts, Target',
-    note: 'Clean deli turkey (no carrageenan) + squeezable applesauce. Eat the turkey cold, sip the applesauce — done.',
-    time: 'Zero Prep',
-    cat: 'notouch',
-    emoji: '🦃',
-    tags: ['protein', 'fruit'],
-    convention: false,
-  },
-  {
-    name: 'Moon Cheese (Cheddar) + Fresh Blueberries',
-    brand: 'Moon Cheese',
-    buy: 'Amazon, Target, Thrive Market',
-    note: 'Crunchy shelf-stable cheese puffs + a small container of blueberries. Good texture combo, no prep at all.',
-    time: 'Zero Prep',
-    cat: 'notouch',
-    emoji: '🧀',
-    tags: ['dairy', 'fruit'],
-    convention: true,
-  },
-  {
-    name: 'Macadamia Nuts + Banana (pre-portioned bag)',
-    brand: 'Any brand (pre-bag the nuts)',
-    buy: 'Grocery store, Thrive Market',
-    note: 'Bag 20 macadamias on Sunday. Grab a banana on the way out. Fat + carb, no prep, very filling.',
-    time: 'Zero Prep',
-    cat: 'notouch',
-    emoji: '🍌',
-    tags: ['nuts', 'fruit'],
-    convention: true,
-  },
-  {
-    name: 'EPIC Bison or Chicken Bar + Applesauce Pouch',
-    brand: 'EPIC Provisions + Santa Cruz',
-    buy: 'Whole Foods, Sprouts, Amazon',
-    note: 'Avoid pork/spicy flavors. Bison or chicken only. Pairs great with the applesauce pouch for a sweet + savory grab.',
-    time: 'Zero Prep',
-    cat: 'notouch',
-    emoji: '🦬',
-    tags: ['protein', 'fruit'],
-    convention: true,
-  },
-
-  // NIGHT BEFORE
-  {
-    name: 'Overnight Oats (jar)',
-    brand: 'Bob\'s Red Mill GF Oats + Almond Milk',
-    buy: 'Grocery store, Whole Foods, Amazon',
-    note: '5 minutes to prep Sunday night. Add blueberries + 1 tsp honey (alfalfa/clover only). Grab the jar from fridge and eat anywhere.',
-    time: 'Night Before',
-    cat: 'nightbefore',
-    emoji: '🫙',
-    tags: ['oats', 'fruit', 'prep-ahead'],
-    convention: false,
-    recipe: {
-      ingredients: ['½ cup GF oats (Bob\'s Red Mill)', '¾ cup almond milk (no thickeners)', '½ cup blueberries', '1 tsp alfalfa or clover honey (optional)', '¼ tsp cinnamon'],
-      steps: ['Combine oats, almond milk, and cinnamon in a mason jar or lidded container', 'Stir in blueberries', 'Cover and refrigerate overnight — minimum 6 hours', 'In the morning, grab and go — eat cold or at room temp', 'Stays good in fridge for up to 3 days'],
-    },
-  },
-  {
-    name: 'Coconut Chia Pudding (jar)',
-    brand: 'Using canned coconut milk (no guar gum)',
-    buy: 'Natural Grocers, Whole Foods, Amazon',
-    note: 'Use Thai Kitchen full-fat coconut milk (no guar gum version). Mix chia + coconut milk night before, top with mango in the morning.',
-    time: 'Night Before',
-    cat: 'nightbefore',
-    emoji: '🥥',
-    tags: ['prep-ahead', 'fruit'],
-    convention: false,
-    recipe: {
-      ingredients: ['3 tbsp chia seeds', '1 cup coconut milk (no thickeners — check label)', '½ cup diced mango or blueberries', '1 tsp alfalfa honey (optional)'],
-      steps: ['Mix chia seeds and coconut milk in a jar', 'Stir well, wait 10 minutes, then stir again to prevent clumping', 'Seal and refrigerate overnight', 'In the morning, top with fruit and honey', 'Grab the jar and go'],
-    },
-  },
-  {
-    name: 'Egg Muffin Bites (batch baked)',
-    brand: 'Homemade — prep Sunday, eat all week',
-    buy: 'Ingredients at any grocery store',
-    note: 'Bake 12 at once. Refrigerate. Grab 2–3 cold or microwave 30 sec. Add bell pepper and chives — no garlic/onion.',
-    time: 'Night Before',
-    cat: 'nightbefore',
-    emoji: '🧁',
-    tags: ['protein', 'batch cook', 'egg'],
-    convention: false,
-    recipe: {
-      ingredients: ['6 eggs', '¼ cup diced bell pepper', '2 tbsp fresh chives, chopped', '1 tbsp olive oil', 'Salt, pepper'],
-      steps: ['Preheat oven to 350°F (175°C)', 'Grease a muffin tin well with olive oil', 'Whisk eggs with salt and pepper', 'Divide bell pepper and chives evenly into muffin cups', 'Pour egg mixture over the fillings', 'Bake 18–20 minutes until set and lightly golden', 'Cool, then refrigerate in a container', 'Grab 2–3 each morning — eat cold or microwave 30 seconds'],
-    },
-  },
-  {
-    name: 'Simple Banana-Almond Overnight Oats',
-    brand: 'Bob\'s Red Mill + any almond milk',
-    buy: 'Grocery store',
-    note: 'Add ½ sliced banana in the morning (don\'t mix in night before — bananas brown). 4 ingredients, takes 3 minutes.',
-    time: 'Night Before',
-    cat: 'nightbefore',
-    emoji: '🍌',
-    tags: ['oats', 'fruit', 'prep-ahead'],
-    convention: false,
-    recipe: {
-      ingredients: ['½ cup GF rolled oats', '¾ cup almond milk', '1 tbsp peanut butter or macadamia nut butter', '½ banana (slice fresh in the morning)'],
-      steps: ['Mix oats, almond milk, and nut butter in a jar', 'Seal and refrigerate overnight', 'In the morning, slice ½ banana on top', 'Grab and go — eat within 15 min of adding banana'],
-    },
-  },
-
-  // 5 MIN
-  {
-    name: 'Scrambled Eggs in a Mug (microwave)',
-    brand: 'Just eggs + olive oil + salt',
-    buy: 'Any grocery store',
-    note: '2 minutes total. Crack 2 eggs into a mug, add a splash of almond milk, microwave 90 seconds, stir halfway. Add chives.',
-    time: '5 Min',
-    cat: '5min',
-    emoji: '☕',
-    tags: ['protein', 'egg', 'microwave'],
-    convention: false,
-    recipe: {
-      ingredients: ['2 eggs', '1 tbsp almond milk', 'Salt, pepper', '1 tsp fresh chives (optional)', '½ tsp olive oil (to grease mug)'],
-      steps: ['Lightly grease the inside of a large mug with olive oil', 'Crack in 2 eggs, add almond milk, salt and pepper', 'Microwave on high 45 seconds', 'Stir well with a fork', 'Microwave another 30–45 seconds until just set (don\'t overcook)', 'Sprinkle with chives, eat from the mug'],
-    },
-  },
-  {
-    name: 'Rice Cake + Peanut Butter + Banana Slices',
-    brand: 'Lundberg Farms Plain Rice Cakes + any natural PB',
-    buy: 'Grocery store, Whole Foods, Target',
-    note: 'Lundberg plain rice cakes are SCD-grey area but low-FODMAP safe. Use 4 tbsp peanut butter max. Very portable, no fridge after assembly.',
-    time: '5 Min',
-    cat: '5min',
-    emoji: '🍚',
-    tags: ['grain', 'nut butter', 'fruit'],
-    convention: false,
-  },
-  {
-    name: 'Almond Milk Yogurt Parfait (no cook)',
-    brand: 'Kite Hill Plain Almond Yogurt',
-    buy: 'Whole Foods, Sprouts, Target',
-    note: 'Layer yogurt + blueberries + 10 macadamia nuts. 3 minutes. Skip the granola — use macadamia nuts for crunch instead.',
-    time: '5 Min',
-    cat: '5min',
-    emoji: '🍓',
-    tags: ['dairy-free', 'fruit', 'nuts'],
-    convention: false,
-    recipe: {
-      ingredients: ['½ cup Kite Hill plain almond milk yogurt', '¼ cup blueberries', '10 macadamia nuts', '½ tsp alfalfa honey (optional)'],
-      steps: ['Spoon yogurt into a jar or bowl', 'Top with blueberries and macadamia nuts', 'Drizzle honey if desired', 'Eat immediately or seal jar and take to go'],
-    },
-  },
-  {
-    name: 'Bone Broth To-Go Cup + 2 Boiled Eggs',
-    brand: 'Kettle & Fire (plain turkey or chicken)',
-    buy: 'Amazon, Whole Foods',
-    note: 'Savory breakfast option for days when sweet feels like too much. Broth warms in 2 min. Eggs grab from fridge. Ultra gentle on gut.',
-    time: '5 Min',
-    cat: '5min',
-    emoji: '🍵',
-    tags: ['protein', 'savory', 'gut-gentle'],
-    convention: false,
-  },
-];
-
-let bfastFilter = 'all';
-
-function setBfastFilter(cat, btn) {
-  bfastFilter = cat;
-  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderBfast();
-}
-
-function renderBfast() {
-  const container = document.getElementById('bfastList');
-  const filtered = bfastFilter === 'all' ? BFAST_ITEMS : BFAST_ITEMS.filter(b => b.cat === bfastFilter);
-
-  const timeBadgeColors = {
-    'Zero Prep': { bg: '#E8F7EE', color: '#2D8A55', icon: '🙌' },
-    'Night Before': { bg: '#EBF4FB', color: '#3A7AAF', icon: '🌙' },
-    '5 Min': { bg: '#FEF8E7', color: '#9A7200', icon: '⚡' },
-  };
-
-  container.innerHTML = filtered.map((b, i) => {
-    const badge = timeBadgeColors[b.time];
-    const recipeId = `bfast-recipe-${i}`;
-    const hasRecipe = !!b.recipe;
-    return `
-      <div class="snack-card" style="flex-direction:column; align-items:stretch; gap:0;">
-        <div style="display:flex; align-items:flex-start; gap:14px;">
-          <div class="snack-emoji" style="background:${badge.bg};">${b.emoji}</div>
-          <div class="snack-info">
-            <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:4px;">
-              <span style="display:inline-flex;align-items:center;gap:3px;background:${badge.bg};color:${badge.color};font-size:0.68rem;font-weight:900;padding:2px 9px;border-radius:20px;">${badge.icon} ${b.time}</span>
-              ${b.convention ? '<span class="convention-badge">🎉 Con-Safe</span>' : ''}
-            </div>
-            <div class="snack-name">${b.name}</div>
-            <div class="snack-brand">${b.brand}</div>
-            <div class="snack-notes" style="margin-top:4px;">${b.note}</div>
-            <div class="snack-buy">🛒 ${b.buy}</div>
-          </div>
-        </div>
-        ${hasRecipe ? `
-          <button class="expand-btn" style="margin-top:10px;color:var(--pink);align-self:flex-start;" onclick="toggleBfastRecipe('${recipeId}', this)">📖 Show How To Prep</button>
-          <div class="recipe-detail" id="${recipeId}">
-            <p style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px;">Ingredients</p>
-            <ul class="ingredient-list">
-              ${b.recipe.ingredients.map(ing => `<li>${ing}</li>`).join('')}
-            </ul>
-            <p style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px;margin-top:8px;">Steps</p>
-            <ol class="steps-list">
-              ${b.recipe.steps.map(s => `<li>${s}</li>`).join('')}
-            </ol>
-          </div>
-        ` : ''}
-      </div>
-    `;
-  }).join('');
-}
-
-function toggleBfastRecipe(id, btn) {
-  const el = document.getElementById(id);
-  const open = el.classList.toggle('open');
-  btn.textContent = open ? '📖 Hide Prep Steps' : '📖 Show How To Prep';
-}
 
 // ── NAVIGATION ────────────────────────────────────────────────
 
@@ -2418,14 +2188,14 @@ async function loadProfileFromSupabase() {
   const sb = getSB();
   if (sb && currentUser) {
     const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
-    if (data) { profile = data; localStorage.setItem('mira_profile', JSON.stringify(data)); }
+    if (data) { profile = data; safeSetItem('mira_profile', JSON.stringify(data)); }
   }
   return profile;
 }
 
 async function saveProfileData(profileData) {
   currentProfile = { ...profileData, updated_at: new Date().toISOString() };
-  localStorage.setItem('mira_profile', JSON.stringify(currentProfile));
+  safeSetItem('mira_profile', JSON.stringify(currentProfile));
   const sb = getSB();
   if (sb && currentUser) {
     await sb.from('profiles').upsert({ id: currentUser.id, ...currentProfile });
@@ -2482,22 +2252,22 @@ function renderProfileScreen() {
   }
   const roleEmoji = p.role === 'caregiver' ? '💜' : '🌿';
   const roleLabel = p.role === 'caregiver' ? 'Caregiver' : 'Patient';
-  const condTags   = (p.conditions   || []).map(c => `<span class="profile-tag pink">${c}</span>`).join('');
-  const restrTags  = (p.restrictions || []).map(r => `<span class="profile-tag green">${r}</span>`).join('');
-  const senseTags  = [...(p.texture_aversions||[]), ...(p.flavor_aversions||[])].map(t => `<span class="profile-tag purple">${t}</span>`).join('');
+  const condTags   = (p.conditions   || []).map(c => `<span class="profile-tag pink">${escHtml(c)}</span>`).join('');
+  const restrTags  = (p.restrictions || []).map(r => `<span class="profile-tag green">${escHtml(r)}</span>`).join('');
+  const senseTags  = [...(p.texture_aversions||[]), ...(p.flavor_aversions||[])].map(t => `<span class="profile-tag purple">${escHtml(t)}</span>`).join('');
   container.innerHTML = `
     <div class="profile-header-card">
       <div class="profile-avatar">${roleEmoji}</div>
       <div class="profile-header-info">
-        <div class="profile-header-name">${p.name || 'Your Profile'}</div>
+        <div class="profile-header-name">${escHtml(p.name) || 'Your Profile'}</div>
         <div class="profile-header-role">${roleLabel}</div>
       </div>
     </div>
     ${condTags  ? `<div class="card"><div class="card-title">🏥 Conditions</div><div class="profile-tag-row">${condTags}</div></div>` : ''}
     ${restrTags ? `<div class="card"><div class="card-title">🚫 Dietary Restrictions</div><div class="profile-tag-row">${restrTags}</div></div>` : ''}
     ${senseTags ? `<div class="card"><div class="card-title">✨ Sensory Preferences</div><div class="profile-tag-row">${senseTags}</div></div>` : ''}
-    ${p.always_avoid ? `<div class="card"><div class="card-title">⛔ Always Avoid</div><div style="font-size:0.88rem;font-weight:600;line-height:1.6;color:var(--text-muted);">${p.always_avoid}</div></div>` : ''}
-    ${p.safe_foods   ? `<div class="card"><div class="card-title">✅ Safe Foods</div><div style="font-size:0.88rem;font-weight:600;line-height:1.6;color:var(--text-muted);">${p.safe_foods}</div></div>` : ''}
+    ${p.always_avoid ? `<div class="card"><div class="card-title">⛔ Always Avoid</div><div style="font-size:0.88rem;font-weight:600;line-height:1.6;color:var(--text-muted);">${escHtml(p.always_avoid)}</div></div>` : ''}
+    ${p.safe_foods   ? `<div class="card"><div class="card-title">✅ Safe Foods</div><div style="font-size:0.88rem;font-weight:600;line-height:1.6;color:var(--text-muted);">${escHtml(p.safe_foods)}</div></div>` : ''}
     <button class="profile-action-btn edit" onclick="editProfile()">✏️ Edit My Profile</button>
     ${authConfigured ? `<button class="profile-action-btn signout" onclick="signOut()">Sign Out</button>` : ''}
   `;
@@ -2724,10 +2494,13 @@ initApp(); // Entry point: auth check → profile check → app
 // ── JOURNAL ──────────────────────────────────────────────────
 const SYMPTOMS = ['Bloating','Gas','Cramping','Nausea','Fatigue','Brain Fog','Constipation','Diarrhea','Acid Reflux','Headache'];
 
+let _journalCache = null;
 function loadJournalLog() {
-  try { return JSON.parse(localStorage.getItem('mira_journal') || '[]'); } catch { return []; }
+  if (_journalCache) return _journalCache;
+  try { _journalCache = JSON.parse(localStorage.getItem('mira_journal') || '[]'); } catch { _journalCache = []; }
+  return _journalCache;
 }
-function saveJournalLog(log) { localStorage.setItem('mira_journal', JSON.stringify(log)); }
+function saveJournalLog(log) { _journalCache = log; safeSetItem('mira_journal', JSON.stringify(log)); }
 
 function initJournal() {
   showScreen('journal');
@@ -2749,7 +2522,6 @@ function renderJournalScreen() {
   const pastHtml = log.length ? `
     <div class="section-label" style="margin-top:20px;">Past Entries</div>
     ${log.slice(0,30).map(e => {
-      const mealNames = getMealLogForRestaurant ? [] : [];
       const sympList = (e.symptoms||[]).join(', ') || 'No symptoms logged';
       return `
       <div class="restaurant-card" onclick="openJournalEntry('${e.date}')">
@@ -2757,8 +2529,8 @@ function renderJournalScreen() {
           <div style="font-size:0.88rem;font-weight:800;color:var(--text);">${e.date}</div>
           <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);">${severityDot(e.severity)}Severity ${e.severity||'—'}/5</div>
         </div>
-        <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">${sympList}</div>
-        ${e.notes ? `<div style="font-size:0.78rem;color:var(--text);margin-top:4px;font-style:italic;">"${e.notes.slice(0,80)}${e.notes.length>80?'…':''}"</div>` : ''}
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">${escHtml(sympList)}</div>
+        ${e.notes ? `<div style="font-size:0.78rem;color:var(--text);margin-top:4px;font-style:italic;">"${escHtml(e.notes.slice(0,80))}${e.notes.length>80?'…':''}"</div>` : ''}
       </div>`;
     }).join('')}
   ` : '<div class="fav-empty" style="margin-top:20px;">No journal entries yet. Log today\'s symptoms to get started.</div>';
@@ -2810,7 +2582,7 @@ function openJournalEntry(date) {
 
     <div class="section-label">Notes</div>
     <textarea id="journal-notes" class="meal-log-notes" rows="4"
-      placeholder="How did you feel overall? Any foods that seemed to cause issues? Stress, sleep, activity level...">${entry.notes||''}</textarea>
+      placeholder="How did you feel overall? Any foods that seemed to cause issues? Stress, sleep, activity level...">${escHtml(entry.notes||'')}</textarea>
 
     <button class="meal-log-save-btn" onclick="saveJournalEntry('${date}')">Save Entry</button>
     ${entry.symptoms?.length || entry.notes ? `<button class="meal-log-cancel-btn" style="margin-top:8px;" onclick="deleteJournalEntry('${date}')">🗑️ Delete Entry</button>` : ''}
@@ -2935,21 +2707,21 @@ function renderPantryResult(json) {
   result.innerHTML = `
     ${(json.meals||[]).map(m => `
       <div class="restaurant-card" style="margin-top:16px;">
-        <div style="font-size:1rem;font-weight:900;color:var(--text);margin-bottom:8px;">🍽️ ${m.name}</div>
+        <div style="font-size:1rem;font-weight:900;color:var(--text);margin-bottom:8px;">🍽️ ${escHtml(m.name)}</div>
         ${m.uses_from_pantry?.length ? `
           <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:0.8px;color:var(--green);margin-bottom:4px;">✅ Using from pantry</div>
-          <div style="font-size:0.8rem;color:var(--text);margin-bottom:10px;">${m.uses_from_pantry.join(' · ')}</div>` : ''}
+          <div style="font-size:0.8rem;color:var(--text);margin-bottom:10px;">${m.uses_from_pantry.map(x => escHtml(x)).join(' · ')}</div>` : ''}
         ${m.need_to_buy?.length ? `
           <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:0.8px;color:var(--orange);margin-bottom:4px;">🛒 Need to grab</div>
-          <div style="font-size:0.8rem;color:var(--text);margin-bottom:10px;">${m.need_to_buy.join(' · ')}</div>` : ''}
+          <div style="font-size:0.8rem;color:var(--text);margin-bottom:10px;">${m.need_to_buy.map(x => escHtml(x)).join(' · ')}</div>` : ''}
         <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-bottom:6px;">Steps</div>
         <ol style="margin:0;padding-left:18px;font-size:0.84rem;line-height:1.7;color:var(--text);">
-          ${(m.steps||[]).map(s => `<li>${s}</li>`).join('')}
+          ${(m.steps||[]).map(s => `<li>${escHtml(s)}</li>`).join('')}
         </ol>
-        <div style="margin-top:10px;padding:8px 12px;background:var(--green-light);border-radius:10px;font-size:0.76rem;font-weight:700;color:var(--green);">✅ ${m.why_safe}</div>
+        <div style="margin-top:10px;padding:8px 12px;background:var(--green-light);border-radius:10px;font-size:0.76rem;font-weight:700;color:var(--green);">✅ ${escHtml(m.why_safe)}</div>
       </div>
     `).join('')}
-    ${json.tip ? `<div style="margin-top:16px;padding:12px 14px;background:var(--purple-light);border-radius:14px;font-size:0.84rem;font-weight:700;color:var(--purple);line-height:1.6;">💜 ${json.tip}</div>` : ''}
+    ${json.tip ? `<div style="margin-top:16px;padding:12px 14px;background:var(--purple-light);border-radius:14px;font-size:0.84rem;font-weight:700;color:var(--purple);line-height:1.6;">💜 ${escHtml(json.tip)}</div>` : ''}
   `;
 }
 
@@ -3186,8 +2958,8 @@ function renderSearchUI() {
       <div class="fav-strip">
         ${favs.map(f => {
           const dot = f.safety_score >= 4 ? 'var(--green)' : f.safety_score === 3 ? 'var(--orange)' : 'var(--red)';
-          return `<button class="fav-chip" onclick="openFavoriteDetail('${f.name.replace(/'/g,"\\'")}','nearby')">
-            <span class="fav-dot" style="background:${dot}"></span>${f.name}
+          return `<button class="fav-chip" data-fname="${escHtml(f.name)}" onclick="openFavoriteDetail(this.dataset.fname,'nearby')">
+            <span class="fav-dot" style="background:${dot}"></span>${escHtml(f.name)}
           </button>`;
         }).join('')}
       </div>
@@ -3382,18 +3154,18 @@ function renderRestaurantCards(restaurants) {
     page.map(r => {
       const badge = priceBadge(r.price_tier);
       return `
-      <div class="restaurant-card" onclick="openRestaurantDetail('${r.name.replace(/'/g, "\\'")}')">
+      <div class="restaurant-card" data-rname="${escHtml(r.name)}" onclick="openRestaurantDetail(this.dataset.rname)">
         <div class="restaurant-header">
-          <div class="restaurant-name">${r.name}</div>
+          <div class="restaurant-name">${escHtml(r.name)}</div>
           <div class="card-header-right">
             <div class="safety-badge" style="color:${scoreColor(r.safety_score)}">${scoreLabel(r.safety_score)} (${r.safety_score}/5)</div>
-            <button class="fav-btn" data-name="${r.name}" onclick="event.stopPropagation();toggleFavorite('${r.name.replace(/'/g,"\\'")}')">
+            <button class="fav-btn" data-fname="${escHtml(r.name)}" onclick="event.stopPropagation();toggleFavorite(this.dataset.fname)">
               ${isFavorite(r.name) ? '⭐' : '☆'}
             </button>
           </div>
         </div>
-        <div class="restaurant-meta">${r.cuisine} · ${r.distance}${badge ? ` <span class="price-badge">${badge}</span>` : ''}</div>
-        <div class="restaurant-reason">${r.safety_reason}</div>
+        <div class="restaurant-meta">${escHtml(r.cuisine)} · ${escHtml(r.distance)}${badge ? ` <span class="price-badge">${badge}</span>` : ''}</div>
+        <div class="restaurant-reason">${escHtml(r.safety_reason)}</div>
         ${r.chain ? '' : '<div class="chain-warning">Independent restaurant — menu data may be limited</div>'}
         <div class="tap-hint">Tap for full menu analysis →</div>
       </div>`;
@@ -3408,7 +3180,7 @@ async function openRestaurantDetail(restaurantName) {
   currentDetailMood = 'good';
 
   const resultsArea = document.getElementById('results-area');
-  if (resultsArea) resultsArea.innerHTML = '<div class="nearby-loading">Analyzing menu against Mira\'s protocol...</div>';
+  if (resultsArea) resultsArea.innerHTML = '<div class="nearby-loading">Analyzing menu against your protocol...</div>';
 
   try {
     if (!pass2Cache[restaurant.name]) {
@@ -3457,29 +3229,29 @@ function renderMenuSections(detail, mood) {
     <div class="section-label">✅ Safe to eat</div>
     ${(detail.safe_items || []).map(i => `
       <div class="detail-item safe">
-        <div class="item-name">${i.item}${i.price_est ? `<span class="item-price">${i.price_est}</span>` : ''}</div>
-        ${i.notes ? `<div class="item-note">${i.notes}</div>` : ''}
+        <div class="item-name">${escHtml(i.item)}${i.price_est ? `<span class="item-price">${escHtml(i.price_est)}</span>` : ''}</div>
+        ${i.notes ? `<div class="item-note">${escHtml(i.notes)}</div>` : ''}
       </div>`).join('')}
     ${showCaution ? `
       <div class="section-label">⚠️ Caution — small amounts / ask staff</div>
       ${(detail.caution_items || []).map(i => `
         <div class="detail-item caution">
-          <div class="item-name">${i.item}${i.price_est ? `<span class="item-price">${i.price_est}</span>` : ''}</div>
-          <div class="item-flag">${i.flag || ''}</div>
+          <div class="item-name">${escHtml(i.item)}${i.price_est ? `<span class="item-price">${escHtml(i.price_est)}</span>` : ''}</div>
+          <div class="item-flag">${escHtml(i.flag || '')}</div>
         </div>`).join('')}` : ''}
     ${showAvoid ? `
       <div class="section-label">🚫 Avoid</div>
       ${(detail.avoid_items || []).map(i => `
         <div class="detail-item avoid">
-          <div class="item-name">${i.item}</div>
-          <div class="item-reason">${i.reason || ''}</div>
+          <div class="item-name">${escHtml(i.item)}</div>
+          <div class="item-reason">${escHtml(i.reason || '')}</div>
         </div>`).join('')}` : ''}
     ${detail.ask_staff && detail.ask_staff.length ? `
       <div class="section-label">💬 Ask staff</div>
       <div class="ask-staff-block">
-        ${detail.ask_staff.map(q => `<div class="ask-item">"${q}"</div>`).join('')}
+        ${detail.ask_staff.map(q => `<div class="ask-item">"${escHtml(q)}"</div>`).join('')}
       </div>` : ''}
-    ${detail.source_url ? `<div class="source-link">Menu source: <a href="${detail.source_url}" target="_blank">${detail.source_url}</a></div>` : ''}
+    ${detail.source_url ? `<div class="source-link">Menu source: <a href="${escHtml(detail.source_url)}" target="_blank">${escHtml(detail.source_url)}</a></div>` : ''}
   `;
 }
 
@@ -3498,11 +3270,12 @@ async function getAISuggestion() {
   btn.textContent = 'Thinking...';
   out.innerHTML = '';
   const moodDesc = { flaring: 'having a SIBO flare (very symptomatic today)', cautious: 'being cautious (mild symptoms)', good: 'feeling well today' };
-  const prompt = `Mira is visiting ${currentDetailRestaurant.name} and is ${moodDesc[currentDetailMood]}.
+  const userName = currentProfile?.name || 'The user';
+  const prompt = `${userName} is visiting ${escHtml(currentDetailRestaurant.name)} and is ${moodDesc[currentDetailMood]}.
 Safe menu items: ${(currentDetailData.safe_items || []).map(i => i.item).join(', ')}.
 Caution items: ${(currentDetailData.caution_items || []).map(i => i.item).join(', ')}.
 Ask staff: ${(currentDetailData.ask_staff || []).join('; ')}.
-Give a warm, friendly 2–3 sentence "order this today" recommendation based on her mood. Name specific dishes. Be practical and encouraging.`;
+Give a warm, friendly 2–3 sentence "order this today" recommendation based on their mood. Name specific dishes. Be practical and encouraging.`;
   try {
     const res = await fetch(PROXY_URL, {
       method: 'POST',
@@ -3511,7 +3284,7 @@ Give a warm, friendly 2–3 sentence "order this today" recommendation based on 
     });
     const data = await res.json();
     const text = data.candidates[0].content.parts.filter(p => !p.thought).map(p => p.text || '').join('');
-    out.innerHTML = `<div class="ai-suggest-card">${text}</div>`;
+    out.innerHTML = `<div class="ai-suggest-card">${escHtml(text)}</div>`;
   } catch (err) {
     out.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
   }
@@ -3531,15 +3304,15 @@ function renderDetailCard(detail, restaurant, opts = {}) {
 
     <div class="detail-header">
       <div class="detail-header-row">
-        <div class="detail-name">${detail.restaurant || restaurant.name}</div>
-        <button class="fav-btn fav-btn-lg" data-name="${restaurant.name}" onclick="toggleFavorite('${restaurant.name.replace(/'/g,"\\'")}')">
+        <div class="detail-name">${escHtml(detail.restaurant || restaurant.name)}</div>
+        <button class="fav-btn fav-btn-lg" data-fname="${escHtml(restaurant.name)}" onclick="toggleFavorite(this.dataset.fname)">
           ${favd ? '⭐' : '☆'}
         </button>
       </div>
       <div class="confidence-badge" style="color:${confidenceColor[detail.confidence] || 'var(--text-muted)'}">
         ${detail.confidence ? detail.confidence.charAt(0).toUpperCase() + detail.confidence.slice(1) + ' confidence' : ''}
       </div>
-      <div class="confidence-reason">${detail.confidence_reason || ''}</div>
+      <div class="confidence-reason">${escHtml(detail.confidence_reason || '')}</div>
     </div>
 
     <div id="variety-card-area"></div>
@@ -3559,18 +3332,22 @@ function renderDetailCard(detail, restaurant, opts = {}) {
       ${renderMenuSections(detail, currentDetailMood)}
     </div>
 
-    <button class="log-meal-btn" onclick="openMealLog('${restaurant.name.replace(/'/g,"\\'")}', currentDetailData)">📝 Log a meal here</button>
+    <button class="log-meal-btn" data-rname="${escHtml(restaurant.name)}" onclick="openMealLog(this.dataset.rname, currentDetailData)">📝 Log a meal here</button>
   `;
 
   maybeRenderVarietyCard(restaurant.name);
 }
 
 // ── MEAL LOG ─────────────────────────────────────────────────
+let _mealLogCache = null;
 function loadMealLog() {
-  try { return JSON.parse(localStorage.getItem('mira_meal_log') || '[]'); } catch { return []; }
+  if (_mealLogCache) return _mealLogCache;
+  try { _mealLogCache = JSON.parse(localStorage.getItem('mira_meal_log') || '[]'); } catch { _mealLogCache = []; }
+  return _mealLogCache;
 }
 function saveMealLog(log) {
-  localStorage.setItem('mira_meal_log', JSON.stringify(log));
+  _mealLogCache = log;
+  safeSetItem('mira_meal_log', JSON.stringify(log));
 }
 function getMealLogForRestaurant(name) {
   return loadMealLog().filter(e => e.restaurant_name === name);
@@ -3585,18 +3362,18 @@ function openMealLog(restaurantName, detail) {
 
   const safeItems = (d?.safe_items || []).map(i => `
     <label class="meal-log-item safe-item">
-      <input type="checkbox" name="log-item" value="${i.item.replace(/"/g,'&quot;')}" data-safety="safe">
-      <span class="meal-log-item-name">${i.item}</span>
+      <input type="checkbox" name="log-item" value="${escHtml(i.item)}" data-safety="safe">
+      <span class="meal-log-item-name">${escHtml(i.item)}</span>
     </label>`).join('');
 
   const cautionItems = (d?.caution_items || []).map(i => `
     <label class="meal-log-item caution-item">
-      <input type="checkbox" name="log-item" value="${i.item.replace(/"/g,'&quot;')}" data-safety="caution">
-      <span class="meal-log-item-name">${i.item}</span>
+      <input type="checkbox" name="log-item" value="${escHtml(i.item)}" data-safety="caution">
+      <span class="meal-log-item-name">${escHtml(i.item)}</span>
     </label>`).join('');
 
   content.innerHTML = `
-    <div class="meal-log-title">📝 Log a meal at ${restaurantName}</div>
+    <div class="meal-log-title">📝 Log a meal at ${escHtml(restaurantName)}</div>
     <div class="meal-log-date">${today}</div>
     ${safeItems ? `<div class="meal-log-section-label">✅ What did you eat?</div>${safeItems}` : ''}
     ${cautionItems ? `<div class="meal-log-section-label">⚠️ Caution items</div>${cautionItems}` : ''}
@@ -3604,7 +3381,7 @@ function openMealLog(restaurantName, detail) {
     <input type="text" id="log-extra" class="meal-log-notes" placeholder="e.g. plain rice, water..." style="height:44px;">
     <div class="meal-log-section-label">Notes</div>
     <textarea id="log-notes" class="meal-log-notes" rows="3" placeholder="How did you feel? Any reactions?"></textarea>
-    <button class="meal-log-save-btn" onclick="saveMealEntry('${restaurantName.replace(/'/g,"\\'")}')">Save</button>
+    <button class="meal-log-save-btn" data-rname="${escHtml(restaurantName)}" onclick="saveMealEntry(this.dataset.rname)">Save</button>
     <button class="meal-log-cancel-btn" onclick="closeMealLog()">Cancel</button>
   `;
 
@@ -3663,9 +3440,9 @@ function maybeRenderVarietyCard(restaurantName, forceRefresh) {
     <div class="variety-card">
       <div class="variety-card-header">
         <span class="variety-card-title">🔀 Try Something Different</span>
-        <button class="variety-regen-btn" onclick="getVarietySuggestion('${restaurantName.replace(/'/g,"\\'")}', true)">🔀 Regenerate</button>
+        <button class="variety-regen-btn" data-rname="${escHtml(restaurantName)}" onclick="getVarietySuggestion(this.dataset.rname, true)">🔀 Regenerate</button>
       </div>
-      <div class="variety-past-orders">Past visits: ${pastSummary}</div>
+      <div class="variety-past-orders">Past visits: ${escHtml(pastSummary)}</div>
       <div id="variety-text" class="variety-loading">Thinking...</div>
     </div>`;
 
@@ -3733,19 +3510,19 @@ function renderFavoritesScreen() {
     ${favs.map(f => {
       const logCount = getMealLogForRestaurant(f.name).length;
       return `
-      <div class="restaurant-card" onclick="openFavoriteDetail('${f.name.replace(/'/g,"\\'")}','favorites')">
+      <div class="restaurant-card" data-fname="${escHtml(f.name)}" onclick="openFavoriteDetail(this.dataset.fname,'favorites')">
         <div class="restaurant-header">
-          <div class="restaurant-name">${f.name}</div>
+          <div class="restaurant-name">${escHtml(f.name)}</div>
           <div class="card-header-right">
             <div class="safety-badge" style="color:${scoreColor(f.safety_score)}">${f.safety_score}/5</div>
-            <button class="fav-remove-btn" onclick="event.stopPropagation();removeFavoriteAndRefresh('${f.name.replace(/'/g,"\\'")}')">🗑️</button>
+            <button class="fav-remove-btn" data-fname="${escHtml(f.name)}" onclick="event.stopPropagation();removeFavoriteAndRefresh(this.dataset.fname)">🗑️</button>
           </div>
         </div>
-        <div class="restaurant-meta">${f.cuisine || ''} ${f.address ? '· ' + f.address : ''}</div>
-        <div class="restaurant-reason">${f.safety_reason || ''}</div>
+        <div class="restaurant-meta">${escHtml(f.cuisine || '')} ${f.address ? '· ' + escHtml(f.address) : ''}</div>
+        <div class="restaurant-reason">${escHtml(f.safety_reason || '')}</div>
         <div class="fav-card-actions">
           ${f.menu ? '<div class="fav-cached-badge">Menu cached · tap to open</div>' : '<div class="tap-hint">Tap to load menu →</div>'}
-          <button class="fav-log-btn" onclick="event.stopPropagation();openFavLogVisit('${f.name.replace(/'/g,"\\'")}')">📝 Log visit${logCount ? ` (${logCount})` : ''}</button>
+          <button class="fav-log-btn" data-fname="${escHtml(f.name)}" onclick="event.stopPropagation();openFavLogVisit(this.dataset.fname)">📝 Log visit${logCount ? ` (${logCount})` : ''}</button>
         </div>
       </div>`;
     }).join('')}
@@ -3766,7 +3543,7 @@ function openFavLogVisit(name) {
 
 <!-- Meal Log Sheet -->
 <div class="meal-log-overlay" id="meal-log-overlay" onclick="closeMealLog()"></div>
-<div class="meal-log-sheet" id="meal-log-sheet">
+<div class="meal-log-sheet" id="meal-log-sheet" role="dialog" aria-modal="true" aria-label="Log a meal">
   <div class="meal-log-handle"></div>
   <div id="meal-log-content"></div>
 </div>
