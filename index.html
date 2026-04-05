@@ -2559,10 +2559,10 @@ function renderOnboardStep() {
       <div class="ob-label" style="margin-top:18px;">Your role</div>
       <div class="ob-role-row">
         <button class="ob-role-btn ${onboardData.role==='patient'?'selected':''}" onclick="selectObRole('patient',this)">
-          <span>🌿</span><span>I'm the patient</span>
+          <span>💜</span><span>I'm the crack rat</span>
         </button>
         <button class="ob-role-btn ${onboardData.role==='caregiver'?'selected':''}" onclick="selectObRole('caregiver',this)">
-          <span>💜</span><span>I'm the caregiver</span>
+          <span>🐺</span><span>I'm the caregiver</span>
         </button>
       </div>`;
   } else if (onboardStep === 2) {
@@ -2572,7 +2572,7 @@ function renderOnboardStep() {
       <div class="ob-sub">Select everything that applies. This calibrates safety ratings and flags specific triggers for your situation.</div>
       <div class="ob-label">Conditions you manage</div>
       <div class="ob-chips">${ONBOARD_CONDITIONS.map(c =>
-        `<button class="ob-chip ${onboardData.conditions.includes(c)?'selected':''}" onclick="toggleObChip(this,'conditions',${JSON.stringify(c)})">${c}</button>`
+        `<button class="ob-chip ${onboardData.conditions.includes(c)?'selected':''}" data-val="${escHtml(c)}" data-field="conditions" onclick="toggleObChip(this)">${c}</button>`
       ).join('')}</div>`;
   } else if (onboardStep === 3) {
     body.innerHTML = `
@@ -2581,7 +2581,7 @@ function renderOnboardStep() {
       <div class="ob-sub">What do you need to avoid? These get injected into every restaurant search and recipe suggestion.</div>
       <div class="ob-label">Active restrictions</div>
       <div class="ob-chips">${ONBOARD_RESTRICTIONS.map(r =>
-        `<button class="ob-chip ${onboardData.restrictions.includes(r)?'selected':''}" onclick="toggleObChip(this,'restrictions',${JSON.stringify(r)})">${r}</button>`
+        `<button class="ob-chip ${onboardData.restrictions.includes(r)?'selected':''}" data-val="${escHtml(r)}" data-field="restrictions" onclick="toggleObChip(this)">${r}</button>`
       ).join('')}</div>
       <div class="ob-label">Anything else to always avoid?</div>
       <textarea class="ob-textarea" placeholder="e.g. tree nuts, corn syrup, shellfish..." oninput="onboardData.always_avoid=this.value">${escHtml(onboardData.always_avoid)}</textarea>`;
@@ -2592,11 +2592,11 @@ function renderOnboardStep() {
       <div class="ob-sub">Optional — especially helpful for autism-friendly suggestions. Skip if not relevant.</div>
       <div class="ob-label">Texture aversions (flag dishes with these)</div>
       <div class="ob-chips">${ONBOARD_TEXTURES.map(t =>
-        `<button class="ob-chip ${onboardData.texture_aversions.includes(t)?'selected':''}" onclick="toggleObChip(this,'texture_aversions',${JSON.stringify(t)})">${t}</button>`
+        `<button class="ob-chip ${onboardData.texture_aversions.includes(t)?'selected':''}" data-val="${escHtml(t)}" data-field="texture_aversions" onclick="toggleObChip(this)">${t}</button>`
       ).join('')}</div>
       <div class="ob-label">Flavor aversions</div>
       <div class="ob-chips">${ONBOARD_FLAVORS.map(f =>
-        `<button class="ob-chip ${onboardData.flavor_aversions.includes(f)?'selected':''}" onclick="toggleObChip(this,'flavor_aversions',${JSON.stringify(f)})">${f}</button>`
+        `<button class="ob-chip ${onboardData.flavor_aversions.includes(f)?'selected':''}" data-val="${escHtml(f)}" data-field="flavor_aversions" onclick="toggleObChip(this)">${f}</button>`
       ).join('')}</div>
       <div class="ob-label">Your trusted safe foods</div>
       <textarea class="ob-textarea" placeholder="e.g. plain white rice, grilled chicken, blueberries..." oninput="onboardData.safe_foods=this.value">${escHtml(onboardData.safe_foods)}</textarea>`;
@@ -2610,7 +2610,9 @@ function selectObRole(role, btn) {
   btn.classList.add('selected');
 }
 
-function toggleObChip(btn, field, value) {
+function toggleObChip(btn) {
+  const field = btn.dataset.field;
+  const value = btn.dataset.val;
   const arr = onboardData[field];
   const idx = arr.indexOf(value);
   if (idx >= 0) arr.splice(idx, 1); else arr.push(value);
