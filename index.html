@@ -1181,6 +1181,16 @@
     <button class="crave-chip" data-crave="Surprise" onclick="selectCrave(this)">🎲 Surprise me</button>
   </div>
 
+  <div class="section-label">What are you cooking with?</div>
+  <div id="setup-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+    <button class="crave-chip active" data-setup="full" onclick="selectSetup(this)">🏠 Full Kitchen</button>
+    <button class="crave-chip" data-setup="airfryer" onclick="selectSetup(this)">🌬️ Air Fryer + Stove</button>
+    <button class="crave-chip" data-setup="stovetop" onclick="selectSetup(this)">🍳 Stovetop Only</button>
+    <button class="crave-chip" data-setup="hotel" onclick="selectSetup(this)">🏨 Hotel / Microwave</button>
+    <button class="crave-chip" data-setup="kitchenette" onclick="selectSetup(this)">☕ Mini Kitchenette</button>
+    <button class="crave-chip" data-setup="nocook" onclick="selectSetup(this)">🧊 No-Cook</button>
+  </div>
+
   <div class="section-label">How much effort?</div>
   <div class="distance-chips" style="margin-bottom:16px;">
     <button class="dist-chip active" data-effort="quick" onclick="selectEffort(this)">⚡ Quick (15 min)</button>
@@ -2827,8 +2837,24 @@ function deleteJournalEntry(date) {
 }
 
 // ── PANTRY / CRAVE ────────────────────────────────────────────
-let selectedCrave = null;
+let selectedCrave  = null;
 let selectedEffort = 'quick';
+let selectedSetup  = 'full';
+
+const SETUP_DESCRIPTIONS = {
+  full:        'full kitchen — stove, oven, air fryer, microwave, all appliances available',
+  airfryer:    'air fryer + stovetop burners only (no conventional oven)',
+  stovetop:    'stovetop/burners only (no oven, no air fryer, no microwave)',
+  hotel:       'microwave only with mini fridge (hotel room — no stove, no oven)',
+  kitchenette: 'mini kitchenette — microwave + electric kettle or hot plate, small fridge',
+  nocook:      'no heat source at all — cold prep only (fridge, knife, mixing bowls)'
+};
+
+function selectSetup(btn) {
+  document.querySelectorAll('#setup-chips .crave-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedSetup = btn.dataset.setup;
+}
 
 function selectCrave(btn) {
   document.querySelectorAll('#crave-chips .crave-chip').forEach(b => b.classList.remove('active'));
@@ -2854,18 +2880,22 @@ async function runPantryCrave() {
   result.innerHTML = '<div class="nearby-loading">Thinking of something delicious and safe...</div>';
 
   const userName = currentProfile?.name || 'The user';
+  const setupDesc = SETUP_DESCRIPTIONS[selectedSetup] || SETUP_DESCRIPTIONS.full;
   const prompt = `${getMiraProtocol()}
 
 What ${userName} has in their pantry: ${pantry}
 
 They are craving: ${crave}
 Effort level: ${effort}
+Available cooking equipment: ${setupDesc}
+
+CRITICAL: Every recipe step must ONLY use the equipment listed above. Do not suggest any technique that requires equipment not available. Adapt cooking methods accordingly (e.g. microwave-only means no sautéing, no-cook means no heating at all).
 
 Suggest 1–2 specific meals they can make RIGHT NOW using mostly what they have. For each meal:
 - Name it
 - List which pantry items it uses
 - Note any 1–2 items they'd need to grab if missing
-- Give simple step-by-step instructions (${selectedEffort === 'quick' ? '3–5 steps max' : 'as detailed as needed'})
+- Give simple step-by-step instructions (${selectedEffort === 'quick' ? '3–5 steps max' : 'as detailed as needed'}) using ONLY their available equipment
 - Confirm why it fits their protocol
 
 Return as JSON:
