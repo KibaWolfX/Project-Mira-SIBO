@@ -1,5 +1,5 @@
 // Mira's SIBO Toolkit — Service Worker
-const CACHE_VERSION = 'mira-v1';
+const CACHE_VERSION = 'mira-v2';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -61,20 +61,28 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Cache-first for core assets, network fallback
+  // Navigation requests (index.html): network-first so code updates show immediately
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).then(response => {
+        const clone = response.clone();
+        caches.open(CACHE_VERSION).then(cache => cache.put(event.request, clone));
+        return response;
+      }).catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // Other assets: cache-first, network fallback
   event.respondWith(
     caches.match(event.request).then(cached =>
       cached || fetch(event.request).then(response => {
-        // Cache successful same-origin responses
         if (response.ok && url.origin === self.location.origin) {
           const clone = response.clone();
           caches.open(CACHE_VERSION).then(cache => cache.put(event.request, clone));
         }
         return response;
-      }).catch(() =>
-        // Ultimate fallback for navigation requests
-        event.request.mode === 'navigate' ? caches.match('./index.html') : undefined
-      )
+      })
     )
   );
 });

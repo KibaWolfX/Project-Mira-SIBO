@@ -3647,17 +3647,34 @@ function extractWeekIngredients() {
 }
 
 function deduplicateIngredients(rawList) {
+  // Prep/cut words to strip for smarter grouping
+  const PREP_WORDS = /\b(sliced|diced|chopped|grated|minced|shredded|julienned|cubed|crushed|mashed|peeled|trimmed|halved|quartered|melted|softened|roasted|toasted|cooked|poached|dried|fresh|thin|thinly|finely|roughly|optional|florets?)\b/gi;
+  const UNIT_WORDS = /^(cup|cups|tbsp|tsp|oz|lb|lbs|cloves?|small|medium|large|heads?|bunch|handful|pinch|dash|splash|florets?)\s+/i;
+
   const seen = new Map();
   rawList.forEach(raw => {
-    // Strip leading quantities for grouping: "2 eggs" → "eggs", "½ cup rice" → "rice"
-    const base = raw.replace(/^[\d½¼¾⅓⅔⅛]+\s*/g, '')
-                     .replace(/^(cup|cups|tbsp|tsp|oz|lb|lbs|cloves?|small|medium|large|heads?|bunch|handful|pinch|dash|splash)\s+/i, '')
-                     .replace(/^of\s+/i, '')
-                     .trim().toLowerCase();
-    const key = base.replace(/[^a-z ]/g, '').replace(/\s+/g, ' ').trim();
-    if (!key) return;
-    if (!seen.has(key)) seen.set(key, { display: raw, count: 1, category: categorizeIngredient(raw) });
-    else seen.get(key).count++;
+    // Strip leading quantities: "2 eggs" → "eggs", "½ cup rice" → "rice"
+    let base = raw.replace(/^[\d½¼¾⅓⅔⅛\/]+\s*/g, '')
+                   .replace(UNIT_WORDS, '')
+                   .replace(/^of\s+/i, '')
+                   .trim();
+    // Strip prep/cut words: "carrot sliced" → "carrot", "zucchini diced" → "zucchini"
+    base = base.replace(PREP_WORDS, '').replace(/\s+/g, ' ').replace(/[,;—–-]+\s*$/, '').trim().toLowerCase();
+    // Normalize to a grouping key: strip non-alpha, collapse spaces, singularize simple plurals
+    let key = base.replace(/[^a-z ]/g, '').replace(/\s+/g, ' ').trim();
+    // Simple singularization (carrots→carrot, berries→berry, radishes→radish)
+    key = key.replace(/\b(\w+)ies\b/g, '$1y')       // berries → berry, blueberries → blueberry
+             .replace(/\b(\w+)oes\b/g, '$1o')        // potatoes → potato, tomatoes → tomato
+             .replace(/\b(\w+[sc]h)es\b/g, '$1')     // radishes → radish, peaches → peach
+             .replace(/\b(\w{2,})s\b/g, '$1');        // carrots → carrot, eggs → egg
+    if (!key || key.length < 2) return;
+    if (!seen.has(key)) {
+      // Clean display name: capitalize the base ingredient (no prep words, no quantities)
+      const displayName = base.replace(/\b\w/g, c => c.toUpperCase());
+      seen.set(key, { display: displayName, count: 1, category: categorizeIngredient(raw) });
+    } else {
+      seen.get(key).count++;
+    }
   });
   return [...seen.values()].sort((a, b) => a.category.localeCompare(b.category) || a.display.localeCompare(b.display));
 }
@@ -3792,7 +3809,7 @@ function renderGroceryList() {
       html += `
         <label class="grocery-item ${isChecked ? 'checked' : ''}">
           <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleGroceryItem('${key}', this)">
-          <span class="grocery-item-text" style="flex:1;">${escHtml(item.display)}${item.count > 1 ? ` <span style="color:var(--text-muted);font-size:0.72rem;">(x${item.count})</span>` : ''}</span>
+          <span class="grocery-item-text" style="flex:1;">${escHtml(item.display)}${item.count > 1 ? ` <span style="color:var(--pink);font-size:0.72rem;font-weight:800;">× ${item.count}</span>` : ''}</span>
           <span style="font-size:0.72rem;font-weight:800;color:var(--text-muted);white-space:nowrap;">~$${price.toFixed(2)}</span>
         </label>`;
     });
@@ -4022,7 +4039,7 @@ function formatGroceryListForShare() {
     catItems.forEach(item => {
       const mark = checked[`g_${item.idx}`] ? '✅' : '⬜';
       const price = (GROCERY_BASE_PRICES[item.category] || GROCERY_BASE_PRICES.pantry)[selectedGroceryTier] * item.count;
-      text += `  ${mark} ${item.display}${item.count > 1 ? ` (x${item.count})` : ''} — ~$${price.toFixed(2)}\n`;
+      text += `  ${mark} ${item.display}${item.count > 1 ? ` × ${item.count}` : ''} — ~$${price.toFixed(2)}\n`;
     });
     text += '\n';
   }
@@ -4073,11 +4090,29 @@ window.addEventListener('online', updateOfflineBanner);
 window.addEventListener('offline', updateOfflineBanner);
 updateOfflineBanner();
 
-// Register service worker
+// Register service worker + force update on new versions
+const APP_VERSION = 'v2';
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(err =>
-    console.warn('SW registration failed:', err)
-  );
+  navigator.serviceWorker.register('./sw.js').then(reg => {
+    // Check for SW updates immediately, then every 30 min
+    reg.update();
+    setInterval(() => reg.update(), 30 * 60 * 1000);
+    // When a new SW is waiting, activate it and reload
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      if (!newWorker) return;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'activated') {
+          window.location.reload();
+        }
+      });
+    });
+  }).catch(err => console.warn('SW registration failed:', err));
+  // If a new SW took over, reload to get fresh assets
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) { refreshing = true; window.location.reload(); }
+  });
 }
 </script>
 
