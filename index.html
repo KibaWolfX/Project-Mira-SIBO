@@ -3662,6 +3662,39 @@ function deduplicateIngredients(rawList) {
   return [...seen.values()].sort((a, b) => a.category.localeCompare(b.category) || a.display.localeCompare(b.display));
 }
 
+// ── GROCERY PRICING ──────────────────────────────────────────
+// Base prices per category (per unique ingredient, weekly quantity)
+const GROCERY_BASE_PRICES = {
+  produce: { poor: 1.20, avg: 2.50, rich: 5.00 },
+  protein: { poor: 3.50, avg: 6.00, rich: 12.00 },
+  dairy:   { poor: 2.00, avg: 3.50, rich: 7.00 },
+  grains:  { poor: 1.00, avg: 2.00, rich: 4.50 },
+  pantry:  { poor: 1.50, avg: 3.00, rich: 6.00 },
+  nuts:    { poor: 2.50, avg: 5.00, rich: 9.00 },
+};
+
+const GROCERY_TIER_META = {
+  poor: { label: '💸 Less than $100 this week', emoji: '💸', sub: 'Aldi / Walmart / store brand', color: 'var(--green)' },
+  avg:  { label: '✨ Oooooohhh Gurl! ~$200',    emoji: '✨', sub: 'Regular grocery / Kroger / Publix', color: 'var(--yellow)' },
+  rich: { label: '👑 SUHCURITY WE SHOPPIN AT WHOLE FOODS', emoji: '👑', sub: 'Whole Foods / specialty organic', color: 'var(--purple)' },
+};
+
+let selectedGroceryTier = 'avg';
+
+function selectGroceryTier(tier) {
+  selectedGroceryTier = tier;
+  renderGroceryList();
+}
+
+function estimateGroceryTotal(items) {
+  let total = 0;
+  items.forEach(item => {
+    const prices = GROCERY_BASE_PRICES[item.category] || GROCERY_BASE_PRICES.pantry;
+    total += prices[selectedGroceryTier] * item.count;
+  });
+  return total;
+}
+
 function loadGroceryChecked() {
   try { return JSON.parse(localStorage.getItem('mira_grocery_checked') || '{}'); } catch { return {}; }
 }
@@ -3706,6 +3739,9 @@ function renderGroceryList() {
     return;
   }
 
+  const total = estimateGroceryTotal(items);
+  const tierMeta = GROCERY_TIER_META[selectedGroceryTier];
+
   // Group by category
   const groups = {};
   items.forEach((item, i) => {
@@ -3723,21 +3759,41 @@ function renderGroceryList() {
         <button class="share-btn" onclick="shareContent('Grocery List', formatGroceryListForShare())">📤 Share</button>
       </div>
     </div>
+
+    <div class="section-label">Where we shoppin?</div>
+    <div class="price-tier-chips" style="margin-bottom:16px;">
+      ${Object.entries(GROCERY_TIER_META).map(([key, meta]) => `
+        <button class="price-tier-chip ${selectedGroceryTier === key ? 'active' : ''}" onclick="selectGroceryTier('${key}')">
+          ${meta.label} <span style="font-size:0.72rem;font-weight:600;opacity:0.7;display:block;margin-top:2px;">${meta.sub}</span>
+        </button>
+      `).join('')}
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,${selectedGroceryTier === 'poor' ? '#D6FAF0,#E8F7EE' : selectedGroceryTier === 'rich' ? '#EEE5FF,#FFE0F0' : '#FFF5D6,#FFE4DA'});border-color:${tierMeta.color};margin-bottom:16px;text-align:center;">
+      <div style="font-size:2rem;margin-bottom:4px;">${tierMeta.emoji}</div>
+      <div style="font-size:1.6rem;font-weight:900;color:var(--text);">~$${Math.round(total)}</div>
+      <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);margin-top:2px;">Estimated weekly total · ${tierMeta.sub}</div>
+    </div>
+
     <div class="grocery-counter">
       <span class="grocery-counter-text" id="grocery-counter-text">0 / ${items.length} items</span>
       <div class="grocery-counter-bar"><div class="grocery-counter-fill" id="grocery-counter-fill" style="width:0%"></div></div>
     </div>`;
 
   for (const [cat, catItems] of Object.entries(groups)) {
-    const label = GROCERY_CATEGORIES[cat]?.label || '📦 Other';
-    html += `<div class="grocery-category">${label}</div>`;
+    const catLabel = GROCERY_CATEGORIES[cat]?.label || '📦 Other';
+    const catPrices = GROCERY_BASE_PRICES[cat] || GROCERY_BASE_PRICES.pantry;
+    const catTotal = catItems.reduce((sum, item) => sum + catPrices[selectedGroceryTier] * item.count, 0);
+    html += `<div class="grocery-category">${catLabel} <span style="float:right;font-size:0.68rem;color:var(--text-muted);text-transform:none;letter-spacing:0;">~$${catTotal.toFixed(0)}</span></div>`;
     catItems.forEach(item => {
       const key = `g_${item.idx}`;
       const isChecked = !!checked[key];
+      const price = (GROCERY_BASE_PRICES[item.category] || GROCERY_BASE_PRICES.pantry)[selectedGroceryTier] * item.count;
       html += `
         <label class="grocery-item ${isChecked ? 'checked' : ''}">
           <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleGroceryItem('${key}', this)">
-          <span class="grocery-item-text">${escHtml(item.display)}${item.count > 1 ? ` <span style="color:var(--text-muted);font-size:0.72rem;">(x${item.count})</span>` : ''}</span>
+          <span class="grocery-item-text" style="flex:1;">${escHtml(item.display)}${item.count > 1 ? ` <span style="color:var(--text-muted);font-size:0.72rem;">(x${item.count})</span>` : ''}</span>
+          <span style="font-size:0.72rem;font-weight:800;color:var(--text-muted);white-space:nowrap;">~$${price.toFixed(2)}</span>
         </label>`;
     });
   }
@@ -3952,7 +4008,9 @@ function formatGroceryListForShare() {
   const raw = extractWeekIngredients();
   const items = deduplicateIngredients(raw);
   const checked = loadGroceryChecked();
-  let text = `🛒 Grocery List (${items.length} items)\n\n`;
+  const total = estimateGroceryTotal(items);
+  const tierMeta = GROCERY_TIER_META[selectedGroceryTier];
+  let text = `🛒 Grocery List (${items.length} items)\n${tierMeta.emoji} ~$${Math.round(total)} estimated · ${tierMeta.sub}\n\n`;
   const groups = {};
   items.forEach((item, i) => {
     if (!groups[item.category]) groups[item.category] = [];
@@ -3963,7 +4021,8 @@ function formatGroceryListForShare() {
     text += `${label}\n`;
     catItems.forEach(item => {
       const mark = checked[`g_${item.idx}`] ? '✅' : '⬜';
-      text += `  ${mark} ${item.display}${item.count > 1 ? ` (x${item.count})` : ''}\n`;
+      const price = (GROCERY_BASE_PRICES[item.category] || GROCERY_BASE_PRICES.pantry)[selectedGroceryTier] * item.count;
+      text += `  ${mark} ${item.display}${item.count > 1 ? ` (x${item.count})` : ''} — ~$${price.toFixed(2)}\n`;
     });
     text += '\n';
   }
