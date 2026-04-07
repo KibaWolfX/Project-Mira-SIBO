@@ -2635,7 +2635,7 @@ function renderProfileScreen() {
     </div>
     ${condTags  ? `<div class="card"><div class="card-title">🏥 Conditions</div><div class="profile-tag-row">${condTags}</div></div>` : ''}
     ${restrTags ? `<div class="card"><div class="card-title">🚫 Dietary Restrictions</div><div class="profile-tag-row">${restrTags}</div></div>` : ''}
-    ${senseTags ? `<div class="card"><div class="card-title">✨ Sensory Preferences</div><div class="profile-tag-row">${senseTags}</div></div>` : ''}
+    ${senseTags ? `<div class="card"><div class="card-title">🚫 Sensory Aversions</div><div class="profile-tag-row">${senseTags}</div></div>` : ''}
     ${p.always_avoid ? `<div class="card"><div class="card-title">⛔ Always Avoid</div><div class="body-text-muted">${escHtml(p.always_avoid)}</div></div>` : ''}
     ${p.safe_foods   ? `<div class="card"><div class="card-title">✅ Safe Foods</div><div class="body-text-muted">${escHtml(p.safe_foods)}</div></div>` : ''}
     <button class="profile-action-btn edit" onclick="editProfile()">✏️ Edit My Profile</button>
@@ -2737,8 +2737,8 @@ function renderOnboardStep() {
   } else if (MiraState.onboard.onboardStep === 4) {
     body.innerHTML = `
       <span class="ob-emoji">✨</span>
-      <div class="ob-title">Sensory Preferences</div>
-      <div class="ob-sub">Optional — especially helpful for autism-friendly suggestions. Skip if not relevant.</div>
+      <div class="ob-title">Sensory Aversions</div>
+      <div class="ob-sub">Optional — things you DON'T like. Especially helpful for autism-friendly suggestions. Skip if not relevant.</div>
       <div class="ob-label">Texture aversions (flag dishes with these)</div>
       <div class="ob-chips">${ONBOARD_TEXTURES.map(t =>
         `<button class="ob-chip ${MiraState.onboard.onboardData.texture_aversions.includes(t)?'selected':''}" data-val="${escHtml(t)}" data-field="texture_aversions" onclick="toggleObChip(this)">${t}</button>`
@@ -2800,9 +2800,18 @@ async function completeOnboarding() {
     flavor_aversions:  [...MiraState.onboard.onboardData.flavor_aversions],
     always_avoid:      MiraState.onboard.onboardData.always_avoid.trim(),
     safe_foods:        MiraState.onboard.onboardData.safe_foods.trim(),
-    created_at:        MiraState.auth.currentProfile?.created_at || new Date().toISOString()
+    created_at:        MiraState.auth.currentProfile?.created_at || new Date().toISOString(),
+    cooking_setup:     MiraState.auth.currentProfile?.cooking_setup || 'full',
+    default_effort:    MiraState.auth.currentProfile?.default_effort || 'quick'
   };
-  await saveProfileData(profileData);
+  try {
+    await saveProfileData(profileData);
+  } catch (err) {
+    console.warn('Profile save error:', err);
+    // Save locally even if Supabase fails
+    MiraState.auth.currentProfile = { ...profileData, updated_at: new Date().toISOString() };
+    safeSetItem('mira_profile', JSON.stringify(MiraState.auth.currentProfile));
+  }
   hideOnboardOverlay();
   updateHeaderForProfile(MiraState.auth.currentProfile);
   if (document.getElementById('screen-profile').classList.contains('active')) renderProfileScreen();
