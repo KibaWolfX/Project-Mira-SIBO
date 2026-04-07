@@ -1167,6 +1167,29 @@
   [data-theme="dark"] .migraine-day-counter { background: linear-gradient(135deg, #251E30, #2D1A25); }
   [data-theme="dark"] .migraine-chip { border-color: var(--border); }
 
+  /* Caregiver Detail Modal */
+  #cg-detail-modal { display:none; position:fixed; inset:0; z-index:2000; }
+  #cg-detail-modal.visible { display:flex; flex-direction:column; justify-content:flex-end; }
+  .cg-modal-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.5); }
+  .cg-modal-sheet {
+    position:relative; z-index:1;
+    background:var(--bg); border-radius:20px 20px 0 0;
+    max-height:85vh; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    padding:0 20px 32px; animation: cg-slide-up 0.3s ease-out;
+  }
+  @keyframes cg-slide-up { from { transform:translateY(100%); } to { transform:translateY(0); } }
+  .cg-modal-header {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:16px 0; position:sticky; top:0; background:var(--bg); z-index:1;
+    border-bottom:1px solid var(--border); margin-bottom:16px;
+  }
+  .cg-modal-title { font-weight:900; font-size:1rem; }
+  .cg-modal-close { background:none; border:none; font-size:1.3rem; color:var(--text-muted); cursor:pointer; padding:4px 8px; }
+  .cg-modal-body { padding-bottom:env(safe-area-inset-bottom); }
+  .cg-detail-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border); }
+  .cg-detail-label { font-size:0.78rem; font-weight:700; color:var(--text-muted); }
+  .cg-detail-val { font-size:0.88rem; font-weight:800; }
+
   /* Nearby / Detail */
   .detail-actions-row { display: flex; gap: 4px; align-items: center; }
   .log-extra-input { height: 44px; }
@@ -2880,14 +2903,19 @@ async function handleAcceptInvite() {
   }
 }
 
+// Store patient data globally so detail views can access it
+MiraState.auth._caregiverPatients = [];
+
 function renderCaregiverDashboard(container, patients) {
+  MiraState.auth._caregiverPatients = patients;
+
   let html = `
     <div class="card meds-header-card">
       <div class="feature-title">💜 Caregiver Dashboard</div>
-      <div class="journal-feature-desc">Real-time view of your patient's health data</div>
+      <div class="journal-feature-desc">Tap any section to see full details</div>
     </div>`;
 
-  patients.forEach(patient => {
+  patients.forEach((patient, pi) => {
     const p = patient.profile || {};
     const journal = patient.journal || [];
     const meds = patient.meds || [];
@@ -2913,6 +2941,7 @@ function renderCaregiverDashboard(container, patients) {
     const topSyms = Object.entries(symFreq).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
     const sevColors = ['','var(--green)','var(--green)','var(--yellow)','var(--orange)','var(--red)'];
+    const sevLabels = ['','Minimal','Mild','Moderate','Severe','Extreme'];
 
     html += `
       <div class="card">
@@ -2928,26 +2957,29 @@ function renderCaregiverDashboard(container, patients) {
         </div>
 
         ${migraineDays > 0 ? `
-          <div class="migraine-day-counter" style="margin-bottom:12px;">
+          <div class="migraine-day-counter" style="margin-bottom:12px;cursor:pointer;" onclick="showCaregiverMigraineDetail(${pi})">
             <div class="migraine-day-count">${migraineDays}</div>
             <div class="migraine-day-label">consecutive day${migraineDays > 1 ? 's' : ''} with migraine</div>
-            ${latestEntry?.migraine ? `<div style="font-size:0.78rem;color:var(--purple);margin-top:4px;">${[latestEntry.migraine.side, latestEntry.migraine.location, latestEntry.migraine.painType].filter(Boolean).join(' · ')}${latestEntry.migraine.associated?.length ? ' · ' + latestEntry.migraine.associated.join(', ') : ''}</div>` : ''}
+            ${latestEntry?.migraine ? `<div style="font-size:0.78rem;color:var(--purple);margin-top:4px;">${[latestEntry.migraine.side, latestEntry.migraine.location, latestEntry.migraine.painType].filter(Boolean).join(' · ')}</div>` : ''}
+            <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;">Tap for migraine history →</div>
           </div>` : ''}
       </div>
 
       ${activeMeds.length ? `
-        <div class="section-label">Active Medications (${activeMeds.length})</div>
-        ${activeMeds.map(m => `
-          <div class="med-card">
+        <div class="section-label" style="cursor:pointer;" onclick="showCaregiverMedsDetail(${pi})">💊 Medications (${activeMeds.length}) <span style="font-weight:400;font-size:0.72rem;color:var(--purple);">View all →</span></div>
+        ${activeMeds.slice(0, 3).map(m => `
+          <div class="med-card" style="cursor:pointer;" onclick="showCaregiverMedsDetail(${pi})">
             <div class="med-card-header">
               <div class="med-card-name">${escHtml(m.name)}</div>
               <span class="med-card-type med-type-${m.type || 'other'}">${m.type || 'other'}</span>
             </div>
             <div class="med-card-detail">${m.dose ? escHtml(m.dose) : ''}${m.dose && m.frequency ? ' · ' : ''}${m.frequency ? escHtml(m.frequency) : ''}</div>
-          </div>`).join('')}` : ''}
+          </div>`).join('')}
+        ${activeMeds.length > 3 ? `<div style="text-align:center;padding:8px;font-size:0.82rem;font-weight:700;color:var(--purple);cursor:pointer;" onclick="showCaregiverMedsDetail(${pi})">+ ${activeMeds.length - 3} more medications</div>` : ''}
+      ` : ''}
 
       ${topSyms.length ? `
-        <div class="section-label">Top Symptoms (Last 7 Entries)</div>
+        <div class="section-label">📊 Top Symptoms (Last 7 Entries)</div>
         <div class="card">
           ${topSyms.map(([sym, count]) => `
             <div class="flex-row-between" style="padding:6px 0;border-bottom:1px solid var(--border);">
@@ -2956,23 +2988,224 @@ function renderCaregiverDashboard(container, patients) {
             </div>`).join('')}
         </div>` : ''}
 
-      <div class="section-label">Recent Journal</div>
-      ${recentEntries.length ? recentEntries.map(e => {
-        const sympStr = (e.symptoms || []).slice(0, 4).join(', ');
+      <div class="section-label" style="cursor:pointer;" onclick="showCaregiverJournalDetail(${pi})">📓 Recent Journal <span style="font-weight:400;font-size:0.72rem;color:var(--purple);">View all →</span></div>
+      ${recentEntries.length ? recentEntries.map((e, ei) => {
+        const sympStr = (e.symptoms || []).slice(0, 3).join(', ');
+        const more = (e.symptoms || []).length > 3 ? ` +${(e.symptoms||[]).length - 3}` : '';
         const migrTag = e.migraine?.active ? ' ⚡' : '';
         return `
-          <div class="history-entry">
+          <div class="history-entry" style="cursor:pointer;" onclick="showCaregiverEntryDetail(${pi},${ei})">
             <div class="history-entry-info">
               <div class="history-entry-name">${e.date}${migrTag}</div>
-              <div class="history-entry-items">${sympStr || 'No symptoms'}${e.notes ? ' · ' + escHtml(e.notes.slice(0, 50)) : ''}</div>
+              <div class="history-entry-items">${sympStr || 'No symptoms'}${more}${e.notes ? ' · 📝' : ''}</div>
             </div>
             <div class="history-entry-sev" style="background:${sevColors[e.severity]}22;color:${sevColors[e.severity]}">${e.severity}/5</div>
           </div>`;
       }).join('') : '<div class="fav-empty">No journal entries yet.</div>'}
+
+      <button class="med-add-btn" style="margin-top:12px;background:var(--purple);" onclick="initCaregiverDashboard()">🔄 Refresh Data</button>
     `;
   });
 
   container.innerHTML = html;
+}
+
+// ── CAREGIVER DETAIL VIEWS ───────────────────────────────────
+
+function showCaregiverDetailModal(title, contentHtml) {
+  let modal = document.getElementById('cg-detail-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'cg-detail-modal';
+    modal.innerHTML = `
+      <div class="cg-modal-backdrop" onclick="closeCaregiverDetail()"></div>
+      <div class="cg-modal-sheet">
+        <div class="cg-modal-header">
+          <div class="cg-modal-title" id="cg-modal-title"></div>
+          <button class="cg-modal-close" onclick="closeCaregiverDetail()">✕</button>
+        </div>
+        <div class="cg-modal-body" id="cg-modal-body"></div>
+      </div>`;
+    document.body.appendChild(modal);
+  }
+  document.getElementById('cg-modal-title').textContent = title;
+  document.getElementById('cg-modal-body').innerHTML = contentHtml;
+  modal.classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCaregiverDetail() {
+  const modal = document.getElementById('cg-detail-modal');
+  if (modal) modal.classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+function showCaregiverEntryDetail(pi, ei) {
+  const patient = MiraState.auth._caregiverPatients[pi];
+  if (!patient) return;
+  const e = patient.journal[ei];
+  if (!e) return;
+  const sevColors = ['','#4CAF50','#4CAF50','#FF9800','#FF5722','#F44336'];
+  const sevLabels = ['','Minimal','Mild','Moderate','Severe','Extreme'];
+
+  let html = `
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);">${e.date}</div>
+      <div style="font-size:2rem;font-weight:900;color:${sevColors[e.severity]};margin-top:4px;">${e.severity}/5</div>
+      <div style="font-size:0.82rem;font-weight:700;color:${sevColors[e.severity]};">${sevLabels[e.severity] || ''}</div>
+    </div>`;
+
+  if (e.migraine?.active) {
+    const m = e.migraine;
+    html += `
+      <div style="background:var(--purple)11;border:1px solid var(--purple)33;border-radius:12px;padding:14px;margin-bottom:14px;">
+        <div style="font-weight:900;font-size:0.88rem;color:var(--purple);margin-bottom:8px;">⚡ Migraine Active</div>
+        ${m.side ? `<div class="cg-detail-row"><span class="cg-detail-label">Side</span><span class="cg-detail-val">${escHtml(m.side)}</span></div>` : ''}
+        ${m.location ? `<div class="cg-detail-row"><span class="cg-detail-label">Location</span><span class="cg-detail-val">${escHtml(m.location)}</span></div>` : ''}
+        ${m.painType ? `<div class="cg-detail-row"><span class="cg-detail-label">Pain Type</span><span class="cg-detail-val">${escHtml(m.painType)}</span></div>` : ''}
+        ${m.intensity ? `<div class="cg-detail-row"><span class="cg-detail-label">Intensity</span><span class="cg-detail-val">${['','Mild','Moderate','Severe','Extreme'][m.intensity] || m.intensity}/4</span></div>` : ''}
+        ${m.associated?.length ? `<div style="margin-top:8px;"><div class="cg-detail-label" style="margin-bottom:4px;">Associated Symptoms</div><div style="display:flex;flex-wrap:wrap;gap:4px;">${m.associated.map(s => `<span class="profile-tag purple">${escHtml(s)}</span>`).join('')}</div></div>` : ''}
+        ${m.notes ? `<div style="margin-top:8px;font-size:0.82rem;color:var(--text-muted);font-style:italic;">"${escHtml(m.notes)}"</div>` : ''}
+      </div>`;
+  }
+
+  if (e.symptoms?.length) {
+    html += `
+      <div style="margin-bottom:14px;">
+        <div style="font-weight:900;font-size:0.82rem;margin-bottom:8px;">Symptoms (${e.symptoms.length})</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${e.symptoms.map(s => `<span class="profile-tag pink">${escHtml(s)}</span>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  if (e.medications_taken?.length) {
+    html += `
+      <div style="margin-bottom:14px;">
+        <div style="font-weight:900;font-size:0.82rem;margin-bottom:8px;">Medications Taken</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          ${e.medications_taken.map(m => `<span class="profile-tag green">${escHtml(m)}</span>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  if (e.notes) {
+    html += `
+      <div style="margin-bottom:14px;">
+        <div style="font-weight:900;font-size:0.82rem;margin-bottom:8px;">📝 Notes</div>
+        <div style="font-size:0.88rem;line-height:1.5;color:var(--text);background:var(--bg-card);padding:12px;border-radius:10px;border:1px solid var(--border);">${escHtml(e.notes)}</div>
+      </div>`;
+  }
+
+  showCaregiverDetailModal(`Journal — ${e.date}`, html);
+}
+
+function showCaregiverMedsDetail(pi) {
+  const patient = MiraState.auth._caregiverPatients[pi];
+  if (!patient) return;
+  const meds = patient.meds || [];
+  const activeMeds = meds.filter(m => m.active);
+  const inactiveMeds = meds.filter(m => !m.active);
+
+  let html = '';
+  if (activeMeds.length) {
+    html += `<div style="font-weight:900;font-size:0.82rem;margin-bottom:10px;color:var(--green);">Active (${activeMeds.length})</div>`;
+    activeMeds.forEach(m => {
+      html += `
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <div style="font-weight:900;font-size:0.95rem;">${escHtml(m.name)}</div>
+            <span class="med-card-type med-type-${m.type || 'other'}">${m.type || 'other'}</span>
+          </div>
+          ${m.dose ? `<div class="cg-detail-row"><span class="cg-detail-label">Dose</span><span class="cg-detail-val">${escHtml(m.dose)}</span></div>` : ''}
+          ${m.frequency ? `<div class="cg-detail-row"><span class="cg-detail-label">Frequency</span><span class="cg-detail-val">${escHtml(m.frequency)}</span></div>` : ''}
+          ${m.start_date ? `<div class="cg-detail-row"><span class="cg-detail-label">Started</span><span class="cg-detail-val">${m.start_date}</span></div>` : ''}
+        </div>`;
+    });
+  }
+
+  if (inactiveMeds.length) {
+    html += `<div style="font-weight:900;font-size:0.82rem;margin:16px 0 10px;color:var(--text-muted);">Inactive (${inactiveMeds.length})</div>`;
+    inactiveMeds.forEach(m => {
+      html += `
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;opacity:0.6;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-weight:800;font-size:0.9rem;">${escHtml(m.name)}</div>
+            <span class="med-card-type med-type-${m.type || 'other'}">${m.type || 'other'}</span>
+          </div>
+          ${m.dose ? `<div style="font-size:0.82rem;color:var(--text-muted);margin-top:4px;">${escHtml(m.dose)}${m.frequency ? ' · ' + escHtml(m.frequency) : ''}</div>` : ''}
+        </div>`;
+    });
+  }
+
+  if (!meds.length) html = '<div class="fav-empty">No medications recorded yet.</div>';
+
+  const pName = patient.profile?.name || 'Patient';
+  showCaregiverDetailModal(`${pName}'s Medications`, html);
+}
+
+function showCaregiverMigraineDetail(pi) {
+  const patient = MiraState.auth._caregiverPatients[pi];
+  if (!patient) return;
+  const migraineEntries = patient.journal.filter(e => e.migraine?.active);
+  const sevColors = ['','#4CAF50','#4CAF50','#FF9800','#FF5722','#F44336'];
+
+  let html = `<div style="text-align:center;margin-bottom:16px;">
+    <div style="font-size:2.5rem;font-weight:900;color:var(--purple);">${migraineEntries.length}</div>
+    <div style="font-size:0.82rem;font-weight:700;color:var(--text-muted);">migraine days recorded</div>
+  </div>`;
+
+  if (migraineEntries.length) {
+    html += migraineEntries.map(e => {
+      const m = e.migraine;
+      const details = [m.side, m.location, m.painType].filter(Boolean).join(' · ');
+      const intensity = m.intensity ? ['','Mild','Moderate','Severe','Extreme'][m.intensity] : '';
+      return `
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;" onclick="closeCaregiverDetail();setTimeout(()=>showCaregiverEntryDetail(${pi},${patient.journal.indexOf(e)}),300)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <div style="font-weight:900;font-size:0.88rem;">⚡ ${e.date}</div>
+            <div style="font-size:0.82rem;font-weight:800;color:${sevColors[e.severity]}">${e.severity}/5</div>
+          </div>
+          ${details ? `<div style="font-size:0.82rem;color:var(--purple);font-weight:600;">${details}</div>` : ''}
+          ${intensity ? `<div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">Intensity: ${intensity}</div>` : ''}
+          ${m.associated?.length ? `<div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">${m.associated.slice(0, 3).join(', ')}</div>` : ''}
+        </div>`;
+    }).join('');
+  }
+
+  const pName = patient.profile?.name || 'Patient';
+  showCaregiverDetailModal(`${pName}'s Migraine History`, html);
+}
+
+function showCaregiverJournalDetail(pi) {
+  const patient = MiraState.auth._caregiverPatients[pi];
+  if (!patient) return;
+  const journal = patient.journal || [];
+  const sevColors = ['','#4CAF50','#4CAF50','#FF9800','#FF5722','#F44336'];
+
+  let html = `<div style="text-align:center;margin-bottom:16px;">
+    <div style="font-size:0.82rem;font-weight:700;color:var(--text-muted);">${journal.length} entries</div>
+  </div>`;
+
+  journal.forEach((e, ei) => {
+    const sympStr = (e.symptoms || []).slice(0, 4).join(', ');
+    const more = (e.symptoms || []).length > 4 ? ` +${(e.symptoms||[]).length - 4}` : '';
+    const migrTag = e.migraine?.active ? ' ⚡' : '';
+    html += `
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;" onclick="closeCaregiverDetail();setTimeout(()=>showCaregiverEntryDetail(${pi},${ei}),300)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <div style="font-weight:900;font-size:0.88rem;">${e.date}${migrTag}</div>
+          <div style="font-weight:800;font-size:0.88rem;color:${sevColors[e.severity]}">${e.severity}/5</div>
+        </div>
+        <div style="font-size:0.82rem;color:var(--text-muted);">${sympStr || 'No symptoms'}${more}</div>
+        ${e.notes ? `<div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;font-style:italic;">📝 ${escHtml(e.notes.slice(0, 80))}${e.notes.length > 80 ? '...' : ''}</div>` : ''}
+      </div>`;
+  });
+
+  if (!journal.length) html = '<div class="fav-empty">No journal entries yet.</div>';
+
+  const pName = patient.profile?.name || 'Patient';
+  showCaregiverDetailModal(`${pName}'s Journal`, html);
 }
 
 // Patient: generate invite code for caregiver
