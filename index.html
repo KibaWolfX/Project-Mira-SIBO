@@ -2676,6 +2676,48 @@ async function deleteJournalFromSupabase(date) {
   } catch (err) { console.warn('Journal delete sync failed:', err); }
 }
 
+async function syncAllJournalToSupabase() {
+  const sb = getSB();
+  if (!sb || !MiraState.auth.currentUser) return 0;
+  const entries = loadJournalLog();
+  let synced = 0;
+  for (const entry of entries) {
+    try {
+      await sb.from('journal_entries').upsert({
+        user_id: MiraState.auth.currentUser.id,
+        date: entry.date,
+        severity: entry.severity,
+        symptoms: entry.symptoms || [],
+        notes: entry.notes || '',
+        medications_taken: entry.medications_taken || [],
+        migraine: entry.migraine || null,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id,date' });
+      synced++;
+    } catch (err) { console.warn('Journal bulk sync entry failed:', err); }
+  }
+  return synced;
+}
+
+async function syncAllDataToSupabase() {
+  const btn = document.getElementById('sync-all-btn');
+  const result = document.getElementById('sync-result');
+  if (btn) { btn.disabled = true; btn.textContent = 'Syncing...'; }
+  if (result) result.textContent = '';
+  try {
+    const journalCount = await syncAllJournalToSupabase();
+    await syncAllMedsToSupabase();
+    const meds = loadMeds();
+    if (result) {
+      result.textContent = `✅ Synced ${journalCount} journal entries and ${meds.length} medications`;
+      result.style.color = 'var(--green)';
+    }
+  } catch (err) {
+    if (result) { result.textContent = '❌ Sync failed: ' + err.message; result.style.color = 'var(--red)'; }
+  }
+  if (btn) { btn.disabled = false; btn.textContent = '🔄 Sync My Data Now'; }
+}
+
 async function syncAllMedsToSupabase() {
   const sb = getSB();
   if (!sb || !MiraState.auth.currentUser) return;
@@ -2787,6 +2829,9 @@ async function initCaregiverDashboard() {
       sb.from('journal_entries').select('*').eq('user_id', pid).order('date', { ascending: false }).limit(30),
       sb.from('medications').select('*').eq('user_id', pid)
     ]);
+    console.log('[Caregiver] Profile:', profileRes.data, profileRes.error);
+    console.log('[Caregiver] Journal:', journalRes.data?.length, 'entries', journalRes.error);
+    console.log('[Caregiver] Meds:', medsRes.data?.length, 'meds', medsRes.error);
     patients.push({
       id: pid,
       profile: profileRes.data,
@@ -2873,7 +2918,7 @@ function renderCaregiverDashboard(container, patients) {
       <div class="card">
         <div class="flex-row-between" style="margin-bottom:12px;">
           <div>
-            <div class="feature-title">${escHtml(p.name || 'Patient')}</div>
+            <div class="feature-title">${escHtml(p.name || 'Your Patient')}</div>
             <div class="journal-feature-desc">${(p.conditions || []).join(', ') || 'No conditions listed'}</div>
           </div>
           <div style="text-align:right;">
@@ -2948,6 +2993,12 @@ async function showPatientInvite() {
   html += `
     <button class="med-add-btn" onclick="generateAndShowInvite()">Generate New Invite Code</button>
     <div id="invite-display"></div>
+    <div class="card" style="text-align:center;padding:20px;margin-top:12px;">
+      <div class="feature-title" style="font-size:0.88rem;">🔄 Sync Data for Caregiver</div>
+      <div class="journal-feature-desc" style="margin-bottom:12px;">Push all your journal entries and medications to the cloud so your caregiver can see them.</div>
+      <button class="med-add-btn" id="sync-all-btn" onclick="syncAllDataToSupabase()" style="background:var(--green)">🔄 Sync My Data Now</button>
+      <div id="sync-result" style="margin-top:8px;font-size:0.82rem;font-weight:700;"></div>
+    </div>
     <div style="text-align:center;margin-top:12px;">
       <button style="background:none;border:none;color:var(--text-muted);font-size:0.78rem;font-weight:600;text-decoration:underline;cursor:pointer;" onclick="setCaregiverRole('caregiver')">I'm actually a caregiver — enter a code instead</button>
     </div>`;
