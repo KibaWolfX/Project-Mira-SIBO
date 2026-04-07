@@ -894,6 +894,7 @@
     display: flex; align-items: center; justify-content: center; gap: 10px; transition: background 0.15s;
   }
   .auth-google-btn:active { background: #f9f9f9; }
+  .auth-recommended-note { text-align: center; font-size: 0.72rem; font-weight: 600; color: #34A853; margin: -4px 0 8px; }
   .auth-footer-note { text-align: center; font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin-top: 16px; line-height: 1.5; }
   .auth-sent-state { display: none; text-align: center; padding: 8px 0; }
   .auth-sent-state.visible { display: block; }
@@ -1236,11 +1237,8 @@
   </div>
   <div class="auth-card">
     <div id="auth-form-state">
-      <div class="auth-section-label">Sign in with your email</div>
-      <input class="auth-email-input" type="email" id="auth-email-input" placeholder="your@email.com" autocomplete="email">
-      <button class="auth-primary-btn" id="auth-magic-btn" onclick="sendMagicLink()">✉️ Send Magic Link</button>
-      <div class="auth-or-divider">or</div>
-      <button class="auth-google-btn" onclick="signInWithGoogle()">
+      <div class="auth-section-label">Sign in to your account</div>
+      <button class="auth-google-btn" onclick="signInWithGoogle()" style="margin-bottom:12px">
         <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
           <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
           <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z" fill="#34A853"/>
@@ -1249,12 +1247,16 @@
         </svg>
         Continue with Google
       </button>
-      <p class="auth-footer-note">Free · Secure · Just you and your caregiver<br>No password needed with magic link</p>
+      <p class="auth-recommended-note">Recommended — stays signed in automatically</p>
+      <div class="auth-or-divider">or use email</div>
+      <input class="auth-email-input" type="email" id="auth-email-input" placeholder="your@email.com" autocomplete="email">
+      <button class="auth-primary-btn" id="auth-magic-btn" onclick="sendMagicLink()">✉️ Send Magic Link</button>
+      <p class="auth-footer-note">Free · Secure · Just you and your caregiver</p>
     </div>
     <div class="auth-sent-state" id="auth-sent-state">
       <span class="auth-sent-emoji">📬</span>
       <div class="auth-sent-title">Check your inbox!</div>
-      <div class="auth-sent-body">We sent a magic link to<br><strong id="auth-sent-to"></strong><br><br>Tap the link in the email to sign in — no password needed.</div>
+      <div class="auth-sent-body">We sent a magic link to<br><strong id="auth-sent-to"></strong><br><br>Tap the link in the email to sign in.<br><br><span style="font-size:0.82rem;color:var(--text-muted)">On iPhone: if the link opens in Safari instead of the app, just come back here — your sign-in will sync automatically.</span></div>
       <button class="auth-resend-btn" onclick="resetAuthForm()">← Use a different email</button>
     </div>
   </div>
@@ -2529,7 +2531,14 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 function getSB() {
   if (!MiraState.auth._sbClient && window.supabase && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
-    MiraState.auth._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    MiraState.auth._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storage: localStorage
+      }
+    });
   }
   return MiraState.auth._sbClient;
 }
@@ -2546,6 +2555,8 @@ function resetAuthForm() {
   btn.textContent = '✉️ Send Magic Link';
   btn.disabled = false;
 }
+
+let magicLinkPollTimer = null;
 
 async function sendMagicLink() {
   const emailEl = document.getElementById('auth-email-input');
@@ -2572,6 +2583,33 @@ async function sendMagicLink() {
   document.getElementById('auth-form-state').style.display = 'none';
   document.getElementById('auth-sent-to').textContent = email;
   document.getElementById('auth-sent-state').classList.add('visible');
+  startMagicLinkPoll();
+}
+
+// iOS PWA fix: magic link opens in Safari, not the PWA.
+// Poll for session so when user returns to the PWA after clicking
+// the link in Safari, the session is detected via Supabase's token refresh.
+function startMagicLinkPoll() {
+  stopMagicLinkPoll();
+  let attempts = 0;
+  const maxAttempts = 120; // 10 minutes at 5s intervals
+  magicLinkPollTimer = setInterval(async () => {
+    attempts++;
+    if (attempts > maxAttempts) { stopMagicLinkPoll(); return; }
+    const sb = getSB();
+    if (!sb) return;
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session) {
+        stopMagicLinkPoll();
+        // onAuthStateChange will handle the rest
+      }
+    } catch {}
+  }, 5000);
+}
+
+function stopMagicLinkPoll() {
+  if (magicLinkPollTimer) { clearInterval(magicLinkPollTimer); magicLinkPollTimer = null; }
 }
 
 async function signInWithGoogle() {
@@ -2773,6 +2811,9 @@ function renderCaregiverEmpty(container) {
       <input id="invite-code-input" class="ob-text-input" type="text" placeholder="Enter code (e.g. MIRA-ABC123)" style="text-transform:uppercase;text-align:center;font-size:1.1rem;letter-spacing:2px;">
       <button class="med-add-btn" style="margin-top:12px;" onclick="handleAcceptInvite()">Connect</button>
       <div id="invite-result" style="margin-top:8px;font-size:0.82rem;font-weight:700;"></div>
+    </div>
+    <div style="text-align:center;margin-top:8px;">
+      <button style="background:none;border:none;color:var(--text-muted);font-size:0.78rem;font-weight:600;text-decoration:underline;cursor:pointer;" onclick="setCaregiverRole('patient')">I'm actually a patient — switch view</button>
     </div>`;
 }
 
@@ -2906,7 +2947,10 @@ async function showPatientInvite() {
 
   html += `
     <button class="med-add-btn" onclick="generateAndShowInvite()">Generate New Invite Code</button>
-    <div id="invite-display"></div>`;
+    <div id="invite-display"></div>
+    <div style="text-align:center;margin-top:12px;">
+      <button style="background:none;border:none;color:var(--text-muted);font-size:0.78rem;font-weight:600;text-decoration:underline;cursor:pointer;" onclick="setCaregiverRole('caregiver')">I'm actually a caregiver — enter a code instead</button>
+    </div>`;
 
   container.innerHTML = html;
 }
@@ -2933,9 +2977,42 @@ function openCaregiverScreen() {
   const role = MiraState.auth.currentProfile?.role;
   if (role === 'caregiver') {
     initCaregiverDashboard();
-  } else {
+  } else if (role === 'patient') {
     showPatientInvite();
+  } else {
+    // Role not set — show a chooser
+    showCaregiverRoleChooser();
   }
+}
+
+function showCaregiverRoleChooser() {
+  const container = document.getElementById('caregiver-content');
+  container.innerHTML = `
+    <div class="card meds-header-card">
+      <div class="feature-title">💜 Caregiver Connection</div>
+      <div class="journal-feature-desc">How would you like to use this feature?</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px;">
+      <button class="med-add-btn" style="margin-bottom:12px;width:100%" onclick="setCaregiverRole('caregiver')">
+        🐺 I'm a Caregiver — enter a patient's code
+      </button>
+      <button class="med-add-btn" style="width:100%;background:var(--accent)" onclick="setCaregiverRole('patient')">
+        💜 I'm a Patient — share my data
+      </button>
+    </div>`;
+}
+
+async function setCaregiverRole(role) {
+  if (MiraState.auth.currentProfile) {
+    MiraState.auth.currentProfile.role = role;
+    localStorage.setItem('mira_profile', JSON.stringify(MiraState.auth.currentProfile));
+    const sb = getSB();
+    if (sb && MiraState.auth.currentUser) {
+      try { await sb.from('profiles').upsert({ id: MiraState.auth.currentUser.id, role }); } catch {}
+    }
+  }
+  updateCaregiverMenuBtn();
+  openCaregiverScreen();
 }
 
 function updateCaregiverMenuBtn() {
@@ -3216,6 +3293,20 @@ async function initApp() {
 
   MiraState.auth.authConfigured = true;
 
+  // If magic link landed here with hash tokens, let Supabase extract them
+  if (window.location.hash && window.location.hash.includes('access_token')) {
+    try {
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      const refreshToken = hashParams.get('refresh_token');
+      if (accessToken && refreshToken) {
+        await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+        // Clean URL hash so it doesn't linger
+        history.replaceState(null, '', window.location.pathname);
+      }
+    } catch (e) { console.warn('Token extraction failed:', e); }
+  }
+
   sb.auth.onAuthStateChange(async (event, session) => {
     if (session) {
       MiraState.auth.currentUser = session.user;
@@ -3238,6 +3329,20 @@ async function initApp() {
 
   const { data: { session } } = await sb.auth.getSession();
   if (!session) showAuthOverlay();
+
+  // iOS PWA: when user returns from Safari after clicking magic link,
+  // immediately re-check session (covers the case where token landed in
+  // shared cookie/session storage rather than isolated PWA localStorage)
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible' && !MiraState.auth.currentUser) {
+      try {
+        const { data: { session: s } } = await sb.auth.getSession();
+        if (s) {
+          // onAuthStateChange will fire and handle login
+        }
+      } catch {}
+    }
+  });
 }
 
 // ── INIT ──────────────────────────────────────────────────────
