@@ -1134,6 +1134,38 @@
   .grocery-total-mid { background: linear-gradient(135deg, #FFF5D6, #FFE4DA); }
   .grocery-total-rich { background: linear-gradient(135deg, #EEE5FF, #FFE0F0); }
 
+  /* Symptom Categories (collapsible) */
+  .symptom-cat { margin-bottom: 8px; }
+  .symptom-cat-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: var(--card); border: 1.5px solid var(--border); border-radius: 14px; cursor: pointer; font-size: 0.85rem; font-weight: 800; color: var(--text); }
+  .symptom-cat-header .cat-count { font-size: 0.72rem; font-weight: 700; color: var(--pink); background: var(--pink-light); padding: 2px 8px; border-radius: 10px; margin-left: auto; margin-right: 8px; }
+  .symptom-cat-header .cat-arrow { font-size: 0.7rem; color: var(--text-muted); transition: transform 0.2s; }
+  .symptom-cat.open .cat-arrow { transform: rotate(180deg); }
+  .symptom-cat-body { display: none; padding: 8px 4px 4px; }
+  .symptom-cat.open .symptom-cat-body { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* Migraine Tracker */
+  .migraine-panel { background: var(--card); border: 1.5px solid var(--purple); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; }
+  .migraine-panel-title { font-size: 0.92rem; font-weight: 900; color: var(--purple); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .migraine-day-counter { background: linear-gradient(135deg, var(--purple-light), var(--pink-light)); border-radius: 14px; padding: 12px 16px; margin-bottom: 12px; text-align: center; }
+  .migraine-day-count { font-size: 1.8rem; font-weight: 900; color: var(--purple); }
+  .migraine-day-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); }
+  .migraine-desc-row { margin-bottom: 10px; }
+  .migraine-desc-label { font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 4px; }
+  .migraine-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .migraine-chip { padding: 6px 12px; border-radius: 10px; border: 1.5px solid var(--border); background: none; font-family: inherit; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); cursor: pointer; }
+  .migraine-chip.active { border-color: var(--purple); background: var(--purple-light); color: var(--purple); }
+  .migraine-intensity-row { display: flex; gap: 6px; margin-top: 8px; }
+  .migraine-int-chip { flex: 1; padding: 8px 4px; border-radius: 10px; border: 1.5px solid var(--border); background: none; font-family: inherit; font-size: 0.78rem; font-weight: 800; color: var(--text-muted); cursor: pointer; text-align: center; }
+  .migraine-int-chip.active { color: white; border-color: transparent; }
+  .migraine-int-1.active { background: var(--green); }
+  .migraine-int-2.active { background: var(--yellow); }
+  .migraine-int-3.active { background: var(--orange); }
+  .migraine-int-4.active { background: var(--red); }
+  [data-theme="dark"] .symptom-cat-header { background: var(--card); border-color: var(--border); }
+  [data-theme="dark"] .migraine-panel { background: var(--card); }
+  [data-theme="dark"] .migraine-day-counter { background: linear-gradient(135deg, #251E30, #2D1A25); }
+  [data-theme="dark"] .migraine-chip { border-color: var(--border); }
+
   /* Nearby / Detail */
   .detail-actions-row { display: flex; gap: 4px; align-items: center; }
   .log-extra-input { height: 44px; }
@@ -2873,6 +2905,21 @@ initApp(); // Entry point: auth check → profile check → app
 // ── JOURNAL ──────────────────────────────────────────────────
 const SYMPTOMS = ['Bloating','Gas','Cramping','Nausea','Fatigue','Brain Fog','Constipation','Diarrhea','Acid Reflux','Headache'];
 
+const SYMPTOM_CATEGORIES = [
+  { id: 'digestive', label: '🫄 Digestive', symptoms: ['Bloating','Gas','Cramping','Nausea','Diarrhea','Constipation','Acid Reflux','Abdominal Pain','Early Satiety','Abdominal Distension','Stomach Gurgling','Loss of Appetite','Vomiting'] },
+  { id: 'head', label: '🧠 Head & Neuro', symptoms: ['Headache','Brain Fog','Dizziness','Difficulty Concentrating','Light Sensitivity','Sound Sensitivity','Numbness/Tingling','Vision Changes'] },
+  { id: 'migraine', label: '⚡ Migraine Detail', symptoms: ['Migraine Active','Aura','Jaw Pain','Ocular Haze','Neck Stiffness','Scalp Tenderness','Eye Pain','Sinus Pressure'] },
+  { id: 'energy', label: '🔋 Energy & Sleep', symptoms: ['Fatigue','Low Energy','Post-Meal Fatigue','Insomnia','Restless Sleep','Daytime Sleepiness','Exercise Intolerance'] },
+  { id: 'pain', label: '💢 Pain', symptoms: ['Joint Pain','Muscle Aches','Back Pain','Chest Tightness','Pelvic Pain','Shoulder Pain'] },
+  { id: 'mood', label: '💭 Mood', symptoms: ['Anxiety','Irritability','Depression','Mood Swings','Panic','Overwhelm','Emotional Dysregulation'] },
+  { id: 'skin', label: '🧴 Skin & Other', symptoms: ['Rash','Acne','Eczema Flare','Hives','Flushing','Heart Palpitations','Shortness of Breath','Sweating'] },
+];
+
+// Migraine tracking descriptors
+const MIGRAINE_SIDE = ['Left','Right','Both','Behind Eyes'];
+const MIGRAINE_LOCATION = ['Front','Back','Banded','Top','Temple'];
+const MIGRAINE_PAIN_TYPE = ['Spikey','Lightning','Hammer','Throbbing','Pressure','Stabbing','Dull Ache'];
+
 // MiraState.journal._journalCache is now in MiraState.journal
 function loadJournalLog() {
   if (MiraState.journal._journalCache) return MiraState.journal._journalCache;
@@ -2902,13 +2949,15 @@ function renderJournalScreen() {
     <div class="section-label mt-20">Past Entries</div>
     ${log.slice(0,30).map(e => {
       const sympList = (e.symptoms||[]).join(', ') || 'No symptoms logged';
+      const migraineTag = e.migraine?.active ? `<span style="font-size:0.72rem;font-weight:800;color:var(--purple);background:var(--purple-light);padding:2px 8px;border-radius:8px;margin-left:6px;">⚡ Migraine${e.migraine.intensity ? ' ' + ['','Mild','Mod','Sev','Ext'][e.migraine.intensity] : ''}</span>` : '';
       return `
       <div class="restaurant-card" onclick="openJournalEntry('${e.date}')">
         <div class="flex-row-between">
-          <div class="journal-entry-date">${e.date}</div>
+          <div class="journal-entry-date">${e.date}${migraineTag}</div>
           <div class="journal-entry-severity">${severityDot(e.severity)}Severity ${e.severity||'—'}/5</div>
         </div>
         <div class="small-text-muted-mt4">${escHtml(sympList)}</div>
+        ${e.migraine?.active ? `<div class="small-text-muted-mt4" style="color:var(--purple);">${[e.migraine.side, e.migraine.location, e.migraine.painType].filter(Boolean).join(' · ')}${e.migraine.associated?.length ? ' · ' + e.migraine.associated.join(', ') : ''}</div>` : ''}
         ${e.notes ? `<div class="small-text-body-italic">"${escHtml(e.notes.slice(0,80))}${e.notes.length>80?'…':''}"</div>` : ''}
       </div>`;
     }).join('')}
@@ -2954,12 +3003,25 @@ function openJournalEntry(date) {
     </div>
 
     <div class="section-label">Symptoms experienced</div>
-    <div class="flex-wrap-gap">
-      ${SYMPTOMS.map(s => `
-        <button class="post-filter-chip ${(entry.symptoms||[]).includes(s) ? 'active' : ''}"
-          onclick="this.classList.toggle('active')">${s}</button>
-      `).join('')}
-    </div>
+    ${SYMPTOM_CATEGORIES.map(cat => {
+      const activeCount = cat.symptoms.filter(s => (entry.symptoms||[]).includes(s)).length;
+      return `
+      <div class="symptom-cat ${activeCount ? 'open' : ''}" id="scat-${cat.id}">
+        <div class="symptom-cat-header" onclick="document.getElementById('scat-${cat.id}').classList.toggle('open')">
+          <span>${cat.label}</span>
+          ${activeCount ? `<span class="cat-count">${activeCount}</span>` : ''}
+          <span class="cat-arrow">▼</span>
+        </div>
+        <div class="symptom-cat-body">
+          ${cat.symptoms.map(s => `
+            <button class="post-filter-chip symptom-chip ${(entry.symptoms||[]).includes(s) ? 'active' : ''}"
+              onclick="this.classList.toggle('active');updateCatCount('${cat.id}')">${s}</button>
+          `).join('')}
+        </div>
+      </div>`;
+    }).join('')}
+
+    ${buildMigrainePanel(entry, date)}
 
     ${mealLog.length ? `
       <div class="section-label">Meals logged today</div>
@@ -2985,14 +3047,144 @@ function openJournalEntry(date) {
   `;
 }
 
+function updateCatCount(catId) {
+  const cat = document.getElementById('scat-' + catId);
+  if (!cat) return;
+  const count = cat.querySelectorAll('.symptom-chip.active').length;
+  const badge = cat.querySelector('.cat-count');
+  if (count && badge) badge.textContent = count;
+  else if (count && !badge) {
+    const header = cat.querySelector('.symptom-cat-header .cat-arrow');
+    header.insertAdjacentHTML('beforebegin', `<span class="cat-count">${count}</span>`);
+  } else if (!count && badge) badge.remove();
+}
+
+function buildMigrainePanel(entry, date) {
+  const m = entry.migraine || {};
+  const dayCount = getMigraineDayCount(date);
+
+  return `
+    <div class="migraine-panel" id="migraine-panel">
+      <div class="migraine-panel-title">⚡ Migraine Tracker</div>
+      ${dayCount > 0 ? `
+        <div class="migraine-day-counter">
+          <div class="migraine-day-count">${dayCount}</div>
+          <div class="migraine-day-label">consecutive day${dayCount > 1 ? 's' : ''} with migraine</div>
+        </div>` : ''}
+
+      <div class="migraine-desc-row">
+        <div class="migraine-desc-label">Active today?</div>
+        <div class="migraine-chips">
+          <button class="migraine-chip ${m.active === true ? 'active' : ''}" data-mfield="active" data-mval="yes"
+            onclick="toggleMigraineActive(this)">Yes</button>
+          <button class="migraine-chip ${m.active === false ? 'active' : ''}" data-mfield="active" data-mval="no"
+            onclick="toggleMigraineActive(this)">No</button>
+        </div>
+      </div>
+
+      <div id="migraine-details" style="display:${m.active ? 'block' : 'none'};">
+        <div class="migraine-desc-row">
+          <div class="migraine-desc-label">Side</div>
+          <div class="migraine-chips">
+            ${MIGRAINE_SIDE.map(s => `<button class="migraine-chip m-side ${m.side === s ? 'active' : ''}"
+              onclick="selectMigraineOption('m-side', this)">${s}</button>`).join('')}
+          </div>
+        </div>
+        <div class="migraine-desc-row">
+          <div class="migraine-desc-label">Location</div>
+          <div class="migraine-chips">
+            ${MIGRAINE_LOCATION.map(l => `<button class="migraine-chip m-loc ${m.location === l ? 'active' : ''}"
+              onclick="selectMigraineOption('m-loc', this)">${l}</button>`).join('')}
+          </div>
+        </div>
+        <div class="migraine-desc-row">
+          <div class="migraine-desc-label">Pain type</div>
+          <div class="migraine-chips">
+            ${MIGRAINE_PAIN_TYPE.map(p => `<button class="migraine-chip m-pain ${m.painType === p ? 'active' : ''}"
+              onclick="selectMigraineOption('m-pain', this)">${p}</button>`).join('')}
+          </div>
+        </div>
+        <div class="migraine-desc-row">
+          <div class="migraine-desc-label">Intensity</div>
+          <div class="migraine-intensity-row">
+            ${[1,2,3,4].map(n => `<button class="migraine-int-chip migraine-int-${n} ${(m.intensity||0) === n ? 'active' : ''}"
+              onclick="selectMigraineInt(this, ${n})">${['Mild','Moderate','Severe','Extreme'][n-1]}</button>`).join('')}
+          </div>
+        </div>
+        <div class="migraine-desc-row">
+          <div class="migraine-desc-label">Associated symptoms</div>
+          <div class="migraine-chips">
+            ${['Jaw Pain','Ocular Haze','Nausea','Light Sensitivity','Sound Sensitivity','Aura','Neck Stiffness','Eye Pain','Sinus Pressure','Scalp Tenderness'].map(s =>
+              `<button class="migraine-chip m-assoc ${(m.associated||[]).includes(s) ? 'active' : ''}"
+                onclick="this.classList.toggle('active')">${s}</button>`).join('')}
+          </div>
+        </div>
+        <div class="migraine-desc-row">
+          <div class="migraine-desc-label">Notes</div>
+          <textarea id="migraine-notes" class="meal-log-notes" rows="2" placeholder="Ebbs, flows, what helped...">${escHtml(m.notes || '')}</textarea>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleMigraineActive(btn) {
+  const isYes = btn.dataset.mval === 'yes';
+  document.querySelectorAll('[data-mfield="active"]').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('migraine-details').style.display = isYes ? 'block' : 'none';
+}
+
+function selectMigraineOption(cls, btn) {
+  document.querySelectorAll('.' + cls).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function selectMigraineInt(btn, val) {
+  document.querySelectorAll('.migraine-int-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function getMigraineDayCount(currentDate) {
+  const log = loadJournalLog();
+  let count = 0;
+  const d = new Date(currentDate + 'T12:00:00');
+  // Count backwards from yesterday
+  for (let i = 1; i <= 90; i++) {
+    const checkDate = new Date(d);
+    checkDate.setDate(checkDate.getDate() - i);
+    const dateStr = checkDate.toISOString().slice(0, 10);
+    const entry = log.find(e => e.date === dateStr);
+    if (entry && entry.migraine && entry.migraine.active) count++;
+    else break;
+  }
+  return count;
+}
+
+function collectMigraineData() {
+  const activeBtn = document.querySelector('[data-mfield="active"].active');
+  if (!activeBtn || activeBtn.dataset.mval !== 'yes') return null;
+
+  const side = document.querySelector('.m-side.active')?.textContent || null;
+  const location = document.querySelector('.m-loc.active')?.textContent || null;
+  const painType = document.querySelector('.m-pain.active')?.textContent || null;
+  const intBtn = document.querySelector('.migraine-int-chip.active');
+  const intMap = { 'Mild': 1, 'Moderate': 2, 'Severe': 3, 'Extreme': 4 };
+  const intensity = intBtn ? (intMap[intBtn.textContent.trim()] || null) : null;
+  const associated = [...document.querySelectorAll('.m-assoc.active')].map(b => b.textContent);
+  const notes = document.getElementById('migraine-notes')?.value.trim() || '';
+
+  return { active: true, side, location, painType, intensity, associated, notes };
+}
+
 function saveJournalEntry(date) {
   const severity = parseInt(document.querySelector('.dist-chip[data-sev].active')?.dataset.sev || '3');
-  const symptoms = [...document.querySelectorAll('.post-filter-chip.active:not(.med-check-chip)')].map(b => b.textContent);
+  const symptoms = [...document.querySelectorAll('.symptom-chip.active')].map(b => b.textContent);
   const medications_taken = [...document.querySelectorAll('.med-check-chip.active')].map(b => b.textContent.replace('💊 ', ''));
   const notes = document.getElementById('journal-notes')?.value.trim() || '';
+  const migraine = collectMigraineData();
   const log = loadJournalLog();
   const idx = log.findIndex(e => e.date === date);
-  const entry = { date, severity, symptoms, notes, medications_taken };
+  const entry = { date, severity, symptoms, notes, medications_taken, migraine };
   if (idx >= 0) log[idx] = entry; else log.unshift(entry);
   log.sort((a,b) => b.date.localeCompare(a.date));
   saveJournalLog(log);
@@ -4724,7 +4916,7 @@ window.addEventListener('offline', updateOfflineBanner);
 updateOfflineBanner();
 
 // Register service worker + force update on new versions
-const APP_VERSION = 'v4';
+const APP_VERSION = 'v5';
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
     // Check for SW updates immediately, then every 30 min
@@ -4764,6 +4956,10 @@ deepFreeze(CHECKLIST_ITEMS);
 deepFreeze(FOOD_GUIDE);
 deepFreeze(BREAKFASTS);
 deepFreeze(SYMPTOMS);
+deepFreeze(SYMPTOM_CATEGORIES);
+Object.freeze(MIGRAINE_SIDE);
+Object.freeze(MIGRAINE_LOCATION);
+Object.freeze(MIGRAINE_PAIN_TYPE);
 deepFreeze(GROCERY_CATEGORIES);
 deepFreeze(GROCERY_BASE_PRICES);
 deepFreeze(GROCERY_TIER_META);
