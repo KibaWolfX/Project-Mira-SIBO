@@ -2677,7 +2677,7 @@ async function createCaregiverInvite() {
   try {
     const { error } = await sb.from('caregiver_links').insert({
       patient_id: MiraState.auth.currentUser.id,
-      caregiver_id: MiraState.auth.currentUser.id, // placeholder, updated on accept
+      caregiver_id: null,
       invite_code: code,
       status: 'pending'
     });
