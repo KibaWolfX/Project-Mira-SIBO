@@ -1300,6 +1300,7 @@
   <button class="more-item" onclick="showScreen('pantry');loadCookingPrefs();closeMore()"><span class="more-icon">🍳</span><span>Pantry & Crave</span></button>
   <button class="more-item" onclick="initHistory();closeMore()"><span class="more-icon">📍</span><span>Restaurant History</span></button>
   <button class="more-item" onclick="initMeds();closeMore()"><span class="more-icon">💊</span><span>Medications & Supplements</span></button>
+  <button class="more-item" id="caregiver-menu-btn" onclick="openCaregiverScreen();closeMore()" style="display:none;"><span class="more-icon">💜</span><span id="caregiver-menu-label">Caregiver Dashboard</span></button>
   <button class="more-item" onclick="showProfile();closeMore()"><span class="more-icon">👤</span><span>My Profile</span></button>
   <button class="more-item" onclick="toggleDarkMode();closeMore()" id="dark-mode-btn"><span class="more-icon" id="dark-mode-icon">🌙</span><span id="dark-mode-label">Dark Mode</span></button>
 </div>
@@ -1478,6 +1479,11 @@
 <!-- ══════════════ RESTAURANT HISTORY SCREEN ══════════════ -->
 <div class="screen" id="screen-history">
   <div id="history-content"></div>
+</div>
+
+<!-- ══════════════ CAREGIVER DASHBOARD SCREEN ══════════════ -->
+<div class="screen" id="screen-caregiver">
+  <div id="caregiver-content"></div>
 </div>
 
 <!-- ══════════════ MEDICATION TRACKER SCREEN ══════════════ -->
@@ -2221,7 +2227,7 @@ function showScreen(name) {
 
   // Highlight the correct bottom nav button
   const directMap = { meal: 'meal', snacks: 'snacks', nearby: 'nearby', favorites: 'favorites' };
-  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'journal', 'pantry', 'profile', 'grocery', 'history', 'meds'];
+  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'journal', 'pantry', 'profile', 'grocery', 'history', 'meds', 'caregiver'];
   const bscreen = directMap[name] || (moreScreens.includes(name) ? 'more' : null);
   if (bscreen) {
     const btn = document.querySelector(`[data-bscreen="${bscreen}"]`);
@@ -2604,6 +2610,348 @@ async function saveProfileData(profileData) {
   }
 }
 
+// ── SUPABASE SYNC: JOURNAL & MEDICATIONS ─────────────────────
+
+async function syncJournalToSupabase(entry) {
+  const sb = getSB();
+  if (!sb || !MiraState.auth.currentUser) return;
+  try {
+    await sb.from('journal_entries').upsert({
+      user_id: MiraState.auth.currentUser.id,
+      date: entry.date,
+      severity: entry.severity,
+      symptoms: entry.symptoms || [],
+      notes: entry.notes || '',
+      medications_taken: entry.medications_taken || [],
+      migraine: entry.migraine || null,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id,date' });
+  } catch (err) { console.warn('Journal sync failed:', err); }
+}
+
+async function deleteJournalFromSupabase(date) {
+  const sb = getSB();
+  if (!sb || !MiraState.auth.currentUser) return;
+  try {
+    await sb.from('journal_entries').delete()
+      .eq('user_id', MiraState.auth.currentUser.id).eq('date', date);
+  } catch (err) { console.warn('Journal delete sync failed:', err); }
+}
+
+async function syncAllMedsToSupabase() {
+  const sb = getSB();
+  if (!sb || !MiraState.auth.currentUser) return;
+  const meds = loadMeds();
+  try {
+    // Delete all existing and re-insert (simple full sync)
+    await sb.from('medications').delete().eq('user_id', MiraState.auth.currentUser.id);
+    if (meds.length) {
+      await sb.from('medications').insert(
+        meds.map(m => ({
+          id: m.id,
+          user_id: MiraState.auth.currentUser.id,
+          name: m.name,
+          type: m.type || 'other',
+          dose: m.dose || '',
+          frequency: m.frequency || '',
+          start_date: m.startDate || null,
+          end_date: m.endDate || null,
+          active: m.active !== false,
+          updated_at: new Date().toISOString()
+        }))
+      );
+    }
+  } catch (err) { console.warn('Meds sync failed:', err); }
+}
+
+// ── CAREGIVER LINKING ────────────────────────────────────────
+
+function generateInviteCode() {
+  return 'MIRA-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
+async function createCaregiverInvite() {
+  const sb = getSB();
+  if (!sb || !MiraState.auth.currentUser) return null;
+  const code = generateInviteCode();
+  try {
+    const { error } = await sb.from('caregiver_links').insert({
+      patient_id: MiraState.auth.currentUser.id,
+      caregiver_id: MiraState.auth.currentUser.id, // placeholder, updated on accept
+      invite_code: code,
+      status: 'pending'
+    });
+    if (error) { console.warn('Invite create failed:', error); return null; }
+    return code;
+  } catch (err) { console.warn('Invite create error:', err); return null; }
+}
+
+async function acceptCaregiverInvite(code) {
+  const sb = getSB();
+  if (!sb || !MiraState.auth.currentUser) return false;
+  try {
+    // Find the pending invite
+    const { data: link } = await sb.from('caregiver_links')
+      .select('*').eq('invite_code', code).eq('status', 'pending').single();
+    if (!link) return false;
+    // Update with caregiver's ID and activate
+    const { error } = await sb.from('caregiver_links')
+      .update({ caregiver_id: MiraState.auth.currentUser.id, status: 'active', invite_code: null })
+      .eq('id', link.id);
+    return !error;
+  } catch (err) { console.warn('Invite accept error:', err); return false; }
+}
+
+async function getLinkedPatients() {
+  const sb = getSB();
+  if (!sb || !MiraState.auth.currentUser) return [];
+  try {
+    const { data } = await sb.from('caregiver_links')
+      .select('patient_id').eq('caregiver_id', MiraState.auth.currentUser.id).eq('status', 'active');
+    return (data || []).map(l => l.patient_id);
+  } catch { return []; }
+}
+
+async function getLinkedCaregivers() {
+  const sb = getSB();
+  if (!sb || !MiraState.auth.currentUser) return [];
+  try {
+    const { data } = await sb.from('caregiver_links')
+      .select('caregiver_id').eq('patient_id', MiraState.auth.currentUser.id).eq('status', 'active');
+    return (data || []).map(l => l.caregiver_id);
+  } catch { return []; }
+}
+
+// ── CAREGIVER DASHBOARD ──────────────────────────────────────
+
+async function initCaregiverDashboard() {
+  showScreen('caregiver');
+  const container = document.getElementById('caregiver-content');
+  container.innerHTML = '<div class="loading-placeholder">Loading patient data...</div>';
+
+  const sb = getSB();
+  if (!sb || !MiraState.auth.currentUser) {
+    container.innerHTML = '<div class="fav-empty">Sign in to access caregiver features.</div>';
+    return;
+  }
+
+  const patientIds = await getLinkedPatients();
+  if (!patientIds.length) {
+    renderCaregiverEmpty(container);
+    return;
+  }
+
+  // Load data for all linked patients
+  const patients = [];
+  for (const pid of patientIds) {
+    const [profileRes, journalRes, medsRes] = await Promise.all([
+      sb.from('profiles').select('*').eq('id', pid).single(),
+      sb.from('journal_entries').select('*').eq('user_id', pid).order('date', { ascending: false }).limit(30),
+      sb.from('medications').select('*').eq('user_id', pid)
+    ]);
+    patients.push({
+      id: pid,
+      profile: profileRes.data,
+      journal: journalRes.data || [],
+      meds: medsRes.data || []
+    });
+  }
+
+  renderCaregiverDashboard(container, patients);
+}
+
+function renderCaregiverEmpty(container) {
+  container.innerHTML = `
+    <div class="card meds-header-card">
+      <div class="feature-title">💜 Caregiver Dashboard</div>
+      <div class="journal-feature-desc">Connect with your patient to view their symptoms, medications, and migraine tracker in real-time.</div>
+    </div>
+    <div class="card" style="text-align:center;padding:24px;">
+      <div style="font-size:2rem;margin-bottom:12px;">🔗</div>
+      <div class="feature-title">Link to a Patient</div>
+      <div class="journal-feature-desc" style="margin-bottom:16px;">Enter the invite code your patient generated from their app.</div>
+      <input id="invite-code-input" class="ob-text-input" type="text" placeholder="Enter code (e.g. MIRA-ABC123)" style="text-transform:uppercase;text-align:center;font-size:1.1rem;letter-spacing:2px;">
+      <button class="med-add-btn" style="margin-top:12px;" onclick="handleAcceptInvite()">Connect</button>
+      <div id="invite-result" style="margin-top:8px;font-size:0.82rem;font-weight:700;"></div>
+    </div>`;
+}
+
+async function handleAcceptInvite() {
+  const input = document.getElementById('invite-code-input');
+  const result = document.getElementById('invite-result');
+  const code = input.value.trim().toUpperCase();
+  if (!code) { input.style.borderColor = 'var(--red)'; return; }
+  result.textContent = 'Connecting...';
+  result.style.color = 'var(--text-muted)';
+  const success = await acceptCaregiverInvite(code);
+  if (success) {
+    result.textContent = '✅ Connected! Loading dashboard...';
+    result.style.color = 'var(--green)';
+    setTimeout(() => initCaregiverDashboard(), 1500);
+  } else {
+    result.textContent = '❌ Invalid or expired code. Ask your patient for a new one.';
+    result.style.color = 'var(--red)';
+  }
+}
+
+function renderCaregiverDashboard(container, patients) {
+  let html = `
+    <div class="card meds-header-card">
+      <div class="feature-title">💜 Caregiver Dashboard</div>
+      <div class="journal-feature-desc">Real-time view of your patient's health data</div>
+    </div>`;
+
+  patients.forEach(patient => {
+    const p = patient.profile || {};
+    const journal = patient.journal || [];
+    const meds = patient.meds || [];
+    const activeMeds = meds.filter(m => m.active);
+    const recentEntries = journal.slice(0, 7);
+    const latestEntry = journal[0];
+
+    // Migraine day count
+    let migraineDays = 0;
+    for (const e of journal) {
+      if (e.migraine && e.migraine.active) migraineDays++;
+      else break;
+    }
+
+    // Avg severity last 7 entries
+    const avgSev = recentEntries.length
+      ? (recentEntries.reduce((s, e) => s + (e.severity || 3), 0) / recentEntries.length).toFixed(1)
+      : '—';
+
+    // Top symptoms last 7 entries
+    const symFreq = {};
+    recentEntries.forEach(e => (e.symptoms || []).forEach(s => { symFreq[s] = (symFreq[s] || 0) + 1; }));
+    const topSyms = Object.entries(symFreq).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+    const sevColors = ['','var(--green)','var(--green)','var(--yellow)','var(--orange)','var(--red)'];
+
+    html += `
+      <div class="card">
+        <div class="flex-row-between" style="margin-bottom:12px;">
+          <div>
+            <div class="feature-title">${escHtml(p.name || 'Patient')}</div>
+            <div class="journal-feature-desc">${(p.conditions || []).join(', ') || 'No conditions listed'}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:1.3rem;font-weight:900;color:${sevColors[Math.round(avgSev)] || 'var(--text)'};">${avgSev}/5</div>
+            <div style="font-size:0.68rem;font-weight:700;color:var(--text-muted);">AVG SEVERITY</div>
+          </div>
+        </div>
+
+        ${migraineDays > 0 ? `
+          <div class="migraine-day-counter" style="margin-bottom:12px;">
+            <div class="migraine-day-count">${migraineDays}</div>
+            <div class="migraine-day-label">consecutive day${migraineDays > 1 ? 's' : ''} with migraine</div>
+            ${latestEntry?.migraine ? `<div style="font-size:0.78rem;color:var(--purple);margin-top:4px;">${[latestEntry.migraine.side, latestEntry.migraine.location, latestEntry.migraine.painType].filter(Boolean).join(' · ')}${latestEntry.migraine.associated?.length ? ' · ' + latestEntry.migraine.associated.join(', ') : ''}</div>` : ''}
+          </div>` : ''}
+      </div>
+
+      ${activeMeds.length ? `
+        <div class="section-label">Active Medications (${activeMeds.length})</div>
+        ${activeMeds.map(m => `
+          <div class="med-card">
+            <div class="med-card-header">
+              <div class="med-card-name">${escHtml(m.name)}</div>
+              <span class="med-card-type med-type-${m.type || 'other'}">${m.type || 'other'}</span>
+            </div>
+            <div class="med-card-detail">${m.dose ? escHtml(m.dose) : ''}${m.dose && m.frequency ? ' · ' : ''}${m.frequency ? escHtml(m.frequency) : ''}</div>
+          </div>`).join('')}` : ''}
+
+      ${topSyms.length ? `
+        <div class="section-label">Top Symptoms (Last 7 Entries)</div>
+        <div class="card">
+          ${topSyms.map(([sym, count]) => `
+            <div class="flex-row-between" style="padding:6px 0;border-bottom:1px solid var(--border);">
+              <span style="font-weight:700;font-size:0.88rem;">${escHtml(sym)}</span>
+              <span style="font-weight:800;font-size:0.82rem;color:var(--pink);">${count}x</span>
+            </div>`).join('')}
+        </div>` : ''}
+
+      <div class="section-label">Recent Journal</div>
+      ${recentEntries.length ? recentEntries.map(e => {
+        const sympStr = (e.symptoms || []).slice(0, 4).join(', ');
+        const migrTag = e.migraine?.active ? ' ⚡' : '';
+        return `
+          <div class="history-entry">
+            <div class="history-entry-info">
+              <div class="history-entry-name">${e.date}${migrTag}</div>
+              <div class="history-entry-items">${sympStr || 'No symptoms'}${e.notes ? ' · ' + escHtml(e.notes.slice(0, 50)) : ''}</div>
+            </div>
+            <div class="history-entry-sev" style="background:${sevColors[e.severity]}22;color:${sevColors[e.severity]}">${e.severity}/5</div>
+          </div>`;
+      }).join('') : '<div class="fav-empty">No journal entries yet.</div>'}
+    `;
+  });
+
+  container.innerHTML = html;
+}
+
+// Patient: generate invite code for caregiver
+async function showPatientInvite() {
+  const container = document.getElementById('caregiver-content');
+  const existingCaregivers = await getLinkedCaregivers();
+
+  let html = `
+    <div class="card meds-header-card">
+      <div class="feature-title">🔗 Share with Caregiver</div>
+      <div class="journal-feature-desc">Generate a code so your caregiver can view your symptoms, medications, and migraine data.</div>
+    </div>`;
+
+  if (existingCaregivers.length) {
+    html += `<div class="card"><div class="feature-title" style="color:var(--green);">✅ Connected</div><div class="journal-feature-desc">Your caregiver is linked and can see your data.</div></div>`;
+  }
+
+  html += `
+    <button class="med-add-btn" onclick="generateAndShowInvite()">Generate New Invite Code</button>
+    <div id="invite-display"></div>`;
+
+  container.innerHTML = html;
+}
+
+async function generateAndShowInvite() {
+  const display = document.getElementById('invite-display');
+  display.innerHTML = '<div class="loading-placeholder">Generating...</div>';
+  const code = await createCaregiverInvite();
+  if (code) {
+    display.innerHTML = `
+      <div class="card" style="text-align:center;padding:24px;">
+        <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:8px;">Your Invite Code</div>
+        <div style="font-size:1.8rem;font-weight:900;letter-spacing:4px;color:var(--purple);margin-bottom:12px;">${code}</div>
+        <div style="font-size:0.78rem;color:var(--text-muted);">Share this code with your caregiver. They'll enter it in their Caregiver Dashboard.</div>
+        <button class="share-btn" style="margin-top:12px;" onclick="shareContent('Mira Invite Code', 'Use this code in Mira\\'s SIBO Toolkit to connect as my caregiver: ${code}')">📤 Share Code</button>
+      </div>`;
+  } else {
+    display.innerHTML = '<div class="nearby-error">Could not generate invite. Make sure you are signed in.</div>';
+  }
+}
+
+function openCaregiverScreen() {
+  showScreen('caregiver');
+  const role = MiraState.auth.currentProfile?.role;
+  if (role === 'caregiver') {
+    initCaregiverDashboard();
+  } else {
+    showPatientInvite();
+  }
+}
+
+function updateCaregiverMenuBtn() {
+  const btn = document.getElementById('caregiver-menu-btn');
+  const label = document.getElementById('caregiver-menu-label');
+  if (!btn) return;
+  const role = MiraState.auth.currentProfile?.role;
+  if (role === 'caregiver') {
+    btn.style.display = '';
+    if (label) label.textContent = 'Caregiver Dashboard';
+  } else if (MiraState.auth.currentUser) {
+    btn.style.display = '';
+    if (label) label.textContent = 'Share with Caregiver';
+  }
+}
+
 function buildSystemContext(profile) {
   if (!profile) return MIRA_PROTOCOL;
   const name         = profile.name || 'The user';
@@ -2861,6 +3209,7 @@ async function initApp() {
     const stored = localStorage.getItem('mira_profile');
     if (stored) { try { MiraState.auth.currentProfile = JSON.parse(stored); } catch {} }
     updateHeaderForProfile(MiraState.auth.currentProfile);
+    updateCaregiverMenuBtn();
     hideAuthOverlay();
     return;
   }
@@ -2877,6 +3226,7 @@ async function initApp() {
       } else {
         MiraState.auth.currentProfile = profile;
         updateHeaderForProfile(MiraState.auth.currentProfile);
+        updateCaregiverMenuBtn();
         hideAuthOverlay();
         hideOnboardOverlay();
       }
@@ -3188,12 +3538,14 @@ function saveJournalEntry(date) {
   if (idx >= 0) log[idx] = entry; else log.unshift(entry);
   log.sort((a,b) => b.date.localeCompare(a.date));
   saveJournalLog(log);
+  syncJournalToSupabase(entry);
   renderJournalScreen();
 }
 
 function deleteJournalEntry(date) {
   const log = loadJournalLog().filter(e => e.date !== date);
   saveJournalLog(log);
+  deleteJournalFromSupabase(date);
   renderJournalScreen();
 }
 
@@ -4756,7 +5108,7 @@ let editingMedId = null;
 function loadMeds() {
   try { return JSON.parse(localStorage.getItem('mira_medications') || '[]'); } catch { return []; }
 }
-function saveMeds(meds) { safeSetItem('mira_medications', JSON.stringify(meds)); }
+function saveMeds(meds) { safeSetItem('mira_medications', JSON.stringify(meds)); syncAllMedsToSupabase(); }
 
 function initMeds() {
   showScreen('meds');
@@ -4916,7 +5268,7 @@ window.addEventListener('offline', updateOfflineBanner);
 updateOfflineBanner();
 
 // Register service worker + force update on new versions
-const APP_VERSION = 'v5';
+const APP_VERSION = 'v6';
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
     // Check for SW updates immediately, then every 30 min
