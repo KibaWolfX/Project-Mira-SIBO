@@ -1,9 +1,11 @@
 // Mira's SIBO Toolkit — Service Worker
-const CACHE_VERSION = 'mira-v2';
+const CACHE_VERSION = 'mira-v4';
 const CORE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './icon-192.png',
+  './icon-512.png',
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js',
   'https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap'
 ];

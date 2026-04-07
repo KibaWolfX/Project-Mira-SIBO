@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Mira's Toolkit">
 <meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#FF7EB3">
-<link rel="apple-touch-icon" id="apple-touch-icon" href="">
+<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="description" content="Mira's SIBO Toolkit — personalized PWA for SIBO, low-histamine, and autism-friendly diet management with AI-powered restaurant safety ratings and meal planning.">
 <link rel="manifest" href="manifest.json">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,6 +43,86 @@
     --radius: 20px;
     --shadow: 0 4px 24px rgba(255,126,179,0.13);
   }
+
+  /* ── DARK MODE ── */
+  [data-theme="dark"] {
+    --green: #2ED89A; --green-light: #1A2F28; --green-mid: #2A5C4A;
+    --yellow: #FFD166; --yellow-light: #2D2A1A;
+    --orange: #FF9A7A; --orange-light: #2D221C;
+    --blue: #6CC4FF; --blue-light: #1A2530;
+    --purple: #C9A0FF; --purple-light: #251E30;
+    --pink: #FF8FC0; --pink-light: #2D1A25;
+    --mint: #5DDDB8; --mint-light: #1A2F28;
+    --red: #FF7A88;
+    --bg: #1A1025;
+    --card: #251E30;
+    --text: #F0E6F6;
+    --text-muted: #9A8AAF;
+    --border: #3D2E4A;
+    --radius: 20px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.25);
+  }
+  [data-theme="dark"] body {
+    background: #1A1025;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(255,126,179,0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(179,136,255,0.05) 0%, transparent 50%),
+      radial-gradient(circle at 60% 10%, rgba(91,184,255,0.04) 0%, transparent 40%);
+  }
+  [data-theme="dark"] .header {
+    background: linear-gradient(135deg, #B3447A 0%, #8A3A70 40%, #6B3A8A 100%);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  }
+  [data-theme="dark"] .bottom-nav {
+    background: rgba(26,16,37,0.96);
+    border-top-color: var(--border);
+    box-shadow: 0 -2px 16px rgba(0,0,0,0.2);
+  }
+  [data-theme="dark"] .more-overlay { background: rgba(0,0,0,0.5); }
+  [data-theme="dark"] .more-sheet { background: #251E30; box-shadow: 0 -8px 40px rgba(0,0,0,0.3); }
+  [data-theme="dark"] .more-item:active { background: var(--purple-light); }
+  [data-theme="dark"] .day-btn { background: var(--card); border-color: var(--border); }
+  [data-theme="dark"] .day-btn .day-num { color: var(--text); }
+  [data-theme="dark"] .day-btn.active { background: linear-gradient(135deg, #B3447A, #7A50B0); border-color: #B3447A; }
+  [data-theme="dark"] .meal-block.breakfast { background: var(--yellow-light); }
+  [data-theme="dark"] .meal-block.breakfast .meal-label { color: var(--yellow); }
+  [data-theme="dark"] .shuffle-btn { background: linear-gradient(135deg, #B3447A, #7A50B0); }
+  [data-theme="dark"] .search-bar input { background: var(--card); border-color: var(--border); color: var(--text); }
+  [data-theme="dark"] .chip { background: var(--card); border-color: var(--border); color: var(--text-muted); }
+  [data-theme="dark"] .chip.active { border-color: var(--pink); }
+  [data-theme="dark"] .snack-card { background: var(--card); }
+  [data-theme="dark"] .snack-emoji { background: var(--purple-light); }
+  [data-theme="dark"] .ob-option { background: var(--card); border-color: var(--border); color: var(--text); }
+  [data-theme="dark"] .ob-option.selected { border-color: var(--pink); }
+  [data-theme="dark"] .ob-input { background: var(--card); border-color: var(--border); color: var(--text); }
+  [data-theme="dark"] .journal-input { background: var(--card); border-color: var(--border); color: var(--text); }
+  [data-theme="dark"] .journal-chip { background: var(--card); border-color: var(--border); }
+  [data-theme="dark"] .journal-chip.active { border-color: var(--pink); background: var(--pink-light); }
+  [data-theme="dark"] .food-pill { background: var(--card); border-color: var(--border); }
+  [data-theme="dark"] .food-pill-flagged { background: var(--red); }
+  [data-theme="dark"] .price-tier-chip { background: var(--card); border-color: var(--border); }
+  [data-theme="dark"] .price-tier-chip.active { border-color: var(--pink); }
+  [data-theme="dark"] .grocery-item { background: var(--card); }
+  [data-theme="dark"] .auth-box { background: var(--card); }
+  [data-theme="dark"] .auth-input { background: #1A1025; border-color: var(--border); color: var(--text); }
+  [data-theme="dark"] .journal-meal-card { background: #1E1628; }
+  [data-theme="dark"] .food-guide-header-card { background: linear-gradient(135deg, #2D1A25, #251E30); border-color: var(--border); }
+  [data-theme="dark"] .pantry-header-card { background: linear-gradient(135deg, #2D2A1A, #251E30); border-color: var(--border); }
+  [data-theme="dark"] .journal-header-card { background: linear-gradient(135deg, #2D2A1A, #1A2F28); border-color: var(--border); }
+  [data-theme="dark"] .grocery-header-card { background: linear-gradient(135deg, #1A2F28, #251E30); border-color: var(--border); }
+  [data-theme="dark"] .grocery-total-poor { background: linear-gradient(135deg, #1A2F28, #1E2D25); }
+  [data-theme="dark"] .grocery-total-mid { background: linear-gradient(135deg, #2D2A1A, #2D221C); }
+  [data-theme="dark"] .grocery-total-rich { background: linear-gradient(135deg, #251E30, #2D1A25); }
+  [data-theme="dark"] .highlight-box { background: var(--pink-light); }
+  [data-theme="dark"] .pantry-safe-box { background: var(--green-light); }
+  [data-theme="dark"] .pantry-tip-box { background: var(--purple-light); }
+  [data-theme="dark"] .fav-filter { background: var(--card); border-color: var(--border); color: var(--text-muted); }
+  [data-theme="dark"] .fav-filter.active { border-color: var(--pink); }
+  [data-theme="dark"] .search-input-standalone { background: var(--card); border-color: var(--border); color: var(--text); }
+  [data-theme="dark"] .nearby-filters input { background: var(--card); border-color: var(--border); color: var(--text); }
+  [data-theme="dark"] .rest-card { background: var(--card); }
+  [data-theme="dark"] .detail-sheet { background: #251E30; }
+  [data-theme="dark"] .offline-banner { background: #2D221C; color: var(--orange); }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -955,6 +1035,158 @@
   /* ── OFFLINE BANNER ──────────────────────────────────────────── */
   .offline-banner { display: none; position: fixed; top: 0; left: 0; right: 0; background: var(--orange); color: white; font-size: 0.78rem; font-weight: 800; text-align: center; padding: 6px 16px; padding-top: calc(6px + env(safe-area-inset-top)); z-index: 150; }
   .offline-banner.visible { display: block; }
+
+  /* ── EXTRACTED INLINE STYLES ─────────────────────────────────── */
+
+  /* Shared / Utility */
+  .sub-label { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 6px; }
+  .sub-label-steps { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 8px 0 6px; }
+  .sub-label-section { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .section-sub-label { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); margin-bottom: 4px; }
+  .section-sub-label-spaced { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); margin: 14px 0 6px; }
+  .body-text-muted { font-size: 0.88rem; font-weight: 600; line-height: 1.6; color: var(--text-muted); }
+  .small-text-muted-mt4 { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+  .small-text-body-italic { font-size: 0.78rem; color: var(--text); margin-top: 4px; font-style: italic; }
+  .feature-title { font-size: 1rem; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+  .feature-title-lg { font-size: 1rem; font-weight: 900; color: var(--text); margin-bottom: 8px; }
+  .feature-title-mb16 { font-size: 1rem; font-weight: 900; color: var(--text); margin-bottom: 16px; }
+  .price-sub { font-size: 0.72rem; font-weight: 600; opacity: 0.7; }
+  .loading-placeholder { text-align: center; padding: 60px 20px; color: var(--text-muted); font-weight: 700; }
+  .flex-row-between { display: flex; justify-content: space-between; align-items: center; }
+  .flex-wrap-gap { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+
+  /* Meal Plan */
+  .meal-plan-action-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .shuffle-btn-inline { margin-bottom: 0; flex: 1; }
+  .share-btn-meal { min-height: 48px; padding: 8px 16px; }
+  .day-view-title { font-size: 1.2rem; margin-bottom: 14px; }
+
+  /* Convention */
+  .convention-food-text { font-size: 0.83rem; font-weight: 600; line-height: 1.7; color: var(--text); }
+  .convention-safe-label { color: var(--orange); }
+  .convention-avoid-label { color: var(--red); }
+  .convention-blue-label { color: var(--blue); }
+  .checklist-item-clickable { cursor: pointer; }
+  .checklist-item-checked { text-decoration: line-through; opacity: 0.5; }
+  .checklist-item-unchecked { text-decoration: none; opacity: 1; }
+  .checklist-reset-btn { margin-top: 12px; width: 100%; background: none; border: 1.5px solid var(--border); border-radius: 12px; padding: 10px; font-size: 0.8rem; font-weight: 800; color: var(--text-muted); cursor: pointer; font-family: inherit; }
+
+  /* Food Guide */
+  .food-guide-header-card { background: linear-gradient(135deg, #FFF0F7, #EEE5FF); border-color: #F5C0E0; margin-bottom: 16px; }
+  .food-guide-legend { font-size: 0.83rem; font-weight: 700; line-height: 1.7; color: var(--text); }
+  .histamine-toggle { margin-top: 10px; width: 100%; background: var(--orange-light); border: 1.5px solid var(--orange); border-radius: 12px; padding: 9px; font-size: 0.82rem; font-weight: 900; color: var(--orange); cursor: pointer; font-family: inherit; }
+  .histamine-toggle.active { background: var(--orange); color: white; }
+  .food-pill-flagged { background: var(--red); color: white; border: none; }
+  .food-pill-none { font-size: 0.75rem; font-weight: 600; }
+  .histamine-note { font-size: 0.74rem; color: var(--orange); font-weight: 700; padding: 8px 4px; text-align: center; }
+
+  /* Breakfast */
+  .breakfast-layout { display: flex; align-items: flex-start; gap: 14px; }
+  .snack-emoji-yellow { background: var(--yellow-light); }
+  .breakfast-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 4px 0; }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-purple { background: var(--purple-light); color: var(--purple); }
+  .snack-notes-mt4 { margin-top: 4px; }
+  .highlight-box { margin-top: 8px; padding: 8px 10px; background: var(--pink-light); border-radius: 10px; font-size: 0.78rem; font-weight: 700; color: var(--pink); }
+  .expand-btn-pink { margin-top: 10px; color: var(--pink); }
+
+  /* Pantry & Crave */
+  .pantry-header-card { background: linear-gradient(135deg, #FFF5D6, #EEE5FF); border-color: #D4BBFF; margin-bottom: 16px; }
+  .pantry-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+  .pantry-result-card { margin-top: 16px; }
+  .pantry-section-green { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--green); margin-bottom: 4px; }
+  .pantry-section-orange { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--orange); margin-bottom: 4px; }
+  .pantry-section-muted { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 6px; }
+  .pantry-item-list { font-size: 0.8rem; color: var(--text); margin-bottom: 10px; }
+  .pantry-steps-list { margin: 0; padding-left: 18px; font-size: 0.84rem; line-height: 1.7; color: var(--text); }
+  .pantry-safe-box { margin-top: 10px; padding: 8px 12px; background: var(--green-light); border-radius: 10px; font-size: 0.76rem; font-weight: 700; color: var(--green); }
+  .pantry-tip-box { margin-top: 16px; padding: 12px 14px; background: var(--purple-light); border-radius: 14px; font-size: 0.84rem; font-weight: 700; color: var(--purple); line-height: 1.6; }
+
+  /* Profile */
+  .profile-empty-card { text-align: center; padding: 32px; }
+  .profile-empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .profile-empty-title { font-weight: 800; font-size: 1.1rem; margin-bottom: 8px; }
+  .profile-empty-desc { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; line-height: 1.5; }
+  .ob-label-mt18 { margin-top: 18px; }
+
+  /* Journal */
+  .severity-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  .journal-header-card { background: linear-gradient(135deg, #FFF5D6, #D6FAF0); border-color: var(--green-mid); margin-bottom: 16px; }
+  .journal-feature-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+  .journal-entry-date { font-size: 0.88rem; font-weight: 800; color: var(--text); }
+  .journal-entry-severity { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); }
+  .journal-meal-card { background: var(--card); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.7; }
+  .journal-delete-btn-mt { margin-top: 8px; }
+
+  /* Grocery List */
+  .grocery-header-card { background: linear-gradient(135deg, #D6FAF0, #EEE5FF); border-color: var(--green-mid); margin-bottom: 16px; }
+  .grocery-subtitle { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+  .grocery-tier-sub { font-size: 0.72rem; font-weight: 600; opacity: 0.7; display: block; margin-top: 2px; }
+  .grocery-total-card { margin-bottom: 16px; text-align: center; }
+  .grocery-total-emoji { font-size: 2rem; margin-bottom: 4px; }
+  .grocery-total-amount { font-size: 1.6rem; font-weight: 900; color: var(--text); }
+  .grocery-total-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-top: 2px; }
+  .grocery-cat-price { float: right; font-size: 0.68rem; color: var(--text-muted); text-transform: none; letter-spacing: 0; }
+  .grocery-item-flex { flex: 1; }
+  .grocery-item-count { color: var(--pink); font-size: 0.72rem; font-weight: 800; }
+  .grocery-item-price { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); white-space: nowrap; }
+  .grocery-total-poor { background: linear-gradient(135deg, #D6FAF0, #E8F7EE); }
+  .grocery-total-mid { background: linear-gradient(135deg, #FFF5D6, #FFE4DA); }
+  .grocery-total-rich { background: linear-gradient(135deg, #EEE5FF, #FFE0F0); }
+
+  /* Nearby / Detail */
+  .detail-actions-row { display: flex; gap: 4px; align-items: center; }
+  .log-extra-input { height: 44px; }
+
+  /* Restaurant History */
+  .history-header-card { background: linear-gradient(135deg, #EEE5FF, #D6FAF0); border-color: var(--purple); margin-bottom: 16px; }
+  .history-stats { display: flex; gap: 10px; margin: 12px 0 0; }
+  .history-stat { flex: 1; text-align: center; padding: 10px 6px; background: var(--card); border-radius: 14px; border: 1.5px solid var(--border); }
+  .history-stat-num { font-size: 1.3rem; font-weight: 900; color: var(--pink); }
+  .history-stat-label { font-size: 0.68rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .history-date-header { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 18px 0 8px; padding-left: 2px; }
+  .history-entry { display: flex; align-items: center; gap: 12px; padding: 14px; background: var(--card); border-radius: var(--radius); border: 1.5px solid var(--border); margin-bottom: 8px; box-shadow: var(--shadow); }
+  .history-entry-icon { font-size: 1.4rem; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: var(--purple-light); flex-shrink: 0; }
+  .history-entry-info { flex: 1; min-width: 0; }
+  .history-entry-name { font-weight: 800; font-size: 0.92rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .history-entry-items { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .history-entry-sev { font-size: 0.72rem; font-weight: 800; padding: 4px 10px; border-radius: 10px; white-space: nowrap; }
+  .history-filter-row { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+  .history-filter-row::-webkit-scrollbar { display: none; }
+  [data-theme="dark"] .history-header-card { background: linear-gradient(135deg, #251E30, #1A2F28); border-color: var(--border); }
+  [data-theme="dark"] .history-stat { background: var(--card); border-color: var(--border); }
+  [data-theme="dark"] .history-entry { background: var(--card); border-color: var(--border); }
+  [data-theme="dark"] .history-entry-icon { background: var(--purple-light); }
+
+  /* Medication Tracker */
+  .meds-header-card { background: linear-gradient(135deg, #D6FAF0, #FFE0F0); border-color: var(--green-mid); margin-bottom: 16px; }
+  .med-card { padding: 14px; background: var(--card); border-radius: var(--radius); border: 1.5px solid var(--border); margin-bottom: 8px; box-shadow: var(--shadow); }
+  .med-card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+  .med-card-name { font-weight: 800; font-size: 0.95rem; color: var(--text); }
+  .med-card-type { font-size: 0.68rem; font-weight: 800; padding: 3px 10px; border-radius: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .med-type-antibiotic { background: var(--red); color: white; }
+  .med-type-prokinetic { background: var(--orange); color: white; }
+  .med-type-supplement { background: var(--green); color: white; }
+  .med-type-probiotic { background: var(--purple); color: white; }
+  .med-type-other { background: var(--text-muted); color: white; }
+  .med-card-detail { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; margin-top: 6px; }
+  .med-card-actions { display: flex; gap: 8px; margin-top: 10px; }
+  .med-card-actions button { flex: 1; padding: 8px; border-radius: 12px; font-family: inherit; font-size: 0.78rem; font-weight: 800; cursor: pointer; border: 1.5px solid var(--border); background: none; color: var(--text-muted); }
+  .med-card-actions button:first-child { border-color: var(--pink); color: var(--pink); }
+  .med-form { padding: 16px; background: var(--card); border-radius: var(--radius); border: 1.5px solid var(--pink); margin-bottom: 14px; box-shadow: var(--shadow); }
+  .med-form label { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); display: block; margin-bottom: 4px; margin-top: 12px; }
+  .med-form label:first-child { margin-top: 0; }
+  .med-form input, .med-form select { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 12px; font-family: inherit; font-size: 0.88rem; font-weight: 600; color: var(--text); background: var(--bg); }
+  .med-form-btns { display: flex; gap: 8px; margin-top: 14px; }
+  .med-form-btns button { flex: 1; padding: 12px; border-radius: 14px; font-family: inherit; font-size: 0.88rem; font-weight: 800; cursor: pointer; border: none; }
+  .med-form-save { background: linear-gradient(135deg, var(--pink), var(--purple)); color: white; }
+  .med-form-cancel { background: none; border: 1.5px solid var(--border) !important; color: var(--text-muted); }
+  .med-add-btn { width: 100%; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, var(--green), var(--mint)); color: white; border: none; font-family: inherit; font-size: 0.92rem; font-weight: 800; cursor: pointer; margin-bottom: 16px; }
+  .med-section-label { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 18px 0 8px; }
+  [data-theme="dark"] .meds-header-card { background: linear-gradient(135deg, #1A2F28, #2D1A25); border-color: var(--border); }
+  [data-theme="dark"] .med-card { background: var(--card); border-color: var(--border); }
+  [data-theme="dark"] .med-form { background: var(--card); border-color: var(--pink); }
+  [data-theme="dark"] .med-form input, [data-theme="dark"] .med-form select { background: #1A1025; border-color: var(--border); color: var(--text); }
 </style>
 </head>
 <body>
@@ -1033,18 +1265,21 @@
   <button class="more-item" onclick="showScreen('tips');closeMore()"><span class="more-icon">💜</span><span>Autism Tips</span></button>
   <button class="more-item" onclick="initJournal();closeMore()"><span class="more-icon">📓</span><span>Journal & Symptoms</span></button>
   <button class="more-item" onclick="showScreen('grocery');renderGroceryList();closeMore()"><span class="more-icon">🛒</span><span>Grocery List</span></button>
-  <button class="more-item" onclick="showScreen('pantry');closeMore()"><span class="more-icon">🍳</span><span>Pantry & Crave</span></button>
+  <button class="more-item" onclick="showScreen('pantry');loadCookingPrefs();closeMore()"><span class="more-icon">🍳</span><span>Pantry & Crave</span></button>
+  <button class="more-item" onclick="initHistory();closeMore()"><span class="more-icon">📍</span><span>Restaurant History</span></button>
+  <button class="more-item" onclick="initMeds();closeMore()"><span class="more-icon">💊</span><span>Medications & Supplements</span></button>
   <button class="more-item" onclick="showProfile();closeMore()"><span class="more-icon">👤</span><span>My Profile</span></button>
+  <button class="more-item" onclick="toggleDarkMode();closeMore()" id="dark-mode-btn"><span class="more-icon" id="dark-mode-icon">🌙</span><span id="dark-mode-label">Dark Mode</span></button>
 </div>
 
 <!-- ══════════════ MEAL PLAN SCREEN ══════════════ -->
 <div class="screen active" id="screen-meal">
 
-  <div style="display:flex;gap:8px;margin-bottom:12px;">
-    <button class="shuffle-btn" style="margin-bottom:0;flex:1;" onclick="shuffleMeals()">
+  <div class="meal-plan-action-row">
+    <button class="shuffle-btn shuffle-btn-inline" onclick="shuffleMeals()">
       <span id="shuffleIcon">🔀</span> Shuffle Meals
     </button>
-    <button class="share-btn" style="min-height:48px;padding:8px 16px;" onclick="shareContent('Meal Plan', formatMealPlanForShare())">📤 Share</button>
+    <button class="share-btn share-btn-meal" onclick="shareContent('Meal Plan', formatMealPlanForShare())">📤 Share</button>
   </div>
 
   <div class="day-selector" id="daySelector"></div>
@@ -1106,13 +1341,13 @@
   <div class="pack-section">
     <div class="pack-header">🍽️ What to Eat at the Con</div>
     <div class="card">
-      <p style="font-size:0.83rem; font-weight:600; line-height:1.7; color:var(--text)">
-        <strong style="color:var(--orange)">Safe bets at convention food courts:</strong><br>
+      <p class="convention-food-text">
+        <strong class="convention-safe-label">Safe bets at convention food courts:</strong><br>
         • <strong>Plain grilled chicken or beef</strong> — ask for no sauce<br>
         • <strong>Plain rice or salad (no dressing)</strong> — add your own olive oil packet<br>
         • <strong>Hard-boiled eggs</strong> if available<br>
         • <strong>Bring your own</strong> wherever possible — it's always the safest option<br><br>
-        <strong style="color:var(--red)">Avoid at cons:</strong><br>
+        <strong class="convention-avoid-label">Avoid at cons:</strong><br>
         • Fried foods, sauces, marinades<br>
         • Anything with "seasoning blend" (usually contains garlic/onion powder)<br>
         • Convention energy drinks and sodas<br>
@@ -1125,15 +1360,14 @@
 <!-- ══════════════ FOOD GUIDE SCREEN ══════════════ -->
 <div class="screen" id="screen-foods">
 
-  <div class="card" style="background: linear-gradient(135deg, #FFF0F7, #EEE5FF); border-color: #F5C0E0; margin-bottom:16px;">
-    <p style="font-size:0.83rem; font-weight:700; line-height:1.7; color:var(--text)">
+  <div class="card food-guide-header-card">
+    <p class="food-guide-legend">
       🟢 <strong>Green</strong> = Less fermentable, safest to eat freely<br>
       🟡 <strong>Yellow</strong> = Moderate — limit to 1 per meal (3–4 hrs apart)<br>
       🟠 <strong>Orange</strong> = Higher FODMAP — eat small amounts, watch reactions<br>
       🔴 <strong>Red</strong> = SCD Illegal — avoid on SIBO diet
     </p>
-    <button id="histamine-toggle-btn" onclick="toggleHistamineFilter()"
-      style="margin-top:10px;width:100%;background:var(--orange-light);border:1.5px solid var(--orange);border-radius:12px;padding:9px;font-size:0.82rem;font-weight:900;color:var(--orange);cursor:pointer;font-family:inherit;">
+    <button id="histamine-toggle-btn" class="histamine-toggle" onclick="toggleHistamineFilter()">
       ⚠️ Show High-Histamine Flags
     </button>
   </div>
@@ -1150,7 +1384,7 @@
   </div>
 
   <!-- FILTER CHIPS -->
-  <div class="snack-filter" style="margin-bottom:14px;">
+  <div class="snack-filter">
     <button class="filter-chip active" onclick="setBfFilter('all',this)">All</button>
     <button class="filter-chip" onclick="setBfFilter('storebought',this)">🛒 Store-Bought</button>
     <button class="filter-chip" onclick="setBfFilter('prepnight',this)">🌙 Prep Night Before</button>
@@ -1161,7 +1395,7 @@
   <div id="bfList"></div>
 
   <!-- PREP TIPS SECTION -->
-  <div style="margin-top:8px;">
+  <div class="mt-8">
     <div class="section-label">🧠 Tips for Low-Energy Mornings</div>
     <div class="sensory-card">
       <span class="tip-icon">🌙</span>
@@ -1209,11 +1443,21 @@
   <div id="journal-content"></div>
 </div>
 
+<!-- ══════════════ RESTAURANT HISTORY SCREEN ══════════════ -->
+<div class="screen" id="screen-history">
+  <div id="history-content"></div>
+</div>
+
+<!-- ══════════════ MEDICATION TRACKER SCREEN ══════════════ -->
+<div class="screen" id="screen-meds">
+  <div id="meds-content"></div>
+</div>
+
 <!-- ══════════════ PANTRY / CRAVE SCREEN ══════════════ -->
 <div class="screen" id="screen-pantry">
-  <div class="card" style="background:linear-gradient(135deg,#FFF5D6,#EEE5FF);border-color:#D4BBFF;margin-bottom:16px;">
-    <div style="font-size:1rem;font-weight:900;color:var(--text);margin-bottom:4px;">🍳 Pantry & Crave</div>
-    <div style="font-size:0.8rem;color:var(--text-muted);line-height:1.5;">Tell me what's in your kitchen and what you're in the mood for — I'll suggest a SIBO-safe meal you can make tonight, or a short shopping list if you're missing a few things.</div>
+  <div class="card pantry-header-card">
+    <div class="feature-title">🍳 Pantry & Crave</div>
+    <div class="pantry-desc">Tell me what's in your kitchen and what you're in the mood for — I'll suggest a SIBO-safe meal you can make tonight, or a short shopping list if you're missing a few things.</div>
   </div>
 
   <div class="section-label">What's in your pantry right now?</div>
@@ -1221,7 +1465,7 @@
     placeholder="e.g. chicken breast, white rice, zucchini, olive oil, eggs, carrots..."></textarea>
 
   <div class="section-label">What are you craving?</div>
-  <div id="crave-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+  <div id="crave-chips" class="flex-wrap-gap">
     <button class="crave-chip" data-crave="Mexican" onclick="selectCrave(this)">🌮 Mexican</button>
     <button class="crave-chip" data-crave="Italian" onclick="selectCrave(this)">🍝 Italian</button>
     <button class="crave-chip" data-crave="Asian" onclick="selectCrave(this)">🍜 Asian</button>
@@ -1245,7 +1489,7 @@
   </div>
 
   <div class="section-label">What are you cooking with?</div>
-  <div id="setup-chips" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+  <div id="setup-chips" class="flex-wrap-gap">
     <button class="crave-chip active" data-setup="full" onclick="selectSetup(this)">🏠 Full Kitchen</button>
     <button class="crave-chip" data-setup="airfryer" onclick="selectSetup(this)">🌬️ Air Fryer + Stove</button>
     <button class="crave-chip" data-setup="stovetop" onclick="selectSetup(this)">🍳 Stovetop Only</button>
@@ -1255,7 +1499,7 @@
   </div>
 
   <div class="section-label">How much effort?</div>
-  <div class="distance-chips" style="margin-bottom:16px;">
+  <div class="distance-chips mb-16">
     <button class="dist-chip active" data-effort="quick" onclick="selectEffort(this)">⚡ Quick (15 min)</button>
     <button class="dist-chip" data-effort="medium" onclick="selectEffort(this)">🍳 Medium (30 min)</button>
     <button class="dist-chip" data-effort="full" onclick="selectEffort(this)">👨‍🍳 Full Recipe</button>
@@ -1281,7 +1525,7 @@
     <span class="tip-icon">👁️</span>
     <div class="tip-title">Keep Foods Separate on the Plate</div>
     <div class="tip-body">Mixed foods can feel unpredictable. Use divided plates or bowls. Put sauces on the side. Knowing exactly what each bite is reduces anxiety and makes eating feel safe.
-      <ul class="checklist" style="margin-top:8px;">
+      <ul class="checklist mt-8">
         <li>Bento-style boxes work great for this</li>
         <li>Same color/texture foods together when possible</li>
         <li>Prep meals visually the same way each time</li>
@@ -1299,7 +1543,7 @@
     <span class="tip-icon">👃</span>
     <div class="tip-title">Managing Strong Food Smells</div>
     <div class="tip-body">Some SIBO-safe foods (fish, certain veggies) have strong smells. Tips:
-      <ul class="checklist" style="margin-top:8px;">
+      <ul class="checklist mt-8">
         <li>Cook when you have time and space, not when overwhelmed</li>
         <li>Use a fan or open window when cooking fish</li>
         <li>Mild proteins (chicken, turkey) are often smell-neutral wins</li>
@@ -1314,7 +1558,7 @@
     <span class="tip-icon">📅</span>
     <div class="tip-title">Use the Meal Plan as a Script</div>
     <div class="tip-body">The 7-day rotating meal plan gives you a predictable script to follow. Knowing what's coming reduces decision fatigue. You can even print it and check off each meal.
-      <ul class="checklist" style="margin-top:8px;">
+      <ul class="checklist mt-8">
         <li>Prep Sunday: cook proteins, chop veggies for the week</li>
         <li>Eat at the same times daily when possible</li>
         <li>Use the shuffle button only when you feel ready for variety</li>
@@ -1326,7 +1570,7 @@
     <span class="tip-icon">🛒</span>
     <div class="tip-title">Safe Food Shopping</div>
     <div class="tip-body">Grocery stores can be overwhelming. Reduce friction:
-      <ul class="checklist" style="margin-top:8px;">
+      <ul class="checklist mt-8">
         <li>Use the snacks list as a pre-written shopping list</li>
         <li>Order from Amazon/Thrive Market to avoid stores on hard days</li>
         <li>Stock backup "safe foods" you know you can always eat</li>
@@ -1341,7 +1585,7 @@
     <span class="tip-icon">🎭</span>
     <div class="tip-title">Convention Food Strategy</div>
     <div class="tip-body">Having a plan removes the anxiety of "what will I eat today?" Pre-packing removes almost all food decisions from an already high-stimulation day.
-      <ul class="checklist" style="margin-top:8px;">
+      <ul class="checklist mt-8">
         <li>Pack the full "Con Bag" the night before, not the morning of</li>
         <li>Keep snacks in an easy-to-reach outer pocket</li>
         <li>Set eating alarms — forgetting to eat at cons is common</li>
@@ -1355,7 +1599,7 @@
     <span class="tip-icon">💬</span>
     <div class="tip-title">Explaining Your Diet to Others</div>
     <div class="tip-body">You don't owe anyone a detailed medical explanation. Some options:
-      <ul class="checklist" style="margin-top:8px;">
+      <ul class="checklist mt-8">
         <li>"I have a digestive condition that limits what I can eat"</li>
         <li>"I'm really particular about ingredients — I'll stick to what I brought"</li>
         <li>It's always okay to say "no thank you" without explanation</li>
@@ -1369,8 +1613,8 @@
     <span class="tip-icon">🆘</span>
     <div class="tip-title">When You're Overwhelmed and Hungry</div>
     <div class="tip-body">
-      <strong style="color:var(--blue)">Your 5-minute reset:</strong>
-      <ul class="checklist" style="margin-top:8px;">
+      <strong class="convention-blue-label">Your 5-minute reset:</strong>
+      <ul class="checklist mt-8">
         <li>Step away from the crowd (outside, hallway, bathroom)</li>
         <li>Drink water first — even mild dehydration worsens everything</li>
         <li>Eat something from your bag — a beef stick or seaweed pack</li>
@@ -1395,7 +1639,7 @@
 <!-- ══════════════ PROFILE SCREEN ══════════════ -->
 <div class="screen" id="screen-profile">
   <div id="profile-screen-content">
-    <div style="text-align:center;padding:60px 20px;color:var(--text-muted);font-weight:700;">Loading profile...</div>
+    <div class="loading-placeholder">Loading profile...</div>
   </div>
 </div>
 
@@ -1421,6 +1665,71 @@
 </nav>
 
 <script>
+// ── GLOBAL STATE NAMESPACE ───────────────────────────────────
+const MiraState = {
+  meals: {
+    selectedDay: 0,
+    weekMeals: {
+      breakfast: [0,1,2,3,4,5,6],
+      lunch:     [0,1,2,3,4,5,6],
+      snack:     [0,1,2,3,4,5,6],
+      dinner:    [0,1,2,3,4,5,6],
+    },
+  },
+  nearby: {
+    lastResults: [],
+    pass1Cache: {},
+    pass2Cache: {},
+    selectedDistance: 1,
+    currentPage: 0,
+    currentSearch: null,
+    currentDetailRestaurant: null,
+    currentDetailData: null,
+    currentDetailMood: 'good',
+    currentSearchMode: 'location',
+    selectedPriceTier: null,
+    activePriceTierFilter: null,
+    varietyCache: {},
+  },
+  auth: {
+    _sbClient: null,
+    currentUser: null,
+    currentProfile: null,
+    authConfigured: false,
+  },
+  snacks: {
+    snackFilter: 'all',
+    snackSearch: '',
+  },
+  food: {
+    histamineFilter: false,
+  },
+  breakfast: {
+    bfFilter: 'all',
+  },
+  onboard: {
+    onboardStep: 1,
+    onboardData: { name:'', role:'patient', conditions:[], restrictions:[], texture_aversions:[], flavor_aversions:[], always_avoid:'', safe_foods:'' },
+  },
+  journal: {
+    _journalCache: null,
+  },
+  favorites: {
+    _favCache: null,
+  },
+  pantry: {
+    selectedCrave: null,
+    selectedEffort: 'quick',
+    selectedSetup: 'full',
+  },
+  grocery: {
+    selectedGroceryTier: 'avg',
+  },
+  mealLog: {
+    _mealLogCache: null,
+  },
+};
+
 // ── DATA ──────────────────────────────────────────────────────
 
 const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
@@ -1465,15 +1774,7 @@ const ALL_MEALS = {
   ]
 };
 
-// Shuffled week meal indices
-let weekMeals = {
-  breakfast: [0,1,2,3,4,5,6],
-  lunch:     [0,1,2,3,4,5,6],
-  snack:     [0,1,2,3,4,5,6],
-  dinner:    [0,1,2,3,4,5,6],
-};
-
-let selectedDay = 0;
+// MiraState.meals.weekMeals and MiraState.meals.selectedDay are now in MiraState.meals
 
 // ── NEARBY RESTAURANTS ────────────────────────────────────────
 const PROXY_URL = 'https://humcnoqdhanhtbpibicm.supabase.co/functions/v1/mira-proxy';
@@ -1511,18 +1812,7 @@ ALWAYS FLAG:
 - Anything with "contains soy" or "contains wheat" in allergen info
 `;
 
-let lastResults = [];
-const pass1Cache = {};
-const pass2Cache = {};
-let selectedDistance = 1;
-let currentPage = 0;
-let currentSearch = null;
-let currentDetailRestaurant = null;
-let currentDetailData = null;
-let currentDetailMood = 'good';
-let currentSearchMode = 'location'; // 'location' | 'name' | 'price'
-let selectedPriceTier = null;       // null | 1 | 2 | 3 (pre-filter, sent to Gemini)
-let activePriceTierFilter = null;   // null | 1 | 2 | 3 (post-filter on loaded results)
+// Nearby state is now in MiraState.nearby
 
 // ── SAFE LOCALSTORAGE ────────────────────────────────────────
 function safeSetItem(key, value) {
@@ -1531,14 +1821,14 @@ function safeSetItem(key, value) {
 }
 
 // ── FAVORITES (in-memory cache, write-through) ───────────────
-let _favCache = null;
+// MiraState.favorites._favCache is now in MiraState.favorites
 function loadFavorites() {
-  if (_favCache) return _favCache;
-  try { _favCache = JSON.parse(localStorage.getItem('mira_favorites') || '[]'); } catch { _favCache = []; }
-  return _favCache;
+  if (MiraState.favorites._favCache) return MiraState.favorites._favCache;
+  try { MiraState.favorites._favCache = JSON.parse(localStorage.getItem('mira_favorites') || '[]'); } catch { MiraState.favorites._favCache = []; }
+  return MiraState.favorites._favCache;
 }
 function saveFavorites(favs) {
-  _favCache = favs;
+  MiraState.favorites._favCache = favs;
   safeSetItem('mira_favorites', JSON.stringify(favs));
 }
 function isFavorite(name) {
@@ -1550,12 +1840,12 @@ function toggleFavorite(name) {
   if (idx >= 0) {
     favs.splice(idx, 1);
   } else {
-    const r = lastResults.find(r => r.name === name) || currentDetailRestaurant;
+    const r = MiraState.nearby.lastResults.find(r => r.name === name) || MiraState.nearby.currentDetailRestaurant;
     if (!r) return;
     favs.unshift({ id: crypto.randomUUID(), saved_at: new Date().toISOString(),
       name: r.name, cuisine: r.cuisine, address: r.address,
       safety_score: r.safety_score, safety_reason: r.safety_reason,
-      chain: r.chain, notes: r.notes, menu: currentDetailData || null });
+      chain: r.chain, notes: r.notes, menu: MiraState.nearby.currentDetailData || null });
   }
   saveFavorites(favs);
   // Refresh star UI without re-rendering entire view
@@ -1580,7 +1870,7 @@ function shuffleMeals() {
       const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-    weekMeals[type] = arr;
+    MiraState.meals.weekMeals[type] = arr;
   });
 
   localStorage.removeItem('mira_grocery_checked');
@@ -1590,7 +1880,7 @@ function shuffleMeals() {
 function renderDaySelector() {
   const el = document.getElementById('daySelector');
   el.innerHTML = DAYS.map((d, i) => `
-    <button class="day-btn ${i === selectedDay ? 'active' : ''}" onclick="selectDay(${i})">
+    <button class="day-btn ${i === MiraState.meals.selectedDay ? 'active' : ''}" onclick="selectDay(${i})">
       <span class="day-num">${i+1}</span>
       ${d}
     </button>
@@ -1598,7 +1888,7 @@ function renderDaySelector() {
 }
 
 function selectDay(i) {
-  selectedDay = i;
+  MiraState.meals.selectedDay = i;
   renderDaySelector();
   renderDayView();
 }
@@ -1613,9 +1903,9 @@ function renderDayView() {
     { type: 'dinner',    label: '🌙 Dinner',    cls: 'dinner' },
   ];
 
-  container.innerHTML = `<div class="card-title" style="font-size:1.2rem; margin-bottom:14px;">📅 ${DAY_FULL[selectedDay]}</div>` +
+  container.innerHTML = `<div class="card-title day-view-title">📅 ${DAY_FULL[MiraState.meals.selectedDay]}</div>` +
     meals.map(({ type, label, cls }) => {
-      const meal = ALL_MEALS[type][weekMeals[type][selectedDay]];
+      const meal = ALL_MEALS[type][MiraState.meals.weekMeals[type][MiraState.meals.selectedDay]];
       const id = `recipe-${type}`;
       return `
         <div class="meal-block ${cls}">
@@ -1624,11 +1914,11 @@ function renderDayView() {
           <div class="meal-desc">${meal.desc}</div>
           <button class="expand-btn" onclick="toggleRecipe('${id}', this)">📖 Show Recipe</button>
           <div class="recipe-detail" id="${id}">
-            <p style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px;">Ingredients</p>
+            <p class="sub-label">Ingredients</p>
             <ul class="ingredient-list">
               ${meal.ingredients.map(i => `<li>${i}</li>`).join('')}
             </ul>
-            <p style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px;">Steps</p>
+            <p class="sub-label">Steps</p>
             <ol class="steps-list">
               ${meal.steps.map(s => `<li>${s}</li>`).join('')}
             </ol>
@@ -1668,26 +1958,25 @@ const SNACKS = [
   { id:20, name:'Electrolyte Water (No Flavoring)', brand:'Trace Minerals Electrolyte Stamina', buy:'Amazon, Natural Grocers', note:'Clean hydration, no additives', cat:'drink', convention:true, emoji:'💧' },
 ];
 
-let snackFilter = 'all';
-let snackSearch = '';
+// MiraState.snacks.snackFilter and MiraState.snacks.snackSearch are now in MiraState.snacks
 
 function setSnackFilter(cat, btn) {
-  snackFilter = cat;
+  MiraState.snacks.snackFilter = cat;
   document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderSnacks();
 }
 
 function filterSnacks(val) {
-  snackSearch = val.toLowerCase();
+  MiraState.snacks.snackSearch = val.toLowerCase();
   renderSnacks();
 }
 
 function renderSnacks() {
   const container = document.getElementById('snackList');
   let filtered = SNACKS.filter(s => {
-    const matchCat = snackFilter === 'all' || s.cat === snackFilter || (snackFilter === 'convention' && s.convention);
-    const matchSearch = !snackSearch || s.name.toLowerCase().includes(snackSearch) || s.brand.toLowerCase().includes(snackSearch);
+    const matchCat = MiraState.snacks.snackFilter === 'all' || s.cat === MiraState.snacks.snackFilter || (MiraState.snacks.snackFilter === 'convention' && s.convention);
+    const matchSearch = !MiraState.snacks.snackSearch || s.name.toLowerCase().includes(MiraState.snacks.snackSearch) || s.brand.toLowerCase().includes(MiraState.snacks.snackSearch);
     return matchCat && matchSearch;
   });
 
@@ -1738,14 +2027,14 @@ function renderConventionChecklist() {
   container.innerHTML = CHECKLIST_ITEMS.map((item, i) => {
     const checked = !!state[i];
     return `
-    <div class="pack-item" onclick="toggleCheck(this, ${i})" style="cursor:pointer;">
+    <div class="pack-item checklist-item-clickable" onclick="toggleCheck(this, ${i})">
       <span class="pack-item-emoji">${checked ? '✅' : '⬜'}</span>
       <div class="pack-item-text">
-        <div class="pack-item-name" style="text-decoration:${checked ? 'line-through' : 'none'};opacity:${checked ? '0.5' : '1'}">${item}</div>
+        <div class="pack-item-name ${checked ? 'checklist-item-checked' : 'checklist-item-unchecked'}">${item}</div>
       </div>
     </div>`;
   }).join('') + `
-  <button onclick="resetChecklist()" style="margin-top:12px;width:100%;background:none;border:1.5px solid var(--border);border-radius:12px;padding:10px;font-size:0.8rem;font-weight:800;color:var(--text-muted);cursor:pointer;font-family:inherit;">🔄 Reset Checklist</button>`;
+  <button class="checklist-reset-btn" onclick="resetChecklist()">🔄 Reset Checklist</button>`;
 }
 
 function toggleCheck(el, i) {
@@ -1756,8 +2045,8 @@ function toggleCheck(el, i) {
   const text = el.querySelector('.pack-item-name');
   const checked = state[i];
   emoji.textContent = checked ? '✅' : '⬜';
-  text.style.textDecoration = checked ? 'line-through' : 'none';
-  text.style.opacity = checked ? '0.5' : '1';
+  text.classList.toggle('checklist-item-checked', checked);
+  text.classList.toggle('checklist-item-unchecked', !checked);
 }
 
 function resetChecklist() {
@@ -1826,7 +2115,7 @@ const FOOD_GUIDE = [
   },
 ];
 
-let histamineFilter = false;
+// MiraState.food.histamineFilter is now in MiraState.food
 
 // Substrings that indicate a high-histamine or histamine-liberating item
 const HISTAMINE_FLAGS = [
@@ -1842,12 +2131,11 @@ function isHighHistamine(item) {
 }
 
 function toggleHistamineFilter() {
-  histamineFilter = !histamineFilter;
+  MiraState.food.histamineFilter = !MiraState.food.histamineFilter;
   const btn = document.getElementById('histamine-toggle-btn');
   if (btn) {
-    btn.style.background = histamineFilter ? 'var(--orange)' : 'var(--orange-light)';
-    btn.style.color = histamineFilter ? 'white' : 'var(--orange)';
-    btn.textContent = histamineFilter ? '⚠️ Hiding High-Histamine Flags — Tap to Clear' : '⚠️ Show High-Histamine Flags';
+    btn.classList.toggle('active', MiraState.food.histamineFilter);
+    btn.textContent = MiraState.food.histamineFilter ? '⚠️ Hiding High-Histamine Flags — Tap to Clear' : '⚠️ Show High-Histamine Flags';
   }
   renderFoodGuide();
 }
@@ -1855,10 +2143,10 @@ function toggleHistamineFilter() {
 function renderFoodGuide() {
   const container = document.getElementById('foodGuideContent');
   const pillHtml = (items, fallbackColor) => {
-    if (!items.length) return `<span style="font-size:0.75rem;color:${fallbackColor};font-weight:600;">None listed</span>`;
+    if (!items.length) return `<span class="food-pill-none" style="color:${fallbackColor}">None listed</span>`;
     return items.map(f => {
-      const flag = histamineFilter && isHighHistamine(f);
-      return `<span class="food-pill" ${flag ? 'style="background:#FF6B7A;color:white;border:none;"' : ''}>${flag ? '⚠️ ' : ''}${f}</span>`;
+      const flag = MiraState.food.histamineFilter && isHighHistamine(f);
+      return `<span class="food-pill ${flag ? 'food-pill-flagged' : ''}">${flag ? '⚠️ ' : ''}${f}</span>`;
     }).join('');
   };
 
@@ -1885,8 +2173,8 @@ function renderFoodGuide() {
       </div>
     </div>
   `).join('');
-  if (histamineFilter) {
-    container.innerHTML += `<div style="font-size:0.74rem;color:var(--orange);font-weight:700;padding:8px 4px;text-align:center;">⚠️ Red pills = high-histamine or histamine-liberating — use extra caution</div>`;
+  if (MiraState.food.histamineFilter) {
+    container.innerHTML += `<div class="histamine-note">⚠️ Red pills = high-histamine or histamine-liberating — use extra caution</div>`;
   }
 }
 
@@ -1901,7 +2189,7 @@ function showScreen(name) {
 
   // Highlight the correct bottom nav button
   const directMap = { meal: 'meal', snacks: 'snacks', nearby: 'nearby', favorites: 'favorites' };
-  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'journal', 'pantry', 'profile', 'grocery'];
+  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'journal', 'pantry', 'profile', 'grocery', 'history', 'meds'];
   const bscreen = directMap[name] || (moreScreens.includes(name) ? 'more' : null);
   if (bscreen) {
     const btn = document.querySelector(`[data-bscreen="${bscreen}"]`);
@@ -1919,6 +2207,34 @@ function openMore() {
 function closeMore() {
   document.getElementById('moreOverlay').classList.remove('open');
   document.getElementById('moreSheet').classList.remove('open');
+}
+
+// ── DARK MODE ─────────────────────────────────────────────────
+function toggleDarkMode() {
+  const isDark = document.documentElement.dataset.theme === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  document.documentElement.dataset.theme = newTheme === 'dark' ? 'dark' : '';
+  localStorage.setItem('mira_theme', newTheme);
+  document.querySelector('meta[name="theme-color"]').content = newTheme === 'dark' ? '#1A1025' : '#FF7EB3';
+  updateDarkModeBtn(newTheme);
+}
+
+function updateDarkModeBtn(theme) {
+  const icon = document.getElementById('dark-mode-icon');
+  const label = document.getElementById('dark-mode-label');
+  if (icon) icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+  if (label) label.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('mira_theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const theme = saved || (prefersDark ? 'dark' : 'light');
+  if (theme === 'dark') {
+    document.documentElement.dataset.theme = 'dark';
+    document.querySelector('meta[name="theme-color"]').content = '#1A1025';
+  }
+  updateDarkModeBtn(theme);
 }
 
 // ── GRAB & GO BREAKFASTS ──────────────────────────────────────
@@ -2113,10 +2429,10 @@ const BREAKFASTS = [
   },
 ];
 
-let bfFilter = 'all';
+// MiraState.breakfast.bfFilter is now in MiraState.breakfast
 
 function setBfFilter(cat, btn) {
-  bfFilter = cat;
+  MiraState.breakfast.bfFilter = cat;
   document.querySelectorAll('#screen-breakfast .filter-chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   renderBreakfasts();
@@ -2125,7 +2441,7 @@ function setBfFilter(cat, btn) {
 function renderBreakfasts() {
   const container = document.getElementById('bfList');
   const filtered = BREAKFASTS.filter(b =>
-    bfFilter === 'all' || b.cat.includes(bfFilter)
+    MiraState.breakfast.bfFilter === 'all' || b.cat.includes(MiraState.breakfast.bfFilter)
   );
 
   if (!filtered.length) {
@@ -2137,27 +2453,27 @@ function renderBreakfasts() {
     const hasRecipe = b.recipe;
     const rid = `bfrecipe-${idx}`;
     return `
-      <div class="card" style="margin-bottom:12px;">
-        <div style="display:flex;align-items:flex-start;gap:14px;">
-          <div class="snack-emoji" style="background:var(--yellow-light)">${b.emoji}</div>
-          <div style="flex:1;min-width:0;">
+      <div class="card mb-12">
+        <div class="breakfast-layout">
+          <div class="snack-emoji snack-emoji-yellow">${b.emoji}</div>
+          <div class="flex-1-min0">
             <div class="snack-name">${b.name}</div>
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:4px 0;">
-              <span class="convention-badge" style="background:var(--blue-light);color:var(--blue);">⏱️ ${b.time}</span>
-              <span class="convention-badge" style="background:var(--purple-light);color:var(--purple);">${b.badge}</span>
+            <div class="breakfast-badges">
+              <span class="convention-badge badge-blue">⏱️ ${b.time}</span>
+              <span class="convention-badge badge-purple">${b.badge}</span>
             </div>
             ${b.brand !== 'none' ? `<div class="snack-brand">${b.brand}</div>` : ''}
             <div class="snack-buy">🛒 ${b.buy}</div>
-            <div class="snack-notes" style="margin-top:4px;">${b.note}</div>
-            <div style="margin-top:8px;padding:8px 10px;background:var(--pink-light);border-radius:10px;font-size:0.78rem;font-weight:700;color:var(--pink);">
+            <div class="snack-notes snack-notes-mt4">${b.note}</div>
+            <div class="highlight-box">
               💡 ${b.highlight}
             </div>
             ${hasRecipe ? `
-              <button class="expand-btn" onclick="toggleRecipe('${rid}',this)" style="margin-top:10px;color:var(--pink);">📖 Show Recipe</button>
+              <button class="expand-btn expand-btn-pink" onclick="toggleRecipe('${rid}',this)">📖 Show Recipe</button>
               <div class="recipe-detail" id="${rid}">
-                <p style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:6px;">Ingredients</p>
+                <p class="sub-label">Ingredients</p>
                 <ul class="ingredient-list">${b.recipe.ingredients.map(i=>`<li>${i}</li>`).join('')}</ul>
-                <p style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:8px 0 6px;">Steps</p>
+                <p class="sub-label-steps">Steps</p>
                 <ol class="steps-list">${b.recipe.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
               </div>` : ''}
           </div>
@@ -2171,16 +2487,13 @@ function renderBreakfasts() {
 const SUPABASE_URL      = 'https://pysgcrnjjotplltcwrav.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB5c2djcm5qam90cGxsdGN3cmF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMDQ4OTgsImV4cCI6MjA5MDc4MDg5OH0.N6P6ikQaxprIPgGxVJB_lF-rs5vs_3tGQlu_5_g1XPk';
 
-let _sbClient      = null;
-let currentUser    = null;
-let currentProfile = null;
-let authConfigured = false;
+// Auth state is now in MiraState.auth
 
 function getSB() {
-  if (!_sbClient && window.supabase && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
-    _sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  if (!MiraState.auth._sbClient && window.supabase && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY') {
+    MiraState.auth._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   }
-  return _sbClient;
+  return MiraState.auth._sbClient;
 }
 
 // ── AUTH OVERLAY ─────────────────────────────────────────────
@@ -2231,8 +2544,8 @@ async function signInWithGoogle() {
 
 async function signOut() {
   const sb = getSB();
-  if (sb && currentUser) await sb.auth.signOut();
-  currentUser = null; currentProfile = null;
+  if (sb && MiraState.auth.currentUser) await sb.auth.signOut();
+  MiraState.auth.currentUser = null; MiraState.auth.currentProfile = null;
   localStorage.removeItem('mira_profile');
   resetAuthForm(); showAuthOverlay(); showScreen('meal');
 }
@@ -2243,19 +2556,19 @@ async function loadProfileFromSupabase() {
   let profile = null;
   if (cached) { try { profile = JSON.parse(cached); } catch {} }
   const sb = getSB();
-  if (sb && currentUser) {
-    const { data } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  if (sb && MiraState.auth.currentUser) {
+    const { data } = await sb.from('profiles').select('*').eq('id', MiraState.auth.currentUser.id).single();
     if (data) { profile = data; safeSetItem('mira_profile', JSON.stringify(data)); }
   }
   return profile;
 }
 
 async function saveProfileData(profileData) {
-  currentProfile = { ...profileData, updated_at: new Date().toISOString() };
-  safeSetItem('mira_profile', JSON.stringify(currentProfile));
+  MiraState.auth.currentProfile = { ...profileData, updated_at: new Date().toISOString() };
+  safeSetItem('mira_profile', JSON.stringify(MiraState.auth.currentProfile));
   const sb = getSB();
-  if (sb && currentUser) {
-    await sb.from('profiles').upsert({ id: currentUser.id, ...currentProfile });
+  if (sb && MiraState.auth.currentUser) {
+    await sb.from('profiles').upsert({ id: MiraState.auth.currentUser.id, ...MiraState.auth.currentProfile });
   }
 }
 
@@ -2276,7 +2589,7 @@ function buildSystemContext(profile) {
   return `PATIENT PROFILE:\nName: ${name} | Conditions: ${conditions} | Dietary restrictions: ${restrictions}${extra}\n\nDIETARY PROTOCOL:\n${MIRA_PROTOCOL}`.trim();
 }
 
-function getMiraProtocol() { return buildSystemContext(currentProfile); }
+function getMiraProtocol() { return buildSystemContext(MiraState.auth.currentProfile); }
 
 function updateHeaderForProfile(profile) {
   const sub = document.querySelector('.header-sub');
@@ -2296,13 +2609,13 @@ function showProfile() {
 
 function renderProfileScreen() {
   const container = document.getElementById('profile-screen-content');
-  const p = currentProfile;
+  const p = MiraState.auth.currentProfile;
   if (!p) {
     container.innerHTML = `
-      <div class="card" style="text-align:center;padding:32px;">
-        <div style="font-size:2.5rem;margin-bottom:12px;">👤</div>
-        <div style="font-weight:800;font-size:1.1rem;margin-bottom:8px;">No profile yet</div>
-        <div style="color:var(--text-muted);font-size:0.88rem;margin-bottom:20px;line-height:1.5;">Set up your profile to personalize all suggestions to your exact conditions and restrictions.</div>
+      <div class="card profile-empty-card">
+        <div class="profile-empty-icon">👤</div>
+        <div class="profile-empty-title">No profile yet</div>
+        <div class="profile-empty-desc">Set up your profile to personalize all suggestions to your exact conditions and restrictions.</div>
         <button class="profile-action-btn edit" onclick="showOnboarding()">Set Up My Profile</button>
       </div>`;
     return;
@@ -2323,24 +2636,24 @@ function renderProfileScreen() {
     ${condTags  ? `<div class="card"><div class="card-title">🏥 Conditions</div><div class="profile-tag-row">${condTags}</div></div>` : ''}
     ${restrTags ? `<div class="card"><div class="card-title">🚫 Dietary Restrictions</div><div class="profile-tag-row">${restrTags}</div></div>` : ''}
     ${senseTags ? `<div class="card"><div class="card-title">✨ Sensory Preferences</div><div class="profile-tag-row">${senseTags}</div></div>` : ''}
-    ${p.always_avoid ? `<div class="card"><div class="card-title">⛔ Always Avoid</div><div style="font-size:0.88rem;font-weight:600;line-height:1.6;color:var(--text-muted);">${escHtml(p.always_avoid)}</div></div>` : ''}
-    ${p.safe_foods   ? `<div class="card"><div class="card-title">✅ Safe Foods</div><div style="font-size:0.88rem;font-weight:600;line-height:1.6;color:var(--text-muted);">${escHtml(p.safe_foods)}</div></div>` : ''}
+    ${p.always_avoid ? `<div class="card"><div class="card-title">⛔ Always Avoid</div><div class="body-text-muted">${escHtml(p.always_avoid)}</div></div>` : ''}
+    ${p.safe_foods   ? `<div class="card"><div class="card-title">✅ Safe Foods</div><div class="body-text-muted">${escHtml(p.safe_foods)}</div></div>` : ''}
     <button class="profile-action-btn edit" onclick="editProfile()">✏️ Edit My Profile</button>
-    ${authConfigured ? `<button class="profile-action-btn signout" onclick="signOut()">Sign Out</button>` : ''}
+    ${MiraState.auth.authConfigured ? `<button class="profile-action-btn signout" onclick="signOut()">Sign Out</button>` : ''}
   `;
 }
 
 function editProfile() {
-  if (currentProfile) {
-    onboardData = {
-      name:              currentProfile.name || '',
-      role:              currentProfile.role || 'patient',
-      conditions:        [...(currentProfile.conditions        || [])],
-      restrictions:      [...(currentProfile.restrictions      || [])],
-      texture_aversions: [...(currentProfile.texture_aversions || [])],
-      flavor_aversions:  [...(currentProfile.flavor_aversions  || [])],
-      always_avoid:      currentProfile.always_avoid || '',
-      safe_foods:        currentProfile.safe_foods   || ''
+  if (MiraState.auth.currentProfile) {
+    MiraState.onboard.onboardData = {
+      name:              MiraState.auth.currentProfile.name || '',
+      role:              MiraState.auth.currentProfile.role || 'patient',
+      conditions:        [...(MiraState.auth.currentProfile.conditions        || [])],
+      restrictions:      [...(MiraState.auth.currentProfile.restrictions      || [])],
+      texture_aversions: [...(MiraState.auth.currentProfile.texture_aversions || [])],
+      flavor_aversions:  [...(MiraState.auth.currentProfile.flavor_aversions  || [])],
+      always_avoid:      MiraState.auth.currentProfile.always_avoid || '',
+      safe_foods:        MiraState.auth.currentProfile.safe_foods   || ''
     };
   }
   showOnboarding();
@@ -2362,11 +2675,10 @@ const ONBOARD_TEXTURES = ['Mushy','Very Crunchy','Chewy / Rubbery','Slimy','Grit
 const ONBOARD_FLAVORS  = ['Spicy','Very Sour','Bitter','Strong Umami','Pungent / Fishy'];
 const ONBOARD_STEPS    = 4;
 
-let onboardStep = 1;
-let onboardData = { name:'', role:'patient', conditions:[], restrictions:[], texture_aversions:[], flavor_aversions:[], always_avoid:'', safe_foods:'' };
+// MiraState.onboard.onboardStep and MiraState.onboard.onboardData are now in MiraState.onboard
 
 function showOnboarding() {
-  onboardStep = 1;
+  MiraState.onboard.onboardStep = 1;
   document.getElementById('onboard-overlay').classList.add('visible');
   renderOnboardStep();
 }
@@ -2378,71 +2690,71 @@ function escHtml(str) {
 }
 
 function renderOnboardStep() {
-  document.getElementById('ob-progress-fill').style.width = ((onboardStep / ONBOARD_STEPS) * 100) + '%';
-  document.getElementById('ob-step-count').textContent = `Step ${onboardStep} of ${ONBOARD_STEPS}`;
-  document.getElementById('ob-back-btn').classList.toggle('invisible', onboardStep === 1);
-  document.getElementById('ob-skip-btn').style.display = onboardStep >= 3 ? 'block' : 'none';
-  document.getElementById('ob-next-btn').textContent = onboardStep === ONBOARD_STEPS ? '🌿 Save My Profile' : 'Continue →';
+  document.getElementById('ob-progress-fill').style.width = ((MiraState.onboard.onboardStep / ONBOARD_STEPS) * 100) + '%';
+  document.getElementById('ob-step-count').textContent = `Step ${MiraState.onboard.onboardStep} of ${ONBOARD_STEPS}`;
+  document.getElementById('ob-back-btn').classList.toggle('invisible', MiraState.onboard.onboardStep === 1);
+  document.getElementById('ob-skip-btn').style.display = MiraState.onboard.onboardStep >= 3 ? 'block' : 'none';
+  document.getElementById('ob-next-btn').textContent = MiraState.onboard.onboardStep === ONBOARD_STEPS ? '🌿 Save My Profile' : 'Continue →';
 
   const body = document.getElementById('ob-body');
 
-  if (onboardStep === 1) {
+  if (MiraState.onboard.onboardStep === 1) {
     body.innerHTML = `
       <span class="ob-emoji">👋</span>
       <div class="ob-title">Welcome! Let's personalize your toolkit.</div>
       <div class="ob-sub">Your profile shapes every suggestion — restaurant safety ratings, recipes, and tips will all be tailored specifically to you.</div>
       <div class="ob-label">What should we call you?</div>
-      <input class="ob-text-input" type="text" id="ob-name-input" placeholder="Your name" value="${escHtml(onboardData.name)}" oninput="onboardData.name=this.value">
-      <div class="ob-label" style="margin-top:18px;">Your role</div>
+      <input class="ob-text-input" type="text" id="ob-name-input" placeholder="Your name" value="${escHtml(MiraState.onboard.onboardData.name)}" oninput="MiraState.onboard.onboardData.name=this.value">
+      <div class="ob-label ob-label-mt18">Your role</div>
       <div class="ob-role-row">
-        <button class="ob-role-btn ${onboardData.role==='patient'?'selected':''}" onclick="selectObRole('patient',this)">
+        <button class="ob-role-btn ${MiraState.onboard.onboardData.role==='patient'?'selected':''}" onclick="selectObRole('patient',this)">
           <span>💜</span><span>I'm the crack rat</span>
         </button>
-        <button class="ob-role-btn ${onboardData.role==='caregiver'?'selected':''}" onclick="selectObRole('caregiver',this)">
+        <button class="ob-role-btn ${MiraState.onboard.onboardData.role==='caregiver'?'selected':''}" onclick="selectObRole('caregiver',this)">
           <span>🐺</span><span>I'm the caregiver</span>
         </button>
       </div>`;
-  } else if (onboardStep === 2) {
+  } else if (MiraState.onboard.onboardStep === 2) {
     body.innerHTML = `
       <span class="ob-emoji">🏥</span>
       <div class="ob-title">Your Conditions</div>
       <div class="ob-sub">Select everything that applies. This calibrates safety ratings and flags specific triggers for your situation.</div>
       <div class="ob-label">Conditions you manage</div>
       <div class="ob-chips">${ONBOARD_CONDITIONS.map(c =>
-        `<button class="ob-chip ${onboardData.conditions.includes(c)?'selected':''}" data-val="${escHtml(c)}" data-field="conditions" onclick="toggleObChip(this)">${c}</button>`
+        `<button class="ob-chip ${MiraState.onboard.onboardData.conditions.includes(c)?'selected':''}" data-val="${escHtml(c)}" data-field="conditions" onclick="toggleObChip(this)">${c}</button>`
       ).join('')}</div>`;
-  } else if (onboardStep === 3) {
+  } else if (MiraState.onboard.onboardStep === 3) {
     body.innerHTML = `
       <span class="ob-emoji">🚫</span>
       <div class="ob-title">Dietary Restrictions</div>
       <div class="ob-sub">What do you need to avoid? These get injected into every restaurant search and recipe suggestion.</div>
       <div class="ob-label">Active restrictions</div>
       <div class="ob-chips">${ONBOARD_RESTRICTIONS.map(r =>
-        `<button class="ob-chip ${onboardData.restrictions.includes(r)?'selected':''}" data-val="${escHtml(r)}" data-field="restrictions" onclick="toggleObChip(this)">${r}</button>`
+        `<button class="ob-chip ${MiraState.onboard.onboardData.restrictions.includes(r)?'selected':''}" data-val="${escHtml(r)}" data-field="restrictions" onclick="toggleObChip(this)">${r}</button>`
       ).join('')}</div>
       <div class="ob-label">Anything else to always avoid?</div>
-      <textarea class="ob-textarea" placeholder="e.g. tree nuts, corn syrup, shellfish..." oninput="onboardData.always_avoid=this.value">${escHtml(onboardData.always_avoid)}</textarea>`;
-  } else if (onboardStep === 4) {
+      <textarea class="ob-textarea" placeholder="e.g. tree nuts, corn syrup, shellfish..." oninput="MiraState.onboard.onboardData.always_avoid=this.value">${escHtml(MiraState.onboard.onboardData.always_avoid)}</textarea>`;
+  } else if (MiraState.onboard.onboardStep === 4) {
     body.innerHTML = `
       <span class="ob-emoji">✨</span>
       <div class="ob-title">Sensory Preferences</div>
       <div class="ob-sub">Optional — especially helpful for autism-friendly suggestions. Skip if not relevant.</div>
       <div class="ob-label">Texture aversions (flag dishes with these)</div>
       <div class="ob-chips">${ONBOARD_TEXTURES.map(t =>
-        `<button class="ob-chip ${onboardData.texture_aversions.includes(t)?'selected':''}" data-val="${escHtml(t)}" data-field="texture_aversions" onclick="toggleObChip(this)">${t}</button>`
+        `<button class="ob-chip ${MiraState.onboard.onboardData.texture_aversions.includes(t)?'selected':''}" data-val="${escHtml(t)}" data-field="texture_aversions" onclick="toggleObChip(this)">${t}</button>`
       ).join('')}</div>
       <div class="ob-label">Flavor aversions</div>
       <div class="ob-chips">${ONBOARD_FLAVORS.map(f =>
-        `<button class="ob-chip ${onboardData.flavor_aversions.includes(f)?'selected':''}" data-val="${escHtml(f)}" data-field="flavor_aversions" onclick="toggleObChip(this)">${f}</button>`
+        `<button class="ob-chip ${MiraState.onboard.onboardData.flavor_aversions.includes(f)?'selected':''}" data-val="${escHtml(f)}" data-field="flavor_aversions" onclick="toggleObChip(this)">${f}</button>`
       ).join('')}</div>
       <div class="ob-label">Your trusted safe foods</div>
-      <textarea class="ob-textarea" placeholder="e.g. plain white rice, grilled chicken, blueberries..." oninput="onboardData.safe_foods=this.value">${escHtml(onboardData.safe_foods)}</textarea>`;
+      <textarea class="ob-textarea" placeholder="e.g. plain white rice, grilled chicken, blueberries..." oninput="MiraState.onboard.onboardData.safe_foods=this.value">${escHtml(MiraState.onboard.onboardData.safe_foods)}</textarea>`;
   }
   body.scrollTop = 0;
 }
 
 function selectObRole(role, btn) {
-  onboardData.role = role;
+  MiraState.onboard.onboardData.role = role;
   document.querySelectorAll('.ob-role-btn').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
 }
@@ -2450,84 +2762,85 @@ function selectObRole(role, btn) {
 function toggleObChip(btn) {
   const field = btn.dataset.field;
   const value = btn.dataset.val;
-  const arr = onboardData[field];
+  const arr = MiraState.onboard.onboardData[field];
   const idx = arr.indexOf(value);
   if (idx >= 0) arr.splice(idx, 1); else arr.push(value);
   btn.classList.toggle('selected', arr.includes(value));
 }
 
 function nextOnboardStep() {
-  if (onboardStep === 1) {
+  if (MiraState.onboard.onboardStep === 1) {
     const nameEl = document.getElementById('ob-name-input');
-    if (nameEl) onboardData.name = nameEl.value.trim();
-    if (!onboardData.name) {
+    if (nameEl) MiraState.onboard.onboardData.name = nameEl.value.trim();
+    if (!MiraState.onboard.onboardData.name) {
       if (nameEl) { nameEl.style.borderColor = 'var(--red)'; nameEl.focus(); }
       return;
     }
   }
-  if (onboardStep < ONBOARD_STEPS) { onboardStep++; renderOnboardStep(); }
+  if (MiraState.onboard.onboardStep < ONBOARD_STEPS) { MiraState.onboard.onboardStep++; renderOnboardStep(); }
   else completeOnboarding();
 }
 
 function prevOnboardStep() {
-  if (onboardStep > 1) { onboardStep--; renderOnboardStep(); }
+  if (MiraState.onboard.onboardStep > 1) { MiraState.onboard.onboardStep--; renderOnboardStep(); }
 }
 
 function skipOnboardStep() {
-  if (onboardStep < ONBOARD_STEPS) { onboardStep++; renderOnboardStep(); }
+  if (MiraState.onboard.onboardStep < ONBOARD_STEPS) { MiraState.onboard.onboardStep++; renderOnboardStep(); }
   else completeOnboarding();
 }
 
 async function completeOnboarding() {
   const profileData = {
-    name:              onboardData.name.trim(),
-    role:              onboardData.role,
-    conditions:        [...onboardData.conditions],
-    restrictions:      [...onboardData.restrictions],
-    texture_aversions: [...onboardData.texture_aversions],
-    flavor_aversions:  [...onboardData.flavor_aversions],
-    always_avoid:      onboardData.always_avoid.trim(),
-    safe_foods:        onboardData.safe_foods.trim(),
-    created_at:        currentProfile?.created_at || new Date().toISOString()
+    name:              MiraState.onboard.onboardData.name.trim(),
+    role:              MiraState.onboard.onboardData.role,
+    conditions:        [...MiraState.onboard.onboardData.conditions],
+    restrictions:      [...MiraState.onboard.onboardData.restrictions],
+    texture_aversions: [...MiraState.onboard.onboardData.texture_aversions],
+    flavor_aversions:  [...MiraState.onboard.onboardData.flavor_aversions],
+    always_avoid:      MiraState.onboard.onboardData.always_avoid.trim(),
+    safe_foods:        MiraState.onboard.onboardData.safe_foods.trim(),
+    created_at:        MiraState.auth.currentProfile?.created_at || new Date().toISOString()
   };
   await saveProfileData(profileData);
   hideOnboardOverlay();
-  updateHeaderForProfile(currentProfile);
+  updateHeaderForProfile(MiraState.auth.currentProfile);
   if (document.getElementById('screen-profile').classList.contains('active')) renderProfileScreen();
   else showScreen('meal');
 }
 
 // ── APP ENTRY POINT ───────────────────────────────────────────
 async function initApp() {
+  initTheme();
   initMainApp();
 
   const sb = getSB();
   if (!sb) {
     // Supabase not configured — bypass auth, use localStorage profile
     const stored = localStorage.getItem('mira_profile');
-    if (stored) { try { currentProfile = JSON.parse(stored); } catch {} }
-    updateHeaderForProfile(currentProfile);
+    if (stored) { try { MiraState.auth.currentProfile = JSON.parse(stored); } catch {} }
+    updateHeaderForProfile(MiraState.auth.currentProfile);
     hideAuthOverlay();
     return;
   }
 
-  authConfigured = true;
+  MiraState.auth.authConfigured = true;
 
   sb.auth.onAuthStateChange(async (event, session) => {
     if (session) {
-      currentUser = session.user;
+      MiraState.auth.currentUser = session.user;
       const profile = await loadProfileFromSupabase();
       if (!profile) {
         hideAuthOverlay();
         showOnboarding();
       } else {
-        currentProfile = profile;
-        updateHeaderForProfile(currentProfile);
+        MiraState.auth.currentProfile = profile;
+        updateHeaderForProfile(MiraState.auth.currentProfile);
         hideAuthOverlay();
         hideOnboardOverlay();
       }
     } else {
-      currentUser = null; currentProfile = null;
+      MiraState.auth.currentUser = null; MiraState.auth.currentProfile = null;
       showAuthOverlay();
     }
   });
@@ -2551,13 +2864,13 @@ initApp(); // Entry point: auth check → profile check → app
 // ── JOURNAL ──────────────────────────────────────────────────
 const SYMPTOMS = ['Bloating','Gas','Cramping','Nausea','Fatigue','Brain Fog','Constipation','Diarrhea','Acid Reflux','Headache'];
 
-let _journalCache = null;
+// MiraState.journal._journalCache is now in MiraState.journal
 function loadJournalLog() {
-  if (_journalCache) return _journalCache;
-  try { _journalCache = JSON.parse(localStorage.getItem('mira_journal') || '[]'); } catch { _journalCache = []; }
-  return _journalCache;
+  if (MiraState.journal._journalCache) return MiraState.journal._journalCache;
+  try { MiraState.journal._journalCache = JSON.parse(localStorage.getItem('mira_journal') || '[]'); } catch { MiraState.journal._journalCache = []; }
+  return MiraState.journal._journalCache;
 }
-function saveJournalLog(log) { _journalCache = log; safeSetItem('mira_journal', JSON.stringify(log)); }
+function saveJournalLog(log) { MiraState.journal._journalCache = log; safeSetItem('mira_journal', JSON.stringify(log)); }
 
 function initJournal() {
   showScreen('journal');
@@ -2573,38 +2886,38 @@ function renderJournalScreen() {
   const severityDot = s => {
     if (!s) return '';
     const color = s <= 2 ? 'var(--green)' : s <= 3 ? 'var(--yellow)' : s <= 4 ? 'var(--orange)' : 'var(--red)';
-    return `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${color};margin-right:6px;vertical-align:middle;"></span>`;
+    return `<span class="severity-dot" style="background:${color}"></span>`;
   };
 
   const pastHtml = log.length ? `
-    <div class="section-label" style="margin-top:20px;">Past Entries</div>
+    <div class="section-label mt-20">Past Entries</div>
     ${log.slice(0,30).map(e => {
       const sympList = (e.symptoms||[]).join(', ') || 'No symptoms logged';
       return `
       <div class="restaurant-card" onclick="openJournalEntry('${e.date}')">
-        <div style="display:flex;justify-content:space-between;align-items:center;">
-          <div style="font-size:0.88rem;font-weight:800;color:var(--text);">${e.date}</div>
-          <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);">${severityDot(e.severity)}Severity ${e.severity||'—'}/5</div>
+        <div class="flex-row-between">
+          <div class="journal-entry-date">${e.date}</div>
+          <div class="journal-entry-severity">${severityDot(e.severity)}Severity ${e.severity||'—'}/5</div>
         </div>
-        <div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;">${escHtml(sympList)}</div>
-        ${e.notes ? `<div style="font-size:0.78rem;color:var(--text);margin-top:4px;font-style:italic;">"${escHtml(e.notes.slice(0,80))}${e.notes.length>80?'…':''}"</div>` : ''}
+        <div class="small-text-muted-mt4">${escHtml(sympList)}</div>
+        ${e.notes ? `<div class="small-text-body-italic">"${escHtml(e.notes.slice(0,80))}${e.notes.length>80?'…':''}"</div>` : ''}
       </div>`;
     }).join('')}
-  ` : '<div class="fav-empty" style="margin-top:20px;">No journal entries yet. Log today\'s symptoms to get started.</div>';
+  ` : '<div class="fav-empty mt-20">No journal entries yet. Log today\'s symptoms to get started.</div>';
 
   const insightsHtml = renderInsightsCard();
 
   container.innerHTML = `
-    <div class="card" style="background:linear-gradient(135deg,#FFF5D6,#D6FAF0);border-color:var(--green-mid);margin-bottom:16px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+    <div class="card journal-header-card">
+      <div class="flex-row-between">
         <div>
-          <div style="font-size:1rem;font-weight:900;color:var(--text);margin-bottom:4px;">📓 Journal & Symptoms</div>
-          <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;">Track how you feel each day. Tap today's entry to log or update it.</div>
+          <div class="feature-title">📓 Journal & Symptoms</div>
+          <div class="journal-feature-desc">Track how you feel each day. Tap today's entry to log or update it.</div>
         </div>
         ${log.length ? `<button class="share-btn" onclick="shareContent('Journal Summary', formatInsightsForShare())">📤</button>` : ''}
       </div>
     </div>
-    <button class="search-submit-btn" style="margin-bottom:16px;" onclick="openJournalEntry('${today}')">
+    <button class="search-submit-btn mb-16" onclick="openJournalEntry('${today}')">
       ${todayEntry ? '✏️ Edit Today\'s Entry' : '+ Log Today'}
     </button>
     ${insightsHtml}
@@ -2620,10 +2933,10 @@ function openJournalEntry(date) {
   const container = document.getElementById('journal-content');
   container.innerHTML = `
     <button class="back-btn" onclick="renderJournalScreen()">← Back</button>
-    <div style="font-size:1rem;font-weight:900;color:var(--text);margin-bottom:16px;">📓 ${date}</div>
+    <div class="feature-title-mb16">📓 ${date}</div>
 
     <div class="section-label">How severe were your symptoms today?</div>
-    <div class="distance-chips" style="margin-bottom:16px;">
+    <div class="distance-chips mb-16">
       ${[1,2,3,4,5].map(n => `
         <button class="dist-chip ${(entry.severity||3) === n ? 'active' : ''}" data-sev="${n}"
           onclick="document.querySelectorAll('.dist-chip[data-sev]').forEach(b=>b.classList.remove('active'));this.classList.add('active');">
@@ -2632,7 +2945,7 @@ function openJournalEntry(date) {
     </div>
 
     <div class="section-label">Symptoms experienced</div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;">
+    <div class="flex-wrap-gap">
       ${SYMPTOMS.map(s => `
         <button class="post-filter-chip ${(entry.symptoms||[]).includes(s) ? 'active' : ''}"
           onclick="this.classList.toggle('active')">${s}</button>
@@ -2641,8 +2954,17 @@ function openJournalEntry(date) {
 
     ${mealLog.length ? `
       <div class="section-label">Meals logged today</div>
-      <div style="background:var(--card);border-radius:12px;padding:10px 14px;margin-bottom:16px;font-size:0.82rem;color:var(--text-muted);line-height:1.7;">
+      <div class="journal-meal-card">
         ${mealLog.map(m => `<strong>${m.restaurant_name}</strong>: ${m.items.map(i=>i.name).join(', ')}`).join('<br>')}
+      </div>` : ''}
+
+    ${getActiveMedsForJournal().length ? `
+      <div class="section-label">Medications taken today</div>
+      <div class="flex-wrap-gap">
+        ${getActiveMedsForJournal().map(m => `
+          <button class="post-filter-chip med-check-chip ${(entry.medications_taken||[]).includes(m.name) ? 'active' : ''}"
+            onclick="this.classList.toggle('active')">💊 ${escHtml(m.name)}</button>
+        `).join('')}
       </div>` : ''}
 
     <div class="section-label">Notes</div>
@@ -2650,17 +2972,18 @@ function openJournalEntry(date) {
       placeholder="How did you feel overall? Any foods that seemed to cause issues? Stress, sleep, activity level...">${escHtml(entry.notes||'')}</textarea>
 
     <button class="meal-log-save-btn" onclick="saveJournalEntry('${date}')">Save Entry</button>
-    ${entry.symptoms?.length || entry.notes ? `<button class="meal-log-cancel-btn" style="margin-top:8px;" onclick="deleteJournalEntry('${date}')">🗑️ Delete Entry</button>` : ''}
+    ${entry.symptoms?.length || entry.notes ? `<button class="meal-log-cancel-btn journal-delete-btn-mt" onclick="deleteJournalEntry('${date}')">🗑️ Delete Entry</button>` : ''}
   `;
 }
 
 function saveJournalEntry(date) {
   const severity = parseInt(document.querySelector('.dist-chip[data-sev].active')?.dataset.sev || '3');
-  const symptoms = [...document.querySelectorAll('.post-filter-chip.active')].map(b => b.textContent);
+  const symptoms = [...document.querySelectorAll('.post-filter-chip.active:not(.med-check-chip)')].map(b => b.textContent);
+  const medications_taken = [...document.querySelectorAll('.med-check-chip.active')].map(b => b.textContent.replace('💊 ', ''));
   const notes = document.getElementById('journal-notes')?.value.trim() || '';
   const log = loadJournalLog();
   const idx = log.findIndex(e => e.date === date);
-  const entry = { date, severity, symptoms, notes };
+  const entry = { date, severity, symptoms, notes, medications_taken };
   if (idx >= 0) log[idx] = entry; else log.unshift(entry);
   log.sort((a,b) => b.date.localeCompare(a.date));
   saveJournalLog(log);
@@ -2674,9 +2997,7 @@ function deleteJournalEntry(date) {
 }
 
 // ── PANTRY / CRAVE ────────────────────────────────────────────
-let selectedCrave  = null;
-let selectedEffort = 'quick';
-let selectedSetup  = 'full';
+// MiraState.pantry.selectedCrave, MiraState.pantry.selectedEffort, MiraState.pantry.selectedSetup are now in MiraState.pantry
 
 const SETUP_DESCRIPTIONS = {
   full:        'full kitchen — stove, oven, air fryer, microwave, all appliances available',
@@ -2690,19 +3011,45 @@ const SETUP_DESCRIPTIONS = {
 function selectSetup(btn) {
   document.querySelectorAll('#setup-chips .crave-chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  selectedSetup = btn.dataset.setup;
+  MiraState.pantry.selectedSetup = btn.dataset.setup;
+  saveCookingPrefs();
 }
 
 function selectCrave(btn) {
   document.querySelectorAll('#crave-chips .crave-chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  selectedCrave = btn.dataset.crave;
+  MiraState.pantry.selectedCrave = btn.dataset.crave;
 }
 
 function selectEffort(btn) {
   document.querySelectorAll('[data-effort]').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  selectedEffort = btn.dataset.effort;
+  MiraState.pantry.selectedEffort = btn.dataset.effort;
+  saveCookingPrefs();
+}
+
+function saveCookingPrefs() {
+  if (!MiraState.auth.currentProfile) return;
+  MiraState.auth.currentProfile.cooking_setup = MiraState.pantry.selectedSetup;
+  MiraState.auth.currentProfile.default_effort = MiraState.pantry.selectedEffort;
+  saveProfileData(MiraState.auth.currentProfile);
+}
+
+function loadCookingPrefs() {
+  const p = MiraState.auth.currentProfile;
+  if (!p) return;
+  if (p.cooking_setup) {
+    MiraState.pantry.selectedSetup = p.cooking_setup;
+    document.querySelectorAll('#setup-chips .crave-chip').forEach(b => {
+      b.classList.toggle('active', b.dataset.setup === p.cooking_setup);
+    });
+  }
+  if (p.default_effort) {
+    MiraState.pantry.selectedEffort = p.default_effort;
+    document.querySelectorAll('[data-effort]').forEach(b => {
+      b.classList.toggle('active', b.dataset.effort === p.default_effort);
+    });
+  }
 }
 
 async function runPantryCrave() {
@@ -2712,13 +3059,13 @@ async function runPantryCrave() {
     document.getElementById('pantry-result').innerHTML = '<div class="nearby-error">Tell me what you have in your pantry first.</div>';
     return;
   }
-  const crave = selectedCrave || 'anything SIBO-safe';
-  const effort = { quick: 'quick (under 15 minutes)', medium: 'medium effort (about 30 minutes)', full: 'a full recipe (any length)' }[selectedEffort];
+  const crave = MiraState.pantry.selectedCrave || 'anything SIBO-safe';
+  const effort = { quick: 'quick (under 15 minutes)', medium: 'medium effort (about 30 minutes)', full: 'a full recipe (any length)' }[MiraState.pantry.selectedEffort];
   const result = document.getElementById('pantry-result');
   result.innerHTML = '<div class="nearby-loading">Thinking of something delicious and safe...</div>';
 
-  const userName = currentProfile?.name || 'The user';
-  const setupDesc = SETUP_DESCRIPTIONS[selectedSetup] || SETUP_DESCRIPTIONS.full;
+  const userName = MiraState.auth.currentProfile?.name || 'The user';
+  const setupDesc = SETUP_DESCRIPTIONS[MiraState.pantry.selectedSetup] || SETUP_DESCRIPTIONS.full;
   const prompt = `${getMiraProtocol()}
 
 What ${userName} has in their pantry: ${pantry}
@@ -2733,7 +3080,7 @@ Suggest 1–2 specific meals they can make RIGHT NOW using mostly what they have
 - Name it
 - List which pantry items it uses
 - Note any 1–2 items they'd need to grab if missing
-- Give simple step-by-step instructions (${selectedEffort === 'quick' ? '3–5 steps max' : 'as detailed as needed'}) using ONLY their available equipment
+- Give simple step-by-step instructions (${MiraState.pantry.selectedEffort === 'quick' ? '3–5 steps max' : 'as detailed as needed'}) using ONLY their available equipment
 - Confirm why it fits their protocol
 
 Return as JSON:
@@ -2772,56 +3119,24 @@ function renderPantryResult(json) {
   const result = document.getElementById('pantry-result');
   result.innerHTML = `
     ${(json.meals||[]).map(m => `
-      <div class="restaurant-card" style="margin-top:16px;">
-        <div style="font-size:1rem;font-weight:900;color:var(--text);margin-bottom:8px;">🍽️ ${escHtml(m.name)}</div>
+      <div class="restaurant-card pantry-result-card">
+        <div class="feature-title-lg">🍽️ ${escHtml(m.name)}</div>
         ${m.uses_from_pantry?.length ? `
-          <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:0.8px;color:var(--green);margin-bottom:4px;">✅ Using from pantry</div>
-          <div style="font-size:0.8rem;color:var(--text);margin-bottom:10px;">${m.uses_from_pantry.map(x => escHtml(x)).join(' · ')}</div>` : ''}
+          <div class="pantry-section-green">✅ Using from pantry</div>
+          <div class="pantry-item-list">${m.uses_from_pantry.map(x => escHtml(x)).join(' · ')}</div>` : ''}
         ${m.need_to_buy?.length ? `
-          <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:0.8px;color:var(--orange);margin-bottom:4px;">🛒 Need to grab</div>
-          <div style="font-size:0.8rem;color:var(--text);margin-bottom:10px;">${m.need_to_buy.map(x => escHtml(x)).join(' · ')}</div>` : ''}
-        <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:0.8px;color:var(--text-muted);margin-bottom:6px;">Steps</div>
-        <ol style="margin:0;padding-left:18px;font-size:0.84rem;line-height:1.7;color:var(--text);">
+          <div class="pantry-section-orange">🛒 Need to grab</div>
+          <div class="pantry-item-list">${m.need_to_buy.map(x => escHtml(x)).join(' · ')}</div>` : ''}
+        <div class="pantry-section-muted">Steps</div>
+        <ol class="pantry-steps-list">
           ${(m.steps||[]).map(s => `<li>${escHtml(s)}</li>`).join('')}
         </ol>
-        <div style="margin-top:10px;padding:8px 12px;background:var(--green-light);border-radius:10px;font-size:0.76rem;font-weight:700;color:var(--green);">✅ ${escHtml(m.why_safe)}</div>
+        <div class="pantry-safe-box">✅ ${escHtml(m.why_safe)}</div>
       </div>
     `).join('')}
-    ${json.tip ? `<div style="margin-top:16px;padding:12px 14px;background:var(--purple-light);border-radius:14px;font-size:0.84rem;font-weight:700;color:var(--purple);line-height:1.6;">💜 ${escHtml(json.tip)}</div>` : ''}
+    ${json.tip ? `<div class="pantry-tip-box">💜 ${escHtml(json.tip)}</div>` : ''}
   `;
 }
-
-// ── iOS HOME SCREEN ICON ──────────────────────────────────────
-(function generateAppIcon() {
-  try {
-    const c = document.createElement('canvas');
-    c.width = 180; c.height = 180;
-    const ctx = c.getContext('2d');
-    // Rounded rect background
-    const r = 36;
-    ctx.beginPath();
-    ctx.moveTo(r, 0); ctx.lineTo(180-r, 0);
-    ctx.quadraticCurveTo(180, 0, 180, r);
-    ctx.lineTo(180, 180-r);
-    ctx.quadraticCurveTo(180, 180, 180-r, 180);
-    ctx.lineTo(r, 180);
-    ctx.quadraticCurveTo(0, 180, 0, 180-r);
-    ctx.lineTo(0, r);
-    ctx.quadraticCurveTo(0, 0, r, 0);
-    ctx.closePath();
-    const grad = ctx.createLinearGradient(0, 0, 180, 180);
-    grad.addColorStop(0, '#1FBF80');
-    grad.addColorStop(1, '#FF7EB3');
-    ctx.fillStyle = grad;
-    ctx.fill();
-    // Leaf emoji centered
-    ctx.font = '90px serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('🌿', 90, 95);
-    document.getElementById('apple-touch-icon').href = c.toDataURL('image/png');
-  } catch(e) {}
-})();
 
 // ── NEARBY RESTAURANTS FUNCTIONS ─────────────────────────────
 
@@ -2871,8 +3186,8 @@ async function runPass1(location, distance, priceTier) {
     ? `\nIMPORTANT: Only include restaurants that are primarily ${tierDesc[priceTier]} per person. Set price_tier to ${priceTier} for all results.`
     : '';
 
-  const profileLine = currentProfile
-    ? `The user (${currentProfile.name || 'patient'}) has: ${(currentProfile.conditions||['SIBO']).join(', ')}. Restrictions: ${(currentProfile.restrictions||['Low-FODMAP','Low-Histamine']).join(', ')}.`
+  const profileLine = MiraState.auth.currentProfile
+    ? `The user (${MiraState.auth.currentProfile.name || 'patient'}) has: ${(MiraState.auth.currentProfile.conditions||['SIBO']).join(', ')}. Restrictions: ${(MiraState.auth.currentProfile.restrictions||['Low-FODMAP','Low-Histamine']).join(', ')}.`
     : 'The user has SIBO and follows a strict low-FODMAP, low-histamine diet.';
 
   const prompt = `
@@ -2984,34 +3299,34 @@ confidence values: "high" (full menu + ingredients found), "medium" (partial men
 }
 
 function setDistance(d) {
-  selectedDistance = d;
+  MiraState.nearby.selectedDistance = d;
   document.querySelectorAll('.dist-chip').forEach(b => b.classList.remove('active'));
   const chip = document.querySelector(`.dist-chip[data-d="${d}"]`);
   if (chip) chip.classList.add('active');
 }
 
 function setSearchMode(mode) {
-  currentSearchMode = mode;
+  MiraState.nearby.currentSearchMode = mode;
   // Only rewrite the form area — results stay untouched
   renderSearchForm();
 }
 
 function selectPriceTierPreFilter(tier) {
-  selectedPriceTier = selectedPriceTier === tier ? null : tier;
+  MiraState.nearby.selectedPriceTier = MiraState.nearby.selectedPriceTier === tier ? null : tier;
   document.querySelectorAll('.price-tier-chip').forEach(b => {
-    b.classList.toggle('active', parseInt(b.dataset.tier) === selectedPriceTier);
+    b.classList.toggle('active', parseInt(b.dataset.tier) === MiraState.nearby.selectedPriceTier);
   });
 }
 
 function setActivePriceTierFilter(tier) {
-  activePriceTierFilter = activePriceTierFilter === tier ? null : tier;
-  const filtered = activePriceTierFilter === null
-    ? lastResults
-    : lastResults.filter(r => r.price_tier === activePriceTierFilter);
+  MiraState.nearby.activePriceTierFilter = MiraState.nearby.activePriceTierFilter === tier ? null : tier;
+  const filtered = MiraState.nearby.activePriceTierFilter === null
+    ? MiraState.nearby.lastResults
+    : MiraState.nearby.lastResults.filter(r => r.price_tier === MiraState.nearby.activePriceTierFilter);
   renderRestaurantCards(filtered);
   // Restore active chip after re-render
   document.querySelectorAll('.post-filter-chip').forEach(b => {
-    b.classList.toggle('active', b.dataset.tier === String(activePriceTierFilter ?? 'all'));
+    b.classList.toggle('active', b.dataset.tier === String(MiraState.nearby.activePriceTierFilter ?? 'all'));
   });
 }
 
@@ -3045,27 +3360,27 @@ function renderSearchForm() {
 
   const tabs = `
     <div class="search-mode-tabs">
-      <button class="mode-tab ${currentSearchMode === 'location' ? 'active' : ''}" onclick="setSearchMode('location')">📍 Location</button>
-      <button class="mode-tab ${currentSearchMode === 'name' ? 'active' : ''}" onclick="setSearchMode('name')">🔍 Restaurant</button>
-      <button class="mode-tab ${currentSearchMode === 'price' ? 'active' : ''}" onclick="setSearchMode('price')">💰 By Price</button>
+      <button class="mode-tab ${MiraState.nearby.currentSearchMode === 'location' ? 'active' : ''}" onclick="setSearchMode('location')">📍 Location</button>
+      <button class="mode-tab ${MiraState.nearby.currentSearchMode === 'name' ? 'active' : ''}" onclick="setSearchMode('name')">🔍 Restaurant</button>
+      <button class="mode-tab ${MiraState.nearby.currentSearchMode === 'price' ? 'active' : ''}" onclick="setSearchMode('price')">💰 By Price</button>
     </div>`;
 
   const distChips = `
     <div class="distance-chips">
       ${[0.5, 1, 2, 5, 10].map(d => `
-        <button class="dist-chip ${d === selectedDistance ? 'active' : ''}" data-d="${d}" onclick="setDistance(${d})">${d} mi</button>
+        <button class="dist-chip ${d === MiraState.nearby.selectedDistance ? 'active' : ''}" data-d="${d}" onclick="setDistance(${d})">${d} mi</button>
       `).join('')}
     </div>`;
 
   const priceTierChipsHtml = `
     <div class="price-tier-chips">
-      <button class="price-tier-chip ${selectedPriceTier === 1 ? 'active' : ''}" data-tier="1" onclick="selectPriceTierPreFilter(1)">💸 I'm fucking poor <span style="font-size:0.72rem;font-weight:600;opacity:0.7">($10–$25/plate)</span></button>
-      <button class="price-tier-chip ${selectedPriceTier === 2 ? 'active' : ''}" data-tier="2" onclick="selectPriceTierPreFilter(2)">🍾 Screw it I'm treating myself <span style="font-size:0.72rem;font-weight:600;opacity:0.7">($25–$50/plate)</span></button>
-      <button class="price-tier-chip ${selectedPriceTier === 3 ? 'active' : ''}" data-tier="3" onclick="selectPriceTierPreFilter(3)">🎰 Fuck it we BALL <span style="font-size:0.72rem;font-weight:600;opacity:0.7">($50+/plate)</span></button>
+      <button class="price-tier-chip ${MiraState.nearby.selectedPriceTier === 1 ? 'active' : ''}" data-tier="1" onclick="selectPriceTierPreFilter(1)">💸 I'm fucking poor <span class="price-sub">($10–$25/plate)</span></button>
+      <button class="price-tier-chip ${MiraState.nearby.selectedPriceTier === 2 ? 'active' : ''}" data-tier="2" onclick="selectPriceTierPreFilter(2)">🍾 Screw it I'm treating myself <span class="price-sub">($25–$50/plate)</span></button>
+      <button class="price-tier-chip ${MiraState.nearby.selectedPriceTier === 3 ? 'active' : ''}" data-tier="3" onclick="selectPriceTierPreFilter(3)">🎰 Fuck it we BALL <span class="price-sub">($50+/plate)</span></button>
     </div>`;
 
   let formHtml = '';
-  if (currentSearchMode === 'location') {
+  if (MiraState.nearby.currentSearchMode === 'location') {
     formHtml = `
       <div class="search-bar">
         <input type="text" id="zip-input" placeholder="Enter ZIP code..." class="zip-input" inputmode="numeric" maxlength="10">
@@ -3073,13 +3388,13 @@ function renderSearchForm() {
       </div>
       ${distChips}
       <button class="search-submit-btn" onclick="searchByZip()">Search</button>`;
-  } else if (currentSearchMode === 'name') {
+  } else if (MiraState.nearby.currentSearchMode === 'name') {
     formHtml = `
       <div class="search-bar">
         <input type="text" id="name-input" placeholder="Restaurant name..." class="zip-input">
       </div>
       <button class="search-submit-btn" onclick="doNameSearch()">Analyze this restaurant</button>`;
-  } else if (currentSearchMode === 'price') {
+  } else if (MiraState.nearby.currentSearchMode === 'price') {
     formHtml = `
       ${priceTierChipsHtml}
       <div class="search-bar">
@@ -3100,9 +3415,9 @@ async function doNameSearch() {
   if (resultsArea) resultsArea.innerHTML = `<div class="nearby-loading">Analyzing ${name}...</div>`;
   try {
     const restaurant = { name, cuisine: 'Unknown', address: 'See menu analysis', price_tier: null };
-    currentDetailRestaurant = restaurant;
+    MiraState.nearby.currentDetailRestaurant = restaurant;
     const detail = await runPass2(restaurant);
-    currentDetailData = detail;
+    MiraState.nearby.currentDetailData = detail;
     if (isFavorite(name)) updateFavoriteMenu(name, detail);
     renderDetailCard(detail, restaurant, { backAction: 'renderSearchUI()' });
   } catch (err) {
@@ -3113,16 +3428,16 @@ async function doNameSearch() {
 async function searchByPriceZip() {
   const zip = document.getElementById('zip-input-price')?.value.trim();
   if (!zip) { searchByPriceGPS(); return; }
-  currentSearch = { type: 'zip', zipcode: zip };
-  currentPage = 0;
+  MiraState.nearby.currentSearch = { type: 'zip', zipcode: zip };
+  MiraState.nearby.currentPage = 0;
   await runSearch();
 }
 
 async function searchByPriceGPS() {
   try {
     const { lat, lng } = await getLocation();
-    currentSearch = { type: 'gps', lat, lng };
-    currentPage = 0;
+    MiraState.nearby.currentSearch = { type: 'gps', lat, lng };
+    MiraState.nearby.currentPage = 0;
     await runSearch();
   } catch (err) {
     const resultsArea = document.getElementById('results-area');
@@ -3133,16 +3448,16 @@ async function searchByPriceGPS() {
 async function searchByZip() {
   const zip = document.getElementById('zip-input')?.value.trim();
   if (!zip) return;
-  currentSearch = { type: 'zip', zipcode: zip };
-  currentPage = 0;
+  MiraState.nearby.currentSearch = { type: 'zip', zipcode: zip };
+  MiraState.nearby.currentPage = 0;
   await runSearch();
 }
 
 async function searchByGPS() {
   try {
     const { lat, lng } = await getLocation();
-    currentSearch = { type: 'gps', lat, lng };
-    currentPage = 0;
+    MiraState.nearby.currentSearch = { type: 'gps', lat, lng };
+    MiraState.nearby.currentPage = 0;
     await runSearch();
   } catch (err) {
     const resultsArea = document.getElementById('results-area');
@@ -3155,29 +3470,29 @@ async function runSearch() {
   if (isOffline()) { if (resultsArea) resultsArea.innerHTML = '<div class="nearby-error">📡 You\'re offline — restaurant search needs an internet connection.</div>'; return; }
   if (resultsArea) resultsArea.innerHTML = '<div class="nearby-loading">Searching restaurants...</div>';
   try {
-    const key = searchKey(currentSearch, selectedDistance, selectedPriceTier);
-    if (!pass1Cache[key]) {
-      pass1Cache[key] = await runPass1(currentSearch, selectedDistance, selectedPriceTier);
+    const key = searchKey(MiraState.nearby.currentSearch, MiraState.nearby.selectedDistance, MiraState.nearby.selectedPriceTier);
+    if (!MiraState.nearby.pass1Cache[key]) {
+      MiraState.nearby.pass1Cache[key] = await runPass1(MiraState.nearby.currentSearch, MiraState.nearby.selectedDistance, MiraState.nearby.selectedPriceTier);
     }
-    lastResults = pass1Cache[key];
-    activePriceTierFilter = null;
-    currentPage = 0;
-    renderRestaurantCards(lastResults);
+    MiraState.nearby.lastResults = MiraState.nearby.pass1Cache[key];
+    MiraState.nearby.activePriceTierFilter = null;
+    MiraState.nearby.currentPage = 0;
+    renderRestaurantCards(MiraState.nearby.lastResults);
   } catch (err) {
     if (resultsArea) resultsArea.innerHTML = `<div class="nearby-error">❌ ${err.message}</div>`;
   }
 }
 
 async function refreshNearby() {
-  if (!currentSearch) { initNearby(); return; }
-  const key = searchKey(currentSearch, selectedDistance, selectedPriceTier);
-  delete pass1Cache[key];
+  if (!MiraState.nearby.currentSearch) { initNearby(); return; }
+  const key = searchKey(MiraState.nearby.currentSearch, MiraState.nearby.selectedDistance, MiraState.nearby.selectedPriceTier);
+  delete MiraState.nearby.pass1Cache[key];
   await runSearch();
 }
 
 function goToPage(n) {
-  currentPage = n;
-  renderRestaurantCards(lastResults);
+  MiraState.nearby.currentPage = n;
+  renderRestaurantCards(MiraState.nearby.lastResults);
   const ra = document.getElementById('results-area');
   if (ra) ra.scrollTop = 0;
 }
@@ -3197,26 +3512,26 @@ function renderRestaurantCards(restaurants) {
 
   const pageSize = 10;
   const totalPages = Math.ceil(restaurants.length / pageSize);
-  const page = restaurants.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+  const page = restaurants.slice(MiraState.nearby.currentPage * pageSize, (MiraState.nearby.currentPage + 1) * pageSize);
 
   const paginationHtml = totalPages > 1 ? `
     <div class="pagination">
-      ${currentPage > 0 ? `<button onclick="goToPage(${currentPage - 1})">← Prev</button>` : '<span></span>'}
-      <span>Page ${currentPage + 1} of ${totalPages}</span>
-      ${currentPage < totalPages - 1 ? `<button onclick="goToPage(${currentPage + 1})">Next →</button>` : '<span></span>'}
+      ${MiraState.nearby.currentPage > 0 ? `<button onclick="goToPage(${MiraState.nearby.currentPage - 1})">← Prev</button>` : '<span></span>'}
+      <span>Page ${MiraState.nearby.currentPage + 1} of ${totalPages}</span>
+      ${MiraState.nearby.currentPage < totalPages - 1 ? `<button onclick="goToPage(${MiraState.nearby.currentPage + 1})">Next →</button>` : '<span></span>'}
     </div>
   ` : '';
 
   const postFilterHtml = `
     <div class="post-filter-strip">
-      <button class="post-filter-chip ${activePriceTierFilter === null ? 'active' : ''}" data-tier="all" onclick="setActivePriceTierFilter(null)">All</button>
-      <button class="post-filter-chip ${activePriceTierFilter === 1 ? 'active' : ''}" data-tier="1" onclick="setActivePriceTierFilter(1)">💸 Budget</button>
-      <button class="post-filter-chip ${activePriceTierFilter === 2 ? 'active' : ''}" data-tier="2" onclick="setActivePriceTierFilter(2)">🍾 Mid</button>
-      <button class="post-filter-chip ${activePriceTierFilter === 3 ? 'active' : ''}" data-tier="3" onclick="setActivePriceTierFilter(3)">🎰 Upscale</button>
+      <button class="post-filter-chip ${MiraState.nearby.activePriceTierFilter === null ? 'active' : ''}" data-tier="all" onclick="setActivePriceTierFilter(null)">All</button>
+      <button class="post-filter-chip ${MiraState.nearby.activePriceTierFilter === 1 ? 'active' : ''}" data-tier="1" onclick="setActivePriceTierFilter(1)">💸 Budget</button>
+      <button class="post-filter-chip ${MiraState.nearby.activePriceTierFilter === 2 ? 'active' : ''}" data-tier="2" onclick="setActivePriceTierFilter(2)">🍾 Mid</button>
+      <button class="post-filter-chip ${MiraState.nearby.activePriceTierFilter === 3 ? 'active' : ''}" data-tier="3" onclick="setActivePriceTierFilter(3)">🎰 Upscale</button>
     </div>`;
 
   container.innerHTML =
-    `<button class="refresh-btn" onclick="refreshNearby()">🔄 Refresh · ${selectedDistance} mi</button>` +
+    `<button class="refresh-btn" onclick="refreshNearby()">🔄 Refresh · ${MiraState.nearby.selectedDistance} mi</button>` +
     postFilterHtml +
     page.map(r => {
       const badge = priceBadge(r.price_tier);
@@ -3240,22 +3555,22 @@ function renderRestaurantCards(restaurants) {
 }
 
 async function openRestaurantDetail(restaurantName) {
-  const restaurant = lastResults.find(r => r.name === restaurantName);
+  const restaurant = MiraState.nearby.lastResults.find(r => r.name === restaurantName);
   if (!restaurant) return;
 
-  currentDetailRestaurant = restaurant;
-  currentDetailMood = 'good';
+  MiraState.nearby.currentDetailRestaurant = restaurant;
+  MiraState.nearby.currentDetailMood = 'good';
 
   const resultsArea = document.getElementById('results-area');
   if (resultsArea) resultsArea.innerHTML = '<div class="nearby-loading">Analyzing menu against your protocol...</div>';
 
   try {
-    if (!pass2Cache[restaurant.name]) {
-      pass2Cache[restaurant.name] = await runPass2(restaurant);
+    if (!MiraState.nearby.pass2Cache[restaurant.name]) {
+      MiraState.nearby.pass2Cache[restaurant.name] = await runPass2(restaurant);
     }
-    currentDetailData = pass2Cache[restaurant.name];
-    if (isFavorite(restaurant.name)) updateFavoriteMenu(restaurant.name, currentDetailData);
-    renderDetailCard(currentDetailData, restaurant, { backAction: 'renderRestaurantCards(lastResults)' });
+    MiraState.nearby.currentDetailData = MiraState.nearby.pass2Cache[restaurant.name];
+    if (isFavorite(restaurant.name)) updateFavoriteMenu(restaurant.name, MiraState.nearby.currentDetailData);
+    renderDetailCard(MiraState.nearby.currentDetailData, restaurant, { backAction: 'renderRestaurantCards(MiraState.nearby.lastResults)' });
   } catch (err) {
     if (resultsArea) resultsArea.innerHTML = `<div class="nearby-error">Menu analysis failed: ${err.message}</div>`;
   }
@@ -3266,14 +3581,14 @@ async function openFavoriteDetail(name, origin) {
   const fav = favs.find(f => f.name === name);
   if (!fav) return;
 
-  currentDetailRestaurant = fav;
-  currentDetailMood = 'good';
+  MiraState.nearby.currentDetailRestaurant = fav;
+  MiraState.nearby.currentDetailMood = 'good';
   const containerId = origin === 'nearby' ? 'results-area' : 'favorites-content';
   const backAction = origin === 'nearby' ? 'renderSearchUI()' : 'renderFavoritesScreen()';
   const container = document.getElementById(containerId) || document.getElementById('nearby-content');
 
   if (fav.menu) {
-    currentDetailData = fav.menu;
+    MiraState.nearby.currentDetailData = fav.menu;
     renderDetailCard(fav.menu, fav, { containerId, backAction, isFav: true });
     return;
   }
@@ -3281,7 +3596,7 @@ async function openFavoriteDetail(name, origin) {
   container.innerHTML = '<div class="nearby-loading">Analyzing menu...</div>';
   try {
     const detail = await runPass2(fav);
-    currentDetailData = detail;
+    MiraState.nearby.currentDetailData = detail;
     updateFavoriteMenu(name, detail);
     renderDetailCard(detail, fav, { containerId, backAction, isFav: true });
   } catch (err) {
@@ -3323,26 +3638,26 @@ function renderMenuSections(detail, mood) {
 }
 
 function applyMoodFilter(mood) {
-  currentDetailMood = mood;
+  MiraState.nearby.currentDetailMood = mood;
   document.querySelectorAll('.mood-btn').forEach(b => b.classList.toggle('active', b.dataset.mood === mood));
   const el = document.getElementById('menu-sections');
-  if (el && currentDetailData) el.innerHTML = renderMenuSections(currentDetailData, mood);
+  if (el && MiraState.nearby.currentDetailData) el.innerHTML = renderMenuSections(MiraState.nearby.currentDetailData, mood);
 }
 
 async function getAISuggestion() {
   const btn = document.getElementById('ai-suggest-btn');
   const out = document.getElementById('ai-suggest-out');
-  if (!btn || !out || !currentDetailData) return;
+  if (!btn || !out || !MiraState.nearby.currentDetailData) return;
   if (isOffline()) { out.innerHTML = '<div class="nearby-error">📡 You\'re offline — AI suggestions need internet.</div>'; return; }
   btn.disabled = true;
   btn.textContent = 'Thinking...';
   out.innerHTML = '';
   const moodDesc = { flaring: 'having a SIBO flare (very symptomatic today)', cautious: 'being cautious (mild symptoms)', good: 'feeling well today' };
-  const userName = currentProfile?.name || 'The user';
-  const prompt = `${userName} is visiting ${escHtml(currentDetailRestaurant.name)} and is ${moodDesc[currentDetailMood]}.
-Safe menu items: ${(currentDetailData.safe_items || []).map(i => i.item).join(', ')}.
-Caution items: ${(currentDetailData.caution_items || []).map(i => i.item).join(', ')}.
-Ask staff: ${(currentDetailData.ask_staff || []).join('; ')}.
+  const userName = MiraState.auth.currentProfile?.name || 'The user';
+  const prompt = `${userName} is visiting ${escHtml(MiraState.nearby.currentDetailRestaurant.name)} and is ${moodDesc[MiraState.nearby.currentDetailMood]}.
+Safe menu items: ${(MiraState.nearby.currentDetailData.safe_items || []).map(i => i.item).join(', ')}.
+Caution items: ${(MiraState.nearby.currentDetailData.caution_items || []).map(i => i.item).join(', ')}.
+Ask staff: ${(MiraState.nearby.currentDetailData.ask_staff || []).join('; ')}.
 Give a warm, friendly 2–3 sentence "order this today" recommendation based on their mood. Name specific dishes. Be practical and encouraging.`;
   try {
     const res = await fetch(PROXY_URL, {
@@ -3362,7 +3677,7 @@ Give a warm, friendly 2–3 sentence "order this today" recommendation based on 
 
 function renderDetailCard(detail, restaurant, opts = {}) {
   const containerId = opts.containerId || 'results-area';
-  const backAction = opts.backAction || 'renderRestaurantCards(lastResults)';
+  const backAction = opts.backAction || 'renderRestaurantCards(MiraState.nearby.lastResults)';
   const container = document.getElementById(containerId) || document.getElementById('nearby-content');
   const confidenceColor = { high: 'var(--green)', medium: 'var(--orange)', low: 'var(--red)' };
   const favd = isFavorite(restaurant.name);
@@ -3373,7 +3688,7 @@ function renderDetailCard(detail, restaurant, opts = {}) {
     <div class="detail-header">
       <div class="detail-header-row">
         <div class="detail-name">${escHtml(detail.restaurant || restaurant.name)}</div>
-        <div style="display:flex;gap:4px;align-items:center;">
+        <div class="detail-actions-row">
           <button class="share-btn" onclick="shareContent('${escHtml(restaurant.name)}', formatRestaurantForShare())">📤</button>
           <button class="fav-btn fav-btn-lg" data-fname="${escHtml(restaurant.name)}" onclick="toggleFavorite(this.dataset.fname)">
             ${favd ? '⭐' : '☆'}
@@ -3391,33 +3706,33 @@ function renderDetailCard(detail, restaurant, opts = {}) {
     <div class="mood-bar">
       <span class="mood-label">How are you feeling?</span>
       <div class="mood-btns">
-        <button class="mood-btn ${currentDetailMood === 'flaring' ? 'active' : ''}" data-mood="flaring" onclick="applyMoodFilter('flaring')">🔴 Flaring</button>
-        <button class="mood-btn ${currentDetailMood === 'cautious' ? 'active' : ''}" data-mood="cautious" onclick="applyMoodFilter('cautious')">🟡 Cautious</button>
-        <button class="mood-btn ${currentDetailMood === 'good' ? 'active' : ''}" data-mood="good" onclick="applyMoodFilter('good')">🟢 Feeling Good</button>
+        <button class="mood-btn ${MiraState.nearby.currentDetailMood === 'flaring' ? 'active' : ''}" data-mood="flaring" onclick="applyMoodFilter('flaring')">🔴 Flaring</button>
+        <button class="mood-btn ${MiraState.nearby.currentDetailMood === 'cautious' ? 'active' : ''}" data-mood="cautious" onclick="applyMoodFilter('cautious')">🟡 Cautious</button>
+        <button class="mood-btn ${MiraState.nearby.currentDetailMood === 'good' ? 'active' : ''}" data-mood="good" onclick="applyMoodFilter('good')">🟢 Feeling Good</button>
       </div>
       <button class="ai-suggest-trigger" id="ai-suggest-btn" onclick="getAISuggestion()">✨ Get AI suggestion</button>
       <div id="ai-suggest-out"></div>
     </div>
 
     <div id="menu-sections">
-      ${renderMenuSections(detail, currentDetailMood)}
+      ${renderMenuSections(detail, MiraState.nearby.currentDetailMood)}
     </div>
 
-    <button class="log-meal-btn" data-rname="${escHtml(restaurant.name)}" onclick="openMealLog(this.dataset.rname, currentDetailData)">📝 Log a meal here</button>
+    <button class="log-meal-btn" data-rname="${escHtml(restaurant.name)}" onclick="openMealLog(this.dataset.rname, MiraState.nearby.currentDetailData)">📝 Log a meal here</button>
   `;
 
   maybeRenderVarietyCard(restaurant.name);
 }
 
 // ── MEAL LOG ─────────────────────────────────────────────────
-let _mealLogCache = null;
+// MiraState.mealLog._mealLogCache is now in MiraState.mealLog
 function loadMealLog() {
-  if (_mealLogCache) return _mealLogCache;
-  try { _mealLogCache = JSON.parse(localStorage.getItem('mira_meal_log') || '[]'); } catch { _mealLogCache = []; }
-  return _mealLogCache;
+  if (MiraState.mealLog._mealLogCache) return MiraState.mealLog._mealLogCache;
+  try { MiraState.mealLog._mealLogCache = JSON.parse(localStorage.getItem('mira_meal_log') || '[]'); } catch { MiraState.mealLog._mealLogCache = []; }
+  return MiraState.mealLog._mealLogCache;
 }
 function saveMealLog(log) {
-  _mealLogCache = log;
+  MiraState.mealLog._mealLogCache = log;
   safeSetItem('mira_meal_log', JSON.stringify(log));
 }
 function getMealLogForRestaurant(name) {
@@ -3428,7 +3743,7 @@ function openMealLog(restaurantName, detail) {
   const overlay = document.getElementById('meal-log-overlay');
   const sheet = document.getElementById('meal-log-sheet');
   const content = document.getElementById('meal-log-content');
-  const d = detail || currentDetailData;
+  const d = detail || MiraState.nearby.currentDetailData;
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
   const safeItems = (d?.safe_items || []).map(i => `
@@ -3449,7 +3764,7 @@ function openMealLog(restaurantName, detail) {
     ${safeItems ? `<div class="meal-log-section-label">✅ What did you eat?</div>${safeItems}` : ''}
     ${cautionItems ? `<div class="meal-log-section-label">⚠️ Caution items</div>${cautionItems}` : ''}
     <div class="meal-log-section-label">Anything else?</div>
-    <input type="text" id="log-extra" class="meal-log-notes" placeholder="e.g. plain rice, water..." style="height:44px;">
+    <input type="text" id="log-extra" class="meal-log-notes log-extra-input" placeholder="e.g. plain rice, water...">
     <div class="meal-log-section-label">Notes</div>
     <textarea id="log-notes" class="meal-log-notes" rows="3" placeholder="How did you feel? Any reactions?"></textarea>
     <button class="meal-log-save-btn" data-rname="${escHtml(restaurantName)}" onclick="saveMealEntry(this.dataset.rname)">Save</button>
@@ -3493,7 +3808,7 @@ function saveMealEntry(restaurantName) {
 }
 
 // ── VARIETY SUGGESTIONS ──────────────────────────────────────
-const varietyCache = {};
+// MiraState.nearby.varietyCache is now in MiraState.nearby
 
 function maybeRenderVarietyCard(restaurantName, forceRefresh) {
   const el = document.getElementById('variety-card-area');
@@ -3524,9 +3839,9 @@ async function getVarietySuggestion(restaurantName, forceRefresh) {
   const el = document.getElementById('variety-text');
   if (!el) return;
 
-  if (!forceRefresh && varietyCache[restaurantName]) {
+  if (!forceRefresh && MiraState.nearby.varietyCache[restaurantName]) {
     el.className = 'variety-suggestion';
-    el.textContent = varietyCache[restaurantName];
+    el.textContent = MiraState.nearby.varietyCache[restaurantName];
     return;
   }
 
@@ -3536,9 +3851,9 @@ async function getVarietySuggestion(restaurantName, forceRefresh) {
   const fav = loadFavorites().find(f => f.name === restaurantName);
   const logs = getMealLogForRestaurant(restaurantName);
   const pastItems = [...new Set(logs.flatMap(e => e.items.map(i => i.name)))];
-  const safeItems = (fav?.menu?.safe_items || currentDetailData?.safe_items || []).map(i => i.item);
+  const safeItems = (fav?.menu?.safe_items || MiraState.nearby.currentDetailData?.safe_items || []).map(i => i.item);
 
-  const userName = currentProfile?.name || 'This person';
+  const userName = MiraState.auth.currentProfile?.name || 'This person';
   const prompt = `${userName} has visited ${restaurantName} before. They usually order: ${pastItems.join(', ')}.
 Safe menu items they haven't tried recently: ${safeItems.filter(i => !pastItems.includes(i)).join(', ')}.
 Suggest 1–2 specific dishes they could try something new today. Keep it warm, personal, and under 3 sentences. Address them as ${userName}.`;
@@ -3554,7 +3869,7 @@ Suggest 1–2 specific dishes they could try something new today. Keep it warm, 
     });
     const data = await res.json();
     const text = data.candidates[0].content.parts.filter(p => !p.thought).map(p => p.text || '').join('').trim();
-    varietyCache[restaurantName] = text;
+    MiraState.nearby.varietyCache[restaurantName] = text;
     if (el) { el.className = 'variety-suggestion'; el.textContent = text; }
   } catch (err) {
     if (el) { el.className = 'variety-suggestion'; el.textContent = '⚠️ Could not load suggestion.'; }
@@ -3636,7 +3951,7 @@ function extractWeekIngredients() {
   const ingredients = [];
   for (let day = 0; day < 7; day++) {
     for (const type of ['breakfast', 'lunch', 'snack', 'dinner']) {
-      const idx = weekMeals[type][day];
+      const idx = MiraState.meals.weekMeals[type][day];
       const meal = ALL_MEALS[type][idx];
       if (meal && meal.ingredients) {
         meal.ingredients.forEach(ing => ingredients.push(ing.trim()));
@@ -3696,10 +4011,10 @@ const GROCERY_TIER_META = {
   rich: { label: '👑 SUHCURITY WE SHOPPIN AT WHOLE FOODS', emoji: '👑', sub: 'Whole Foods / specialty organic', color: 'var(--purple)' },
 };
 
-let selectedGroceryTier = 'avg';
+// MiraState.grocery.selectedGroceryTier is now in MiraState.grocery
 
 function selectGroceryTier(tier) {
-  selectedGroceryTier = tier;
+  MiraState.grocery.selectedGroceryTier = tier;
   renderGroceryList();
 }
 
@@ -3707,7 +4022,7 @@ function estimateGroceryTotal(items) {
   let total = 0;
   items.forEach(item => {
     const prices = GROCERY_BASE_PRICES[item.category] || GROCERY_BASE_PRICES.pantry;
-    total += prices[selectedGroceryTier] * item.count;
+    total += prices[MiraState.grocery.selectedGroceryTier] * item.count;
   });
   return total;
 }
@@ -3757,7 +4072,7 @@ function renderGroceryList() {
   }
 
   const total = estimateGroceryTotal(items);
-  const tierMeta = GROCERY_TIER_META[selectedGroceryTier];
+  const tierMeta = GROCERY_TIER_META[MiraState.grocery.selectedGroceryTier];
 
   // Group by category
   const groups = {};
@@ -3767,29 +4082,29 @@ function renderGroceryList() {
   });
 
   let html = `
-    <div class="card" style="background:linear-gradient(135deg,#D6FAF0,#EEE5FF);border-color:var(--green-mid);margin-bottom:16px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
+    <div class="card grocery-header-card">
+      <div class="flex-row-between">
         <div>
-          <div style="font-size:1rem;font-weight:900;color:var(--text);">🛒 Grocery List</div>
-          <div style="font-size:0.78rem;color:var(--text-muted);margin-top:2px;">Based on this week's ${raw.length} ingredients across 28 meals</div>
+          <div class="feature-title">🛒 Grocery List</div>
+          <div class="grocery-subtitle">Based on this week's ${raw.length} ingredients across 28 meals</div>
         </div>
         <button class="share-btn" onclick="shareContent('Grocery List', formatGroceryListForShare())">📤 Share</button>
       </div>
     </div>
 
     <div class="section-label">Where we shoppin?</div>
-    <div class="price-tier-chips" style="margin-bottom:16px;">
+    <div class="price-tier-chips mb-16">
       ${Object.entries(GROCERY_TIER_META).map(([key, meta]) => `
-        <button class="price-tier-chip ${selectedGroceryTier === key ? 'active' : ''}" onclick="selectGroceryTier('${key}')">
-          ${meta.label} <span style="font-size:0.72rem;font-weight:600;opacity:0.7;display:block;margin-top:2px;">${meta.sub}</span>
+        <button class="price-tier-chip ${MiraState.grocery.selectedGroceryTier === key ? 'active' : ''}" onclick="selectGroceryTier('${key}')">
+          ${meta.label} <span class="grocery-tier-sub">${meta.sub}</span>
         </button>
       `).join('')}
     </div>
 
-    <div class="card" style="background:linear-gradient(135deg,${selectedGroceryTier === 'poor' ? '#D6FAF0,#E8F7EE' : selectedGroceryTier === 'rich' ? '#EEE5FF,#FFE0F0' : '#FFF5D6,#FFE4DA'});border-color:${tierMeta.color};margin-bottom:16px;text-align:center;">
-      <div style="font-size:2rem;margin-bottom:4px;">${tierMeta.emoji}</div>
-      <div style="font-size:1.6rem;font-weight:900;color:var(--text);">~$${Math.round(total)}</div>
-      <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);margin-top:2px;">Estimated weekly total · ${tierMeta.sub}</div>
+    <div class="card grocery-total-card ${MiraState.grocery.selectedGroceryTier === 'poor' ? 'grocery-total-poor' : MiraState.grocery.selectedGroceryTier === 'rich' ? 'grocery-total-rich' : 'grocery-total-mid'}" style="border-color:${tierMeta.color}">
+      <div class="grocery-total-emoji">${tierMeta.emoji}</div>
+      <div class="grocery-total-amount">~$${Math.round(total)}</div>
+      <div class="grocery-total-label">Estimated weekly total · ${tierMeta.sub}</div>
     </div>
 
     <div class="grocery-counter">
@@ -3800,17 +4115,17 @@ function renderGroceryList() {
   for (const [cat, catItems] of Object.entries(groups)) {
     const catLabel = GROCERY_CATEGORIES[cat]?.label || '📦 Other';
     const catPrices = GROCERY_BASE_PRICES[cat] || GROCERY_BASE_PRICES.pantry;
-    const catTotal = catItems.reduce((sum, item) => sum + catPrices[selectedGroceryTier] * item.count, 0);
-    html += `<div class="grocery-category">${catLabel} <span style="float:right;font-size:0.68rem;color:var(--text-muted);text-transform:none;letter-spacing:0;">~$${catTotal.toFixed(0)}</span></div>`;
+    const catTotal = catItems.reduce((sum, item) => sum + catPrices[MiraState.grocery.selectedGroceryTier] * item.count, 0);
+    html += `<div class="grocery-category">${catLabel} <span class="grocery-cat-price">~$${catTotal.toFixed(0)}</span></div>`;
     catItems.forEach(item => {
       const key = `g_${item.idx}`;
       const isChecked = !!checked[key];
-      const price = (GROCERY_BASE_PRICES[item.category] || GROCERY_BASE_PRICES.pantry)[selectedGroceryTier] * item.count;
+      const price = (GROCERY_BASE_PRICES[item.category] || GROCERY_BASE_PRICES.pantry)[MiraState.grocery.selectedGroceryTier] * item.count;
       html += `
         <label class="grocery-item ${isChecked ? 'checked' : ''}">
           <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleGroceryItem('${key}', this)">
-          <span class="grocery-item-text" style="flex:1;">${escHtml(item.display)}${item.count > 1 ? ` <span style="color:var(--pink);font-size:0.72rem;font-weight:800;">× ${item.count}</span>` : ''}</span>
-          <span style="font-size:0.72rem;font-weight:800;color:var(--text-muted);white-space:nowrap;">~$${price.toFixed(2)}</span>
+          <span class="grocery-item-text grocery-item-flex">${escHtml(item.display)}${item.count > 1 ? ` <span class="grocery-item-count">× ${item.count}</span>` : ''}</span>
+          <span class="grocery-item-price">~$${price.toFixed(2)}</span>
         </label>`;
     });
   }
@@ -3895,7 +4210,22 @@ function generateInsights() {
   // Count matched days
   const matchedDays = meals.filter(m => journalByDate[m.date]).length;
 
-  return { triggers, restaurants, symptomRanked, trend, matchedDays, totalJournal: journal.length, totalMeals: meals.length };
+  // Medication correlation: avg severity on days with vs without each med
+  const medInsights = [];
+  const allMedNames = new Set();
+  journal.forEach(j => (j.medications_taken || []).forEach(m => allMedNames.add(m)));
+  allMedNames.forEach(medName => {
+    const withMed = journal.filter(j => (j.medications_taken || []).includes(medName));
+    const withoutMed = journal.filter(j => !(j.medications_taken || []).includes(medName));
+    if (withMed.length >= 2 && withoutMed.length >= 2) {
+      const avgWith = withMed.reduce((s, j) => s + (j.severity || 3), 0) / withMed.length;
+      const avgWithout = withoutMed.reduce((s, j) => s + (j.severity || 3), 0) / withoutMed.length;
+      medInsights.push({ name: medName, avgWith, avgWithout, daysWith: withMed.length, daysWithout: withoutMed.length });
+    }
+  });
+  medInsights.sort((a, b) => (a.avgWith - a.avgWithout) - (b.avgWith - b.avgWithout));
+
+  return { triggers, restaurants, symptomRanked, trend, matchedDays, totalJournal: journal.length, totalMeals: meals.length, medInsights };
 }
 
 function renderInsightsCard() {
@@ -3914,7 +4244,7 @@ function renderInsightsCard() {
 
   if (insights.trend.length >= 3) {
     html += `
-      <div style="font-size:0.72rem;font-weight:800;color:var(--text-muted);margin-bottom:4px;">SEVERITY TREND</div>
+      <div class="section-sub-label">SEVERITY TREND</div>
       <div class="sparkline-row">
         ${insights.trend.map(t => {
           const h = (t.severity / 5) * 100;
@@ -3925,7 +4255,7 @@ function renderInsightsCard() {
   }
 
   if (topTriggers.length) {
-    html += `<div style="font-size:0.72rem;font-weight:800;color:var(--text-muted);margin:14px 0 6px;">POTENTIAL TRIGGERS</div>`;
+    html += `<div class="section-sub-label-spaced">POTENTIAL TRIGGERS</div>`;
     topTriggers.forEach(t => {
       const pct = Math.round(t.avgSeverity / 5 * 100);
       const barColor = t.avgSeverity >= 4 ? 'red' : t.avgSeverity >= 3 ? 'orange' : 'green';
@@ -3941,13 +4271,29 @@ function renderInsightsCard() {
   }
 
   if (insights.restaurants.length) {
-    html += `<div style="font-size:0.72rem;font-weight:800;color:var(--text-muted);margin:14px 0 6px;">RESTAURANT PATTERNS</div>`;
+    html += `<div class="section-sub-label-spaced">RESTAURANT PATTERNS</div>`;
     insights.restaurants.slice(0, 3).forEach(r => {
       const color = severityColor(r.avgSeverity);
       html += `
         <div class="insight-restaurant">
           <span class="insight-rest-name">${escHtml(r.name)}</span>
           <span class="insight-rest-stat" style="color:${color}">Avg ${r.avgSeverity.toFixed(1)}/5 (${r.visits} visits)</span>
+        </div>`;
+    });
+  }
+
+  if (insights.medInsights && insights.medInsights.length) {
+    html += `<div class="section-sub-label-spaced">MEDICATION IMPACT</div>`;
+    insights.medInsights.forEach(m => {
+      const diff = m.avgWithout - m.avgWith;
+      const helping = diff > 0.3;
+      const hurting = diff < -0.3;
+      const icon = helping ? '✅' : hurting ? '⚠️' : '➖';
+      const color = helping ? 'var(--green)' : hurting ? 'var(--red)' : 'var(--text-muted)';
+      html += `
+        <div class="insight-restaurant">
+          <span class="insight-rest-name">${icon} ${escHtml(m.name)}</span>
+          <span class="insight-rest-stat" style="color:${color}">${m.avgWith.toFixed(1)} with · ${m.avgWithout.toFixed(1)} without</span>
         </div>`;
     });
   }
@@ -3988,11 +4334,11 @@ async function shareContent(title, text) {
 }
 
 function formatMealPlanForShare() {
-  let text = `🌿 ${currentProfile?.name || "Mira"}'s Meal Plan\n\n`;
+  let text = `🌿 ${MiraState.auth.currentProfile?.name || "Mira"}'s Meal Plan\n\n`;
   for (let day = 0; day < 7; day++) {
     text += `📅 ${DAY_FULL[day]}\n`;
     for (const type of ['breakfast', 'lunch', 'snack', 'dinner']) {
-      const meal = ALL_MEALS[type][weekMeals[type][day]];
+      const meal = ALL_MEALS[type][MiraState.meals.weekMeals[type][day]];
       const emoji = { breakfast: '☀️', lunch: '🥗', snack: '🍎', dinner: '🌙' }[type];
       text += `  ${emoji} ${type.charAt(0).toUpperCase() + type.slice(1)}: ${meal.name}\n`;
     }
@@ -4003,8 +4349,8 @@ function formatMealPlanForShare() {
 }
 
 function formatRestaurantForShare(restaurant, detail) {
-  const r = restaurant || currentDetailRestaurant;
-  const d = detail || currentDetailData;
+  const r = restaurant || MiraState.nearby.currentDetailRestaurant;
+  const d = detail || MiraState.nearby.currentDetailData;
   if (!r || !d) return 'No restaurant data to share.';
   let text = `🌿 Restaurant Analysis: ${r.name}\n`;
   text += `Safety: ${r.safety_score}/5 · ${r.cuisine}\n\n`;
@@ -4026,7 +4372,7 @@ function formatGroceryListForShare() {
   const items = deduplicateIngredients(raw);
   const checked = loadGroceryChecked();
   const total = estimateGroceryTotal(items);
-  const tierMeta = GROCERY_TIER_META[selectedGroceryTier];
+  const tierMeta = GROCERY_TIER_META[MiraState.grocery.selectedGroceryTier];
   let text = `🛒 Grocery List (${items.length} items)\n${tierMeta.emoji} ~$${Math.round(total)} estimated · ${tierMeta.sub}\n\n`;
   const groups = {};
   items.forEach((item, i) => {
@@ -4038,7 +4384,7 @@ function formatGroceryListForShare() {
     text += `${label}\n`;
     catItems.forEach(item => {
       const mark = checked[`g_${item.idx}`] ? '✅' : '⬜';
-      const price = (GROCERY_BASE_PRICES[item.category] || GROCERY_BASE_PRICES.pantry)[selectedGroceryTier] * item.count;
+      const price = (GROCERY_BASE_PRICES[item.category] || GROCERY_BASE_PRICES.pantry)[MiraState.grocery.selectedGroceryTier] * item.count;
       text += `  ${mark} ${item.display}${item.count > 1 ? ` × ${item.count}` : ''} — ~$${price.toFixed(2)}\n`;
     });
     text += '\n';
@@ -4076,6 +4422,284 @@ function formatInsightsForShare() {
 }
 
 // ══════════════════════════════════════════════════════════════
+// ── FEATURE: RESTAURANT HISTORY TIMELINE ────────────────────
+// ══════════════════════════════════════════════════════════════
+
+let historyFilter = 'all';
+
+function initHistory() {
+  showScreen('history');
+  renderHistory();
+}
+
+function renderHistory() {
+  const container = document.getElementById('history-content');
+  const log = loadMealLog();
+  const journal = loadJournalLog();
+
+  const uniqueRestaurants = new Set(log.map(e => e.restaurant_name)).size;
+  const totalVisits = log.length;
+  const mostVisited = getMostVisited(log);
+
+  const now = new Date();
+  const filtered = log.filter(e => {
+    if (historyFilter === 'all') return true;
+    const days = parseInt(historyFilter);
+    const entryDate = new Date(e.date);
+    return (now - entryDate) / 86400000 <= days;
+  });
+
+  if (!filtered.length && !totalVisits) {
+    container.innerHTML = `
+      <div class="card history-header-card">
+        <div class="feature-title">📍 Restaurant History</div>
+        <div class="journal-feature-desc">Your restaurant visits will appear here as a timeline. Log a meal from any restaurant detail page to get started!</div>
+      </div>
+      <div class="fav-empty">No restaurant visits logged yet.</div>`;
+    return;
+  }
+
+  const grouped = {};
+  filtered.forEach(e => {
+    const d = e.date || 'Unknown';
+    if (!grouped[d]) grouped[d] = [];
+    grouped[d].push(e);
+  });
+  const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
+
+  let html = `
+    <div class="card history-header-card">
+      <div class="feature-title">📍 Restaurant History</div>
+      <div class="journal-feature-desc">Your dining timeline — track what you ate and how you felt</div>
+      <div class="history-stats">
+        <div class="history-stat">
+          <div class="history-stat-num">${totalVisits}</div>
+          <div class="history-stat-label">Visits</div>
+        </div>
+        <div class="history-stat">
+          <div class="history-stat-num">${uniqueRestaurants}</div>
+          <div class="history-stat-label">Restaurants</div>
+        </div>
+        <div class="history-stat">
+          <div class="history-stat-num">${mostVisited ? mostVisited.count : 0}</div>
+          <div class="history-stat-label">${mostVisited ? escHtml(mostVisited.name.split(' ').slice(0, 2).join(' ')) : 'Top Spot'}</div>
+        </div>
+      </div>
+    </div>
+    <div class="history-filter-row">
+      <button class="chip ${historyFilter === 'all' ? 'active' : ''}" onclick="setHistoryFilter('all')">All Time</button>
+      <button class="chip ${historyFilter === '7' ? 'active' : ''}" onclick="setHistoryFilter('7')">Last 7 Days</button>
+      <button class="chip ${historyFilter === '30' ? 'active' : ''}" onclick="setHistoryFilter('30')">Last 30 Days</button>
+    </div>`;
+
+  if (!filtered.length) {
+    html += `<div class="fav-empty">No visits in this time range.</div>`;
+  }
+
+  const sevColors = ['','var(--green)','var(--green)','var(--yellow)','var(--orange)','var(--red)'];
+  const sevLabels = ['','Great','Good','Okay','Rough','Bad'];
+
+  sortedDates.forEach(date => {
+    const journalEntry = journal.find(j => j.date === date);
+    const dateObj = new Date(date + 'T12:00:00');
+    const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+
+    html += `<div class="history-date-header">${escHtml(dateStr)}${journalEntry ? ` · <span style="color:${sevColors[journalEntry.severity] || 'var(--text-muted)'}">${sevLabels[journalEntry.severity] || ''} day</span>` : ''}</div>`;
+
+    grouped[date].forEach(entry => {
+      const items = entry.items || 'No items logged';
+      html += `
+        <div class="history-entry">
+          <div class="history-entry-icon">🍽️</div>
+          <div class="history-entry-info">
+            <div class="history-entry-name">${escHtml(entry.restaurant_name)}</div>
+            <div class="history-entry-items">${escHtml(items)}${entry.notes ? ' · ' + escHtml(entry.notes) : ''}</div>
+          </div>
+          ${journalEntry ? `<div class="history-entry-sev" style="background:${sevColors[journalEntry.severity]}22;color:${sevColors[journalEntry.severity]}">${journalEntry.severity}/5</div>` : ''}
+        </div>`;
+    });
+  });
+
+  container.innerHTML = html;
+}
+
+function setHistoryFilter(val) {
+  historyFilter = val;
+  renderHistory();
+}
+
+function getMostVisited(log) {
+  const counts = {};
+  log.forEach(e => { counts[e.restaurant_name] = (counts[e.restaurant_name] || 0) + 1; });
+  let best = null;
+  for (const [name, count] of Object.entries(counts)) {
+    if (!best || count > best.count) best = { name, count };
+  }
+  return best;
+}
+
+// ══════════════════════════════════════════════════════════════
+// ── FEATURE: MEDICATION / SUPPLEMENT TRACKER ────────────────
+// ══════════════════════════════════════════════════════════════
+
+const MED_TYPES = [
+  { id: 'antibiotic', label: '💊 Antibiotic', css: 'med-type-antibiotic' },
+  { id: 'prokinetic', label: '⚡ Prokinetic', css: 'med-type-prokinetic' },
+  { id: 'supplement', label: '🌿 Supplement', css: 'med-type-supplement' },
+  { id: 'probiotic', label: '🦠 Probiotic', css: 'med-type-probiotic' },
+  { id: 'other', label: '📦 Other', css: 'med-type-other' },
+];
+
+let editingMedId = null;
+
+function loadMeds() {
+  try { return JSON.parse(localStorage.getItem('mira_medications') || '[]'); } catch { return []; }
+}
+function saveMeds(meds) { safeSetItem('mira_medications', JSON.stringify(meds)); }
+
+function initMeds() {
+  showScreen('meds');
+  renderMeds();
+}
+
+function renderMeds() {
+  const container = document.getElementById('meds-content');
+  const meds = loadMeds();
+  const active = meds.filter(m => m.active !== false);
+  const archived = meds.filter(m => m.active === false);
+
+  let html = `
+    <div class="card meds-header-card">
+      <div class="feature-title">💊 Medications & Supplements</div>
+      <div class="journal-feature-desc">Track your meds and supplements. They'll show up in your journal so you can see how they affect your symptoms.</div>
+    </div>
+    <button class="med-add-btn" onclick="showMedForm()">+ Add Medication or Supplement</button>
+    <div id="med-form-container"></div>`;
+
+  if (active.length) {
+    html += `<div class="med-section-label">Active (${active.length})</div>`;
+    active.forEach(m => { html += renderMedCard(m); });
+  }
+  if (archived.length) {
+    html += `<div class="med-section-label">Archived (${archived.length})</div>`;
+    archived.forEach(m => { html += renderMedCard(m, true); });
+  }
+  if (!meds.length) {
+    html += `<div class="fav-empty">No medications added yet. Tap the button above to add your first one!</div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+function renderMedCard(med, isArchived) {
+  const typeInfo = MED_TYPES.find(t => t.id === med.type) || MED_TYPES[4];
+  const startStr = med.startDate ? new Date(med.startDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+  const endStr = med.endDate ? new Date(med.endDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Ongoing';
+
+  return `
+    <div class="med-card" style="${isArchived ? 'opacity:0.6;' : ''}">
+      <div class="med-card-header">
+        <div class="med-card-name">${escHtml(med.name)}</div>
+        <span class="med-card-type ${typeInfo.css}">${typeInfo.id}</span>
+      </div>
+      <div class="med-card-detail">
+        ${med.dose ? escHtml(med.dose) : ''}${med.dose && med.frequency ? ' · ' : ''}${med.frequency ? escHtml(med.frequency) : ''}
+      </div>
+      ${startStr ? `<div class="med-card-detail">${escHtml(startStr)} → ${escHtml(endStr)}</div>` : ''}
+      <div class="med-card-actions">
+        <button onclick="editMed('${med.id}')">Edit</button>
+        <button onclick="${isArchived ? `reactivateMed('${med.id}')` : `archiveMed('${med.id}')`}">${isArchived ? 'Reactivate' : 'Archive'}</button>
+        <button onclick="deleteMed('${med.id}')">Delete</button>
+      </div>
+    </div>`;
+}
+
+function showMedForm(med) {
+  editingMedId = med ? med.id : null;
+  const container = document.getElementById('med-form-container');
+  const today = new Date().toISOString().split('T')[0];
+  container.innerHTML = `
+    <div class="med-form">
+      <label>Name</label>
+      <input id="med-name" type="text" placeholder="e.g. Rifaximin, Digestive Enzymes..." value="${med ? escHtml(med.name) : ''}">
+      <label>Type</label>
+      <select id="med-type">
+        ${MED_TYPES.map(t => `<option value="${t.id}" ${med && med.type === t.id ? 'selected' : ''}>${t.label}</option>`).join('')}
+      </select>
+      <label>Dose</label>
+      <input id="med-dose" type="text" placeholder="e.g. 550mg, 1 capsule..." value="${med ? escHtml(med.dose || '') : ''}">
+      <label>Frequency</label>
+      <input id="med-frequency" type="text" placeholder="e.g. 3x/day, with meals..." value="${med ? escHtml(med.frequency || '') : ''}">
+      <label>Start Date</label>
+      <input id="med-start" type="date" value="${med ? med.startDate || '' : today}">
+      <label>End Date (leave blank if ongoing)</label>
+      <input id="med-end" type="date" value="${med ? med.endDate || '' : ''}">
+      <div class="med-form-btns">
+        <button class="med-form-cancel" onclick="cancelMedForm()">Cancel</button>
+        <button class="med-form-save" onclick="saveMedForm()">Save</button>
+      </div>
+    </div>`;
+  container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function cancelMedForm() {
+  editingMedId = null;
+  document.getElementById('med-form-container').innerHTML = '';
+}
+
+function saveMedForm() {
+  const name = document.getElementById('med-name').value.trim();
+  if (!name) return;
+  const med = {
+    id: editingMedId || ('med_' + Date.now()),
+    name,
+    type: document.getElementById('med-type').value,
+    dose: document.getElementById('med-dose').value.trim(),
+    frequency: document.getElementById('med-frequency').value.trim(),
+    startDate: document.getElementById('med-start').value,
+    endDate: document.getElementById('med-end').value,
+    active: true
+  };
+  const meds = loadMeds();
+  if (editingMedId) {
+    const idx = meds.findIndex(m => m.id === editingMedId);
+    if (idx >= 0) { med.active = meds[idx].active; meds[idx] = med; }
+    else meds.unshift(med);
+  } else {
+    meds.unshift(med);
+  }
+  saveMeds(meds);
+  editingMedId = null;
+  renderMeds();
+}
+
+function editMed(id) {
+  const med = loadMeds().find(m => m.id === id);
+  if (med) showMedForm(med);
+}
+
+function archiveMed(id) {
+  const meds = loadMeds();
+  const med = meds.find(m => m.id === id);
+  if (med) { med.active = false; saveMeds(meds); renderMeds(); }
+}
+
+function reactivateMed(id) {
+  const meds = loadMeds();
+  const med = meds.find(m => m.id === id);
+  if (med) { med.active = true; saveMeds(meds); renderMeds(); }
+}
+
+function deleteMed(id) {
+  saveMeds(loadMeds().filter(m => m.id !== id));
+  renderMeds();
+}
+
+function getActiveMedsForJournal() {
+  return loadMeds().filter(m => m.active !== false);
+}
+
+// ══════════════════════════════════════════════════════════════
 // ── FEATURE: OFFLINE MODE ───────────────────────────────────
 // ══════════════════════════════════════════════════════════════
 
@@ -4091,7 +4715,7 @@ window.addEventListener('offline', updateOfflineBanner);
 updateOfflineBanner();
 
 // Register service worker + force update on new versions
-const APP_VERSION = 'v2';
+const APP_VERSION = 'v4';
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
     // Check for SW updates immediately, then every 30 min
@@ -4114,6 +4738,34 @@ if ('serviceWorker' in navigator) {
     if (!refreshing) { refreshing = true; window.location.reload(); }
   });
 }
+
+// ── FREEZE CONSTANT DATA ─────────────────────────────────────
+// Prevent accidental mutation of reference data objects
+function deepFreeze(obj) {
+  Object.freeze(obj);
+  Object.getOwnPropertyNames(obj).forEach(prop => {
+    const val = obj[prop];
+    if (val && typeof val === 'object' && !Object.isFrozen(val)) deepFreeze(val);
+  });
+  return obj;
+}
+deepFreeze(ALL_MEALS);
+deepFreeze(SNACKS);
+deepFreeze(CHECKLIST_ITEMS);
+deepFreeze(FOOD_GUIDE);
+deepFreeze(BREAKFASTS);
+deepFreeze(SYMPTOMS);
+deepFreeze(GROCERY_CATEGORIES);
+deepFreeze(GROCERY_BASE_PRICES);
+deepFreeze(GROCERY_TIER_META);
+Object.freeze(DAYS);
+Object.freeze(DAY_FULL);
+Object.freeze(ONBOARD_CONDITIONS);
+Object.freeze(ONBOARD_RESTRICTIONS);
+Object.freeze(ONBOARD_TEXTURES);
+Object.freeze(ONBOARD_FLAVORS);
+Object.freeze(SETUP_DESCRIPTIONS);
+Object.freeze(HISTAMINE_FLAGS);
 </script>
 
 <!-- Meal Log Sheet -->
