@@ -1128,6 +1128,28 @@
   /* Toast */
   .mira-toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 24px; border-radius: 24px; font-family: inherit; font-size: 0.82rem; font-weight: 800; opacity: 0; transition: all 0.3s ease; z-index: 3000; pointer-events: none; }
   .mira-toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+  /* Analytics */
+  .analytics-header { background: linear-gradient(135deg, #E8F0FF, #F0E8FF); border-color: var(--purple); margin-bottom: 16px; }
+  .chart-card { padding: 16px; margin-bottom: 12px; }
+  .chart-title { font-size: 0.82rem; font-weight: 900; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .bar-chart { display: flex; align-items: flex-end; gap: 3px; height: 100px; }
+  .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .bar-fill { width: 100%; border-radius: 4px 4px 0 0; min-height: 2px; transition: height 0.3s; cursor: pointer; }
+  .bar-label { font-size: 0.52rem; font-weight: 700; color: var(--text-muted); writing-mode: vertical-rl; transform: rotate(180deg); max-height: 40px; overflow: hidden; }
+  .bar-date { font-size: 0.52rem; font-weight: 700; color: var(--text-muted); }
+  .freq-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+  .freq-bar-bg { flex: 1; height: 20px; background: var(--border); border-radius: 10px; overflow: hidden; position: relative; }
+  .freq-bar-fill { height: 100%; border-radius: 10px; transition: width 0.3s; }
+  .freq-name { font-size: 0.82rem; font-weight: 800; min-width: 100px; }
+  .freq-count { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); min-width: 30px; text-align: right; }
+  .migraine-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .migraine-cal-day { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; font-weight: 800; }
+  .drill-card { padding: 12px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; background: var(--bg-card); cursor: pointer; }
+  .drill-date { font-weight: 900; font-size: 0.82rem; }
+  .drill-detail { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+  .export-btn { width: 100%; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; border: none; font-family: inherit; font-size: 0.92rem; font-weight: 800; cursor: pointer; margin-bottom: 12px; }
+  [data-theme="dark"] .analytics-header { background: linear-gradient(135deg, #1A1E30, #251E30); border-color: var(--border); }
+  [data-theme="dark"] .drill-card { background: var(--card); border-color: var(--border); }
   .journal-entry-date { font-size: 0.88rem; font-weight: 800; color: var(--text); }
   .journal-entry-severity { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); }
   .journal-meal-card { background: var(--card); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.7; }
@@ -1371,6 +1393,7 @@
   <div class="more-handle"></div>
   <div class="more-title">More</div>
   <button class="more-item" onclick="initMeds();closeMore()"><span class="more-icon">💊</span><span>Medications & Supplements</span></button>
+  <button class="more-item" onclick="initAnalytics();closeMore()"><span class="more-icon">📊</span><span>Analytics & Insights</span></button>
   <button class="more-item" onclick="showScreen('snacks');closeMore()"><span class="more-icon">🎒</span><span>Snacks</span></button>
   <button class="more-item" onclick="showScreen('foods');closeMore()"><span class="more-icon">📋</span><span>Food Guide</span></button>
   <button class="more-item" onclick="showScreen('grocery');renderGroceryList();closeMore()"><span class="more-icon">🛒</span><span>Grocery List</span></button>
@@ -1568,6 +1591,11 @@
 <!-- ══════════════ MEDICATION TRACKER SCREEN ══════════════ -->
 <div class="screen" id="screen-meds">
   <div id="meds-content"></div>
+</div>
+
+<!-- ══════════════ ANALYTICS SCREEN ══════════════ -->
+<div class="screen" id="screen-analytics">
+  <div id="analytics-content"></div>
 </div>
 
 <!-- ══════════════ PANTRY / CRAVE SCREEN ══════════════ -->
@@ -2306,7 +2334,7 @@ function showScreen(name) {
 
   // Highlight the correct bottom nav button
   const directMap = { meal: 'meal', journal: 'journal', nearby: 'nearby', favorites: 'favorites' };
-  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'snacks', 'pantry', 'profile', 'grocery', 'history', 'meds', 'caregiver'];
+  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'snacks', 'pantry', 'profile', 'grocery', 'history', 'meds', 'caregiver', 'analytics'];
   const bscreen = directMap[name] || (moreScreens.includes(name) ? 'more' : null);
   if (bscreen) {
     const btn = document.querySelector(`[data-bscreen="${bscreen}"]`);
@@ -5671,6 +5699,446 @@ function formatInsightsForShare() {
   }
   text += '\nGenerated with Mira\'s SIBO Toolkit';
   return text;
+}
+
+// ══════════════════════════════════════════════════════════════
+// ── FEATURE: ANALYTICS & INSIGHTS SCREEN ────────────────────
+
+function initAnalytics() {
+  showScreen('analytics');
+  renderAnalytics();
+}
+
+function renderAnalytics() {
+  const container = document.getElementById('analytics-content');
+  const journal = loadJournalLog();
+  const meals = loadMealLog();
+  const meds = loadMeds();
+  const insights = generateInsights();
+
+  if (!journal.length) {
+    container.innerHTML = `
+      <div class="card analytics-header"><div class="feature-title">📊 Analytics & Insights</div>
+        <div class="journal-feature-desc">Start logging journal entries to unlock analytics.</div></div>`;
+    return;
+  }
+
+  let html = `
+    <div class="card analytics-header">
+      <div class="flex-row-between">
+        <div>
+          <div class="feature-title">📊 Analytics & Insights</div>
+          <div class="journal-feature-desc">${journal.length} entries · ${meals.length} meals logged</div>
+        </div>
+        <button class="share-btn" onclick="generateDoctorExport()">🩺 Export</button>
+      </div>
+    </div>`;
+
+  // ── 1. SEVERITY TREND (30 day) ───────────────────────
+  const last30 = journal.slice(0, 30).reverse();
+  if (last30.length >= 3) {
+    const sevColor = s => s >= 4 ? 'var(--red)' : s >= 3 ? 'var(--orange)' : s >= 2 ? 'var(--yellow)' : 'var(--green)';
+    html += `
+      <div class="card chart-card">
+        <div class="chart-title">📈 Severity Trend <span style="font-weight:600;font-size:0.68rem;color:var(--text-muted);">(last ${last30.length} entries)</span></div>
+        <div class="bar-chart">
+          ${last30.map(e => {
+            const h = (e.severity / 5) * 100;
+            const d = new Date(e.date + 'T12:00:00');
+            const label = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            return `<div class="bar-col">
+              <div class="bar-fill" style="height:${h}%;background:${sevColor(e.severity)};" title="${e.date}: ${e.severity}/5"></div>
+              <div class="bar-date">${last30.length <= 14 ? label : ''}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:0.68rem;font-weight:700;color:var(--text-muted);">
+          <span>${last30[0]?.date || ''}</span>
+          <span>Today</span>
+        </div>
+      </div>`;
+
+    // Avg severity stat cards
+    const avgAll = (journal.reduce((s, e) => s + (e.severity || 3), 0) / journal.length).toFixed(1);
+    const last7 = journal.slice(0, 7);
+    const avg7 = last7.length ? (last7.reduce((s, e) => s + (e.severity || 3), 0) / last7.length).toFixed(1) : '—';
+    const prev7 = journal.slice(7, 14);
+    const avgPrev7 = prev7.length ? (prev7.reduce((s, e) => s + (e.severity || 3), 0) / prev7.length).toFixed(1) : null;
+    const trendDir = avgPrev7 ? (avg7 < avgPrev7 ? '↓ improving' : avg7 > avgPrev7 ? '↑ worsening' : '→ stable') : '';
+    const trendColor = trendDir.includes('improving') ? 'var(--green)' : trendDir.includes('worsening') ? 'var(--red)' : 'var(--text-muted)';
+
+    html += `
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <div class="card" style="flex:1;text-align:center;padding:12px;">
+          <div style="font-size:1.4rem;font-weight:900;color:${sevColor(avg7)};">${avg7}</div>
+          <div style="font-size:0.62rem;font-weight:800;color:var(--text-muted);">7-DAY AVG</div>
+          ${trendDir ? `<div style="font-size:0.62rem;font-weight:800;color:${trendColor};margin-top:2px;">${trendDir}</div>` : ''}
+        </div>
+        <div class="card" style="flex:1;text-align:center;padding:12px;">
+          <div style="font-size:1.4rem;font-weight:900;">${avgAll}</div>
+          <div style="font-size:0.62rem;font-weight:800;color:var(--text-muted);">ALL-TIME AVG</div>
+        </div>
+        <div class="card" style="flex:1;text-align:center;padding:12px;">
+          <div style="font-size:1.4rem;font-weight:900;color:var(--purple);">${journal.filter(e => e.migraine?.active).length}</div>
+          <div style="font-size:0.62rem;font-weight:800;color:var(--text-muted);">MIGRAINE DAYS</div>
+        </div>
+      </div>`;
+  }
+
+  // ── 2. SYMPTOM FREQUENCY ────────────────────────────
+  const symFreq = {};
+  journal.forEach(e => (e.symptoms || []).forEach(s => { symFreq[s] = (symFreq[s] || 0) + 1; }));
+  const topSyms = Object.entries(symFreq).sort((a, b) => b[1] - a[1]);
+  const maxSym = topSyms[0]?.[1] || 1;
+
+  if (topSyms.length) {
+    const symColor = i => ['var(--pink)', 'var(--purple)', 'var(--orange)', 'var(--red)', 'var(--yellow)', 'var(--green)', 'var(--accent)', '#5C6BC0', '#FF7043', '#26A69A'][i % 10];
+    html += `
+      <div class="card chart-card">
+        <div class="chart-title">🔥 Top Symptoms <span style="font-weight:600;font-size:0.68rem;color:var(--text-muted);">(${journal.length} entries)</span></div>
+        ${topSyms.slice(0, 10).map(([sym, count], i) => `
+          <div class="freq-row" onclick="showSymptomDrillDown('${sym.replace(/'/g, "\\'")}')">
+            <div class="freq-name">${sym}</div>
+            <div class="freq-bar-bg"><div class="freq-bar-fill" style="width:${(count/maxSym)*100}%;background:${symColor(i)};"></div></div>
+            <div class="freq-count">${count}x</div>
+          </div>
+        `).join('')}
+      </div>`;
+  }
+
+  // ── 3. MIGRAINE CALENDAR (last 30 days) ──────────────
+  const migraineEntries = journal.filter(e => e.migraine?.active);
+  if (migraineEntries.length) {
+    const migraineDates = new Set(migraineEntries.map(e => e.date));
+    const allDates = new Set(journal.map(e => e.date));
+    html += `
+      <div class="card chart-card">
+        <div class="chart-title">⚡ Migraine Calendar <span style="font-weight:600;font-size:0.68rem;color:var(--text-muted);">(last 30 days)</span></div>
+        <div style="display:flex;gap:4px;margin-bottom:6px;font-size:0.58rem;font-weight:700;color:var(--text-muted);">
+          ${'SMTWTFS'.split('').map(d => `<div style="flex:1;text-align:center;">${d}</div>`).join('')}
+        </div>
+        <div class="migraine-cal">`;
+    const today = new Date();
+    // Start from 29 days ago, pad to start on Sunday
+    const startDate = new Date(today);
+    startDate.setDate(startDate.getDate() - 29);
+    const startPad = startDate.getDay(); // 0=Sun
+    for (let i = 0; i < startPad; i++) html += `<div class="migraine-cal-day"></div>`;
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const ds = d.toISOString().slice(0,10);
+      const hasMigraine = migraineDates.has(ds);
+      const hasEntry = allDates.has(ds);
+      const bg = hasMigraine ? 'var(--purple)' : hasEntry ? 'var(--green)' : 'var(--border)';
+      const color = hasMigraine || hasEntry ? 'white' : 'var(--text-muted)';
+      html += `<div class="migraine-cal-day" style="background:${bg};color:${color};">${d.getDate()}</div>`;
+    }
+    html += `</div>
+        <div style="display:flex;gap:12px;margin-top:8px;font-size:0.62rem;font-weight:700;">
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--purple);vertical-align:middle;margin-right:3px;"></span> Migraine</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--green);vertical-align:middle;margin-right:3px;"></span> Entry (no migraine)</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--border);vertical-align:middle;margin-right:3px;"></span> No entry</span>
+        </div>
+      </div>`;
+  }
+
+  // ── 4. TRIGGER FOODS ────────────────────────────────
+  if (insights && insights.triggers.length) {
+    html += `
+      <div class="card chart-card">
+        <div class="chart-title">⚠️ Potential Trigger Foods</div>
+        <div class="journal-feature-desc" style="margin-bottom:10px;">Foods eaten 2+ times with above-average severity. Tap to see details.</div>
+        ${insights.triggers.slice(0, 8).map(t => {
+          const sevColor = t.avgSeverity >= 4 ? 'var(--red)' : t.avgSeverity >= 3 ? 'var(--orange)' : 'var(--yellow)';
+          return `
+          <div class="freq-row" onclick="showTriggerDrillDown('${t.name.replace(/'/g, "\\'")}')">
+            <div class="freq-name">${escHtml(t.name)}</div>
+            <div class="freq-bar-bg"><div class="freq-bar-fill" style="width:${(t.avgSeverity/5)*100}%;background:${sevColor};"></div></div>
+            <div class="freq-count" style="color:${sevColor};">${t.avgSeverity.toFixed(1)}</div>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  // ── 5. MEDICATION IMPACT ────────────────────────────
+  if (insights && insights.medInsights?.length) {
+    html += `
+      <div class="card chart-card">
+        <div class="chart-title">💊 Medication Impact</div>
+        <div class="journal-feature-desc" style="margin-bottom:10px;">Average severity on days with vs without each medication.</div>
+        ${insights.medInsights.map(m => {
+          const diff = m.avgWith - m.avgWithout;
+          const icon = diff <= -0.5 ? '✅' : diff >= 0.5 ? '⚠️' : '➖';
+          const note = diff <= -0.5 ? 'helps' : diff >= 0.5 ? 'no help yet' : 'neutral';
+          const noteColor = diff <= -0.5 ? 'var(--green)' : diff >= 0.5 ? 'var(--orange)' : 'var(--text-muted)';
+          return `
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:1.1rem;">${icon}</span>
+            <div style="flex:1;">
+              <div style="font-weight:800;font-size:0.82rem;">${escHtml(m.name)}</div>
+              <div style="font-size:0.68rem;color:var(--text-muted);">With: ${m.avgWith.toFixed(1)}/5 (${m.daysWith}d) · Without: ${m.avgWithout.toFixed(1)}/5 (${m.daysWithout}d)</div>
+            </div>
+            <span style="font-size:0.72rem;font-weight:800;color:${noteColor};">${note}</span>
+          </div>`;
+        }).join('')}
+      </div>`;
+  }
+
+  // ── 6. DOCTOR EXPORT BUTTON ─────────────────────────
+  html += `
+    <button class="export-btn" onclick="generateDoctorExport()">🩺 Generate Doctor Visit Summary</button>
+    <div style="font-size:0.68rem;color:var(--text-muted);text-align:center;margin-bottom:20px;">Creates a shareable summary of your symptoms, triggers, meds, and migraine history</div>`;
+
+  container.innerHTML = html;
+}
+
+// ── TRIGGER DRILL-DOWN ────────────────────────────────────────
+
+function showTriggerDrillDown(foodName) {
+  const meals = loadMealLog();
+  const journal = loadJournalLog();
+  const sevColors = ['','#4CAF50','#4CAF50','#FF9800','#FF5722','#F44336'];
+
+  // Find all meals containing this food
+  const matchedMeals = meals.filter(m =>
+    (m.items || []).some(i => i.name.toLowerCase() === foodName.toLowerCase())
+  );
+
+  // Group by date → journal lookup
+  const journalByDate = {};
+  journal.forEach(j => {
+    if (!journalByDate[j.date]) journalByDate[j.date] = [];
+    journalByDate[j.date].push(j);
+  });
+
+  let html = `
+    <div style="margin-bottom:12px;">
+      <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);">Eaten ${matchedMeals.length} time${matchedMeals.length !== 1 ? 's' : ''}</div>
+    </div>`;
+
+  matchedMeals.sort((a, b) => b.date.localeCompare(a.date)).forEach(meal => {
+    const dayEntries = journalByDate[meal.date] || [];
+    const worstSev = dayEntries.length ? Math.max(...dayEntries.map(e => e.severity || 3)) : null;
+    const allSyms = [...new Set(dayEntries.flatMap(e => e.symptoms || []))];
+    const hadMigraine = dayEntries.some(e => e.migraine?.active);
+
+    html += `
+      <div class="drill-card">
+        <div class="flex-row-between">
+          <div class="drill-date">${meal.date} · ${escHtml(meal.restaurant_name)}</div>
+          ${worstSev ? `<div style="font-weight:900;font-size:0.88rem;color:${sevColors[worstSev]}">${worstSev}/5</div>` : ''}
+        </div>
+        <div class="drill-detail">
+          ${(meal.items || []).map(i => escHtml(i.name)).join(', ')}
+        </div>
+        ${allSyms.length ? `<div class="drill-detail" style="margin-top:4px;">${allSyms.slice(0, 5).join(', ')}${allSyms.length > 5 ? ' +' + (allSyms.length - 5) : ''}</div>` : ''}
+        ${hadMigraine ? `<div style="font-size:0.72rem;font-weight:800;color:var(--purple);margin-top:4px;">⚡ Migraine day</div>` : ''}
+      </div>`;
+  });
+
+  if (!matchedMeals.length) html += '<div class="fav-empty">No meal logs found for this food.</div>';
+
+  showCaregiverDetailModal(`⚠️ ${foodName}`, html);
+}
+
+function showSymptomDrillDown(symptom) {
+  const journal = loadJournalLog();
+  const sevColors = ['','#4CAF50','#4CAF50','#FF9800','#FF5722','#F44336'];
+
+  const entries = journal.filter(e => (e.symptoms || []).includes(symptom));
+
+  let html = `
+    <div style="margin-bottom:12px;">
+      <div style="font-size:0.68rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);">Logged ${entries.length} time${entries.length !== 1 ? 's' : ''}</div>
+    </div>`;
+
+  // Severity breakdown
+  const sevBreak = [0,0,0,0,0];
+  entries.forEach(e => { if (e.severity >= 1 && e.severity <= 5) sevBreak[e.severity - 1]++; });
+  const maxBreak = Math.max(...sevBreak, 1);
+
+  html += `
+    <div style="display:flex;gap:6px;align-items:flex-end;height:50px;margin-bottom:16px;">
+      ${sevBreak.map((count, i) => {
+        const h = (count / maxBreak) * 100;
+        const color = sevColors[i + 1];
+        return `<div style="flex:1;text-align:center;">
+          <div style="height:${h}%;min-height:2px;background:${color};border-radius:4px 4px 0 0;margin:0 auto;width:80%;"></div>
+          <div style="font-size:0.62rem;font-weight:800;margin-top:2px;">${i+1}</div>
+          <div style="font-size:0.58rem;color:var(--text-muted);">${count}x</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+
+  // Co-occurring symptoms
+  const coSymFreq = {};
+  entries.forEach(e => (e.symptoms || []).forEach(s => {
+    if (s !== symptom) coSymFreq[s] = (coSymFreq[s] || 0) + 1;
+  }));
+  const coSyms = Object.entries(coSymFreq).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  if (coSyms.length) {
+    html += `<div style="font-weight:900;font-size:0.78rem;margin-bottom:6px;">Often appears with:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px;">
+        ${coSyms.map(([s, c]) => `<span class="profile-tag pink">${s} (${c}x)</span>`).join('')}
+      </div>`;
+  }
+
+  // Recent entries
+  html += `<div style="font-weight:900;font-size:0.78rem;margin-bottom:6px;">Recent entries:</div>`;
+  entries.slice(0, 10).forEach(e => {
+    const timeStr = e.time && e.time !== '12:00' ? ` · ${formatEntryTime(e.time)}` : '';
+    html += `
+      <div class="drill-card">
+        <div class="flex-row-between">
+          <div class="drill-date">${e.date}${timeStr}</div>
+          <div style="font-weight:900;color:${sevColors[e.severity]}">${e.severity}/5</div>
+        </div>
+        ${e.notes ? `<div class="drill-detail" style="font-style:italic;">"${escHtml(e.notes.slice(0, 80))}"</div>` : ''}
+      </div>`;
+  });
+
+  showCaregiverDetailModal(`🔍 ${symptom}`, html);
+}
+
+// ── DOCTOR VISIT EXPORT ──────────────────────────────────────
+
+function generateDoctorExport() {
+  const journal = loadJournalLog();
+  const meals = loadMealLog();
+  const meds = loadMeds();
+  const profile = MiraState.auth.currentProfile;
+  const insights = generateInsights();
+  const today = new Date().toISOString().slice(0, 10);
+  const adh = loadMedAdherence();
+
+  let text = `════════════════════════════════════\n`;
+  text += `  HEALTH SUMMARY — ${today}\n`;
+  text += `  Generated by Mira's SIBO Toolkit\n`;
+  text += `════════════════════════════════════\n\n`;
+
+  // Patient info
+  if (profile) {
+    text += `PATIENT: ${profile.name || 'Not set'}\n`;
+    if (profile.conditions?.length) text += `CONDITIONS: ${profile.conditions.join(', ')}\n`;
+    if (profile.restrictions?.length) text += `DIETARY: ${profile.restrictions.join(', ')}\n`;
+    text += '\n';
+  }
+
+  // Date range
+  if (journal.length) {
+    const oldest = journal[journal.length - 1].date;
+    text += `REPORTING PERIOD: ${oldest} to ${today} (${journal.length} entries)\n\n`;
+  }
+
+  // Severity overview
+  if (journal.length) {
+    const avg = (journal.reduce((s, e) => s + (e.severity || 3), 0) / journal.length).toFixed(1);
+    const last7 = journal.slice(0, 7);
+    const avg7 = last7.length ? (last7.reduce((s, e) => s + (e.severity || 3), 0) / last7.length).toFixed(1) : '—';
+    text += `── SEVERITY OVERVIEW ──\n`;
+    text += `  Overall average: ${avg}/5\n`;
+    text += `  Last 7 days avg: ${avg7}/5\n`;
+    const highDays = journal.filter(e => e.severity >= 4).length;
+    text += `  High severity days (4-5): ${highDays} of ${journal.length} (${Math.round(highDays/journal.length*100)}%)\n\n`;
+  }
+
+  // Migraine summary
+  const migraineEntries = journal.filter(e => e.migraine?.active);
+  if (migraineEntries.length) {
+    text += `── MIGRAINE SUMMARY ──\n`;
+    text += `  Total migraine days: ${migraineEntries.length}\n`;
+    // Intensity distribution
+    const intDist = [0, 0, 0, 0];
+    migraineEntries.forEach(e => { if (e.migraine.intensity) intDist[e.migraine.intensity - 1]++; });
+    text += `  Intensity: Mild(${intDist[0]}) Moderate(${intDist[1]}) Severe(${intDist[2]}) Extreme(${intDist[3]})\n`;
+    // Common descriptors
+    const sides = {}, locs = {}, pains = {};
+    migraineEntries.forEach(e => {
+      if (e.migraine.side) sides[e.migraine.side] = (sides[e.migraine.side] || 0) + 1;
+      if (e.migraine.location) locs[e.migraine.location] = (locs[e.migraine.location] || 0) + 1;
+      if (e.migraine.painType) pains[e.migraine.painType] = (pains[e.migraine.painType] || 0) + 1;
+    });
+    const topOf = obj => Object.entries(obj).sort((a,b) => b[1]-a[1]).slice(0,2).map(([k,v]) => `${k}(${v}x)`).join(', ');
+    if (Object.keys(sides).length) text += `  Most common side: ${topOf(sides)}\n`;
+    if (Object.keys(locs).length) text += `  Most common location: ${topOf(locs)}\n`;
+    if (Object.keys(pains).length) text += `  Most common pain type: ${topOf(pains)}\n`;
+    // Associated symptoms
+    const assocFreq = {};
+    migraineEntries.forEach(e => (e.migraine.associated || []).forEach(s => { assocFreq[s] = (assocFreq[s] || 0) + 1; }));
+    const topAssoc = Object.entries(assocFreq).sort((a,b) => b[1]-a[1]).slice(0,5);
+    if (topAssoc.length) text += `  Associated: ${topAssoc.map(([s,c]) => `${s}(${c}x)`).join(', ')}\n`;
+    text += '\n';
+  }
+
+  // Top symptoms
+  const symFreq = {};
+  journal.forEach(e => (e.symptoms || []).forEach(s => { symFreq[s] = (symFreq[s] || 0) + 1; }));
+  const topSyms = Object.entries(symFreq).sort((a,b) => b[1]-a[1]).slice(0, 10);
+  if (topSyms.length) {
+    text += `── TOP SYMPTOMS ──\n`;
+    topSyms.forEach(([s, c]) => {
+      const pct = Math.round(c / journal.length * 100);
+      text += `  ${s}: ${c}x (${pct}% of entries)\n`;
+    });
+    text += '\n';
+  }
+
+  // Triggers
+  if (insights?.triggers?.length) {
+    text += `── POTENTIAL FOOD TRIGGERS ──\n`;
+    text += `  (Foods eaten 2+ times with elevated severity)\n`;
+    insights.triggers.slice(0, 8).forEach(t => {
+      text += `  ${t.name}: avg ${t.avgSeverity.toFixed(1)}/5 (eaten ${t.times}x)${t.topSymptom ? ' → ' + t.topSymptom : ''}\n`;
+    });
+    text += '\n';
+  }
+
+  // Current medications
+  const activeMeds = meds.filter(m => m.active !== false);
+  if (activeMeds.length) {
+    text += `── CURRENT MEDICATIONS (${activeMeds.length}) ──\n`;
+    activeMeds.forEach(m => {
+      const typeInfo = MED_TYPES.find(t => t.id === m.type);
+      text += `  ${m.name}`;
+      if (m.dose) text += ` — ${m.dose}`;
+      if (m.frequency) text += ` (${m.frequency})`;
+      if (typeInfo) text += ` [${typeInfo.id}]`;
+      if (m.startDate) text += ` since ${m.startDate}`;
+      text += '\n';
+    });
+    text += '\n';
+  }
+
+  // Medication impact
+  if (insights?.medInsights?.length) {
+    text += `── MEDICATION IMPACT ──\n`;
+    insights.medInsights.forEach(m => {
+      const diff = m.avgWith - m.avgWithout;
+      const assessment = diff <= -0.5 ? 'HELPFUL' : diff >= 0.5 ? 'NO CLEAR BENEFIT' : 'NEUTRAL';
+      text += `  ${m.name}: avg ${m.avgWith.toFixed(1)}/5 with (${m.daysWith}d) vs ${m.avgWithout.toFixed(1)}/5 without (${m.daysWithout}d) → ${assessment}\n`;
+    });
+    text += '\n';
+  }
+
+  // Severity trend last 14 days
+  const last14 = journal.slice(0, 14).reverse();
+  if (last14.length) {
+    text += `── RECENT SEVERITY LOG (last ${last14.length} entries) ──\n`;
+    last14.forEach(e => {
+      const bar = '█'.repeat(e.severity) + '░'.repeat(5 - e.severity);
+      const migr = e.migraine?.active ? ' ⚡MIGRAINE' : '';
+      const syms = (e.symptoms || []).slice(0, 3).join(', ');
+      text += `  ${e.date} ${bar} ${e.severity}/5${migr}${syms ? ' — ' + syms : ''}\n`;
+    });
+    text += '\n';
+  }
+
+  text += `────────────────────────────────────\n`;
+  text += `Generated ${today} by Mira's SIBO Toolkit\n`;
+  text += `https://kibawolfx.github.io/Project-Mira-SIBO/\n`;
+
+  shareContent('Health Summary — ' + today, text);
 }
 
 // ══════════════════════════════════════════════════════════════
