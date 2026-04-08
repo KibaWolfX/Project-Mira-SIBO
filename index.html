@@ -1114,6 +1114,20 @@
   .severity-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
   .journal-header-card { background: linear-gradient(135deg, #FFF5D6, #D6FAF0); border-color: var(--green-mid); margin-bottom: 16px; }
   .journal-feature-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+  /* Quick Log */
+  .quick-log-card { padding: 14px; margin-bottom: 12px; }
+  .quick-log-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .quick-log-chip { padding: 7px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--bg); font-family: inherit; font-size: 0.78rem; font-weight: 700; color: var(--text); cursor: pointer; transition: all 0.15s; }
+  .quick-log-chip:active { transform: scale(0.95); }
+  .quick-log-chip.logged { border-color: var(--green); background: #E8F5E930; color: var(--green); }
+  .quick-log-sev { display: flex; align-items: center; gap: 6px; }
+  .quick-sev-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border); background: none; font-family: inherit; font-size: 0.78rem; font-weight: 800; color: var(--text-muted); cursor: pointer; }
+  .quick-sev-btn.active { background: var(--pink); color: white; border-color: var(--pink); }
+  [data-theme="dark"] .quick-log-chip { background: var(--card); border-color: var(--border); }
+  [data-theme="dark"] .quick-log-chip.logged { background: #1B3A2A; border-color: var(--green); }
+  /* Toast */
+  .mira-toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--text); color: var(--bg); padding: 10px 24px; border-radius: 24px; font-family: inherit; font-size: 0.82rem; font-weight: 800; opacity: 0; transition: all 0.3s ease; z-index: 3000; pointer-events: none; }
+  .mira-toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
   .journal-entry-date { font-size: 0.88rem; font-weight: 800; color: var(--text); }
   .journal-entry-severity { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); }
   .journal-meal-card { background: var(--card); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.7; }
@@ -1224,6 +1238,16 @@
   .med-type-prokinetic { background: var(--orange); color: white; }
   .med-type-supplement { background: var(--green); color: white; }
   .med-type-probiotic { background: var(--purple); color: white; }
+  .med-type-antihistamine { background: #5C6BC0; color: white; }
+  .med-type-betablocker { background: #E91E63; color: white; }
+  .med-type-antidepressant { background: #00ACC1; color: white; }
+  .med-type-painkiller { background: #FF7043; color: white; }
+  .med-type-antacid { background: #FFA726; color: white; }
+  .med-type-antimigraine { background: #AB47BC; color: white; }
+  .med-type-immunosuppressant { background: #78909C; color: white; }
+  .med-type-hormone { background: #26A69A; color: white; }
+  .med-type-antifungal { background: #8D6E63; color: white; }
+  .med-type-enzyme { background: #66BB6A; color: white; }
   .med-type-other { background: var(--text-muted); color: white; }
   .med-card-detail { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; margin-top: 6px; }
   .med-card-actions { display: flex; gap: 8px; margin-top: 10px; }
@@ -1239,6 +1263,26 @@
   .med-form-cancel { background: none; border: 1.5px solid var(--border) !important; color: var(--text-muted); }
   .med-add-btn { width: 100%; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, var(--green), var(--mint)); color: white; border: none; font-family: inherit; font-size: 0.92rem; font-weight: 800; cursor: pointer; margin-bottom: 16px; }
   .med-section-label { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 18px 0 8px; }
+  /* Med Adherence Checklist */
+  .med-checklist-card { padding: 16px; margin-bottom: 12px; }
+  .med-progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 12px; overflow: hidden; }
+  .med-progress-fill { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
+  .med-checklist { display: flex; flex-direction: column; gap: 6px; }
+  .med-checklist-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1.5px solid var(--border); background: var(--bg); cursor: pointer; text-align: left; font-family: inherit; transition: all 0.15s; }
+  .med-checklist-item.taken { border-color: var(--green); background: #E8F5E920; }
+  .med-check-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .med-check-info { flex: 1; display: flex; flex-direction: column; }
+  .med-check-name { font-weight: 800; font-size: 0.88rem; color: var(--text); }
+  .med-check-dose { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); }
+  .med-check-time { font-size: 0.68rem; font-weight: 700; color: var(--green); }
+  .med-week-grid { display: flex; gap: 4px; justify-content: space-between; }
+  .med-week-day { flex: 1; text-align: center; }
+  .med-week-day.today { font-weight: 900; }
+  .med-week-label { font-size: 0.62rem; font-weight: 800; color: var(--text-muted); margin-bottom: 4px; }
+  .med-week-dot { width: 28px; height: 28px; border-radius: 50%; margin: 0 auto 2px; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; font-weight: 900; color: white; }
+  .med-week-count { font-size: 0.58rem; font-weight: 700; color: var(--text-muted); }
+  [data-theme="dark"] .med-checklist-item { background: var(--card); border-color: var(--border); }
+  [data-theme="dark"] .med-checklist-item.taken { background: #1B3A2A; border-color: var(--green); }
   [data-theme="dark"] .meds-header-card { background: linear-gradient(135deg, #1A2F28, #2D1A25); border-color: var(--border); }
   [data-theme="dark"] .med-card { background: var(--card); border-color: var(--border); }
   [data-theme="dark"] .med-form { background: var(--card); border-color: var(--pink); }
@@ -1316,15 +1360,15 @@
 <div class="more-sheet" id="moreSheet" role="dialog" aria-modal="true" aria-label="More options">
   <div class="more-handle"></div>
   <div class="more-title">More</div>
+  <button class="more-item" onclick="initMeds();closeMore()"><span class="more-icon">💊</span><span>Medications & Supplements</span></button>
+  <button class="more-item" onclick="showScreen('snacks');closeMore()"><span class="more-icon">🎒</span><span>Snacks</span></button>
   <button class="more-item" onclick="showScreen('foods');closeMore()"><span class="more-icon">📋</span><span>Food Guide</span></button>
-  <button class="more-item" onclick="showScreen('convention');closeMore()"><span class="more-icon">🎉</span><span>Convention Pack</span></button>
-  <button class="more-item" onclick="showScreen('breakfast');closeMore()"><span class="more-icon">🌅</span><span>Grab & Go Breakfasts</span></button>
-  <button class="more-item" onclick="showScreen('tips');closeMore()"><span class="more-icon">💜</span><span>Autism Tips</span></button>
-  <button class="more-item" onclick="initJournal();closeMore()"><span class="more-icon">📓</span><span>Journal & Symptoms</span></button>
   <button class="more-item" onclick="showScreen('grocery');renderGroceryList();closeMore()"><span class="more-icon">🛒</span><span>Grocery List</span></button>
   <button class="more-item" onclick="showScreen('pantry');loadCookingPrefs();closeMore()"><span class="more-icon">🍳</span><span>Pantry & Crave</span></button>
+  <button class="more-item" onclick="showScreen('breakfast');closeMore()"><span class="more-icon">🌅</span><span>Grab & Go Breakfasts</span></button>
   <button class="more-item" onclick="initHistory();closeMore()"><span class="more-icon">📍</span><span>Restaurant History</span></button>
-  <button class="more-item" onclick="initMeds();closeMore()"><span class="more-icon">💊</span><span>Medications & Supplements</span></button>
+  <button class="more-item" onclick="showScreen('convention');closeMore()"><span class="more-icon">🎉</span><span>Convention Pack</span></button>
+  <button class="more-item" onclick="showScreen('tips');closeMore()"><span class="more-icon">💜</span><span>Autism Tips</span></button>
   <button class="more-item" id="caregiver-menu-btn" onclick="openCaregiverScreen();closeMore()" style="display:none;"><span class="more-icon">💜</span><span id="caregiver-menu-label">Caregiver Dashboard</span></button>
   <button class="more-item" onclick="showProfile();closeMore()"><span class="more-icon">👤</span><span>My Profile</span></button>
   <button class="more-item" onclick="toggleDarkMode();closeMore()" id="dark-mode-btn"><span class="more-icon" id="dark-mode-icon">🌙</span><span id="dark-mode-label">Dark Mode</span></button>
@@ -1713,8 +1757,8 @@
   <button class="bottom-btn active" onclick="showScreen('meal')" data-bscreen="meal" aria-label="Meals">
     <span class="b-icon" aria-hidden="true">🍽️</span>Meals
   </button>
-  <button class="bottom-btn" onclick="showScreen('snacks')" data-bscreen="snacks" aria-label="Snacks">
-    <span class="b-icon" aria-hidden="true">🎒</span>Snacks
+  <button class="bottom-btn" onclick="initJournal()" data-bscreen="journal" aria-label="Journal">
+    <span class="b-icon" aria-hidden="true">📓</span>Journal
   </button>
   <button class="bottom-btn" onclick="initNearby()" data-bscreen="nearby" aria-label="Nearby restaurants">
     <span class="b-icon" aria-hidden="true">📍</span>Nearby
@@ -2251,8 +2295,8 @@ function showScreen(name) {
   document.getElementById('screen-' + name).classList.add('active');
 
   // Highlight the correct bottom nav button
-  const directMap = { meal: 'meal', snacks: 'snacks', nearby: 'nearby', favorites: 'favorites' };
-  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'journal', 'pantry', 'profile', 'grocery', 'history', 'meds', 'caregiver'];
+  const directMap = { meal: 'meal', journal: 'journal', nearby: 'nearby', favorites: 'favorites' };
+  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'snacks', 'pantry', 'profile', 'grocery', 'history', 'meds', 'caregiver'];
   const bscreen = directMap[name] || (moreScreens.includes(name) ? 'more' : null);
   if (bscreen) {
     const btn = document.querySelector(`[data-bscreen="${bscreen}"]`);
@@ -3750,6 +3794,9 @@ function renderJournalScreen() {
 
   const insightsHtml = renderInsightsCard();
 
+  // Quick-log: show user's most-logged symptoms as one-tap buttons
+  const quickLogHtml = renderQuickLog(log);
+
   container.innerHTML = `
     <div class="card journal-header-card">
       <div class="flex-row-between">
@@ -3760,8 +3807,9 @@ function renderJournalScreen() {
         ${log.length ? `<button class="share-btn" onclick="shareContent('Journal Summary', formatInsightsForShare())">📤</button>` : ''}
       </div>
     </div>
+    ${quickLogHtml}
     <button class="search-submit-btn mb-16" onclick="createNewJournalEntry()">
-      + New Entry${todayEntries.length ? ` (${todayEntries.length} today)` : ''}
+      + Full Entry${todayEntries.length ? ` (${todayEntries.length} today)` : ''}
     </button>
     ${todayEntries.length ? `<div style="text-align:center;margin:-8px 0 12px;"><button style="background:none;border:none;font-size:0.78rem;font-weight:700;color:var(--purple);cursor:pointer;" onclick="openJournalEntry('${todayEntries[todayEntries.length-1].id}')">✏️ Edit latest entry</button></div>` : ''}
     ${insightsHtml}
@@ -3769,10 +3817,110 @@ function renderJournalScreen() {
   `;
 }
 
-function createNewJournalEntry() {
+function renderQuickLog(log) {
+  // Build top symptoms from user's history, fallback to common ones
+  const QUICK_DEFAULTS = ['Bloating', 'Headache', 'Nausea', 'Fatigue', 'Brain Fog', 'Cramping', 'Migraine Active', 'Diarrhea'];
+  const symFreq = {};
+  log.slice(0, 30).forEach(e => (e.symptoms || []).forEach(s => { symFreq[s] = (symFreq[s] || 0) + 1; }));
+  const topSyms = Object.entries(symFreq).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([s]) => s);
+  const quickSyms = topSyms.length >= 4 ? topSyms : QUICK_DEFAULTS;
+
+  // Track which quick symptoms are already in a "quick log" state
+  const today = new Date().toISOString().slice(0,10);
+  const todaySyms = new Set(log.filter(e => e.date === today).flatMap(e => e.symptoms || []));
+
+  return `
+    <div class="card quick-log-card">
+      <div class="flex-row-between" style="margin-bottom:8px;">
+        <div style="font-weight:900;font-size:0.82rem;">⚡ Quick Log</div>
+        <div style="font-size:0.68rem;font-weight:600;color:var(--text-muted);">Tap to instantly log</div>
+      </div>
+      <div class="quick-log-chips">
+        ${quickSyms.map(s => `
+          <button class="quick-log-chip ${todaySyms.has(s) ? 'logged' : ''}" onclick="quickLogSymptom('${s.replace(/'/g, "\\'")}')">
+            ${todaySyms.has(s) ? '✓ ' : ''}${s}
+          </button>
+        `).join('')}
+      </div>
+      <div class="quick-log-sev" id="quick-log-sev">
+        <span style="font-size:0.68rem;font-weight:800;color:var(--text-muted);">Severity:</span>
+        ${[1,2,3,4,5].map(n => `<button class="quick-sev-btn ${n===3?'active':''}" data-qsev="${n}" onclick="document.querySelectorAll('.quick-sev-btn').forEach(b=>b.classList.remove('active'));this.classList.add('active');">${n}</button>`).join('')}
+      </div>
+    </div>`;
+}
+
+function quickLogSymptom(symptom) {
   const today = new Date().toISOString().slice(0,10);
   const now = new Date();
-  const time = now.toTimeString().slice(0,5); // "HH:MM"
+  const time = now.toTimeString().slice(0,5);
+  const severity = parseInt(document.querySelector('.quick-sev-btn.active')?.dataset.qsev || '3');
+
+  const log = loadJournalLog();
+  // Check if there's a recent quick-log entry (within last 15 min) to append to
+  const recentCutoff = Date.now() - (15 * 60 * 1000);
+  const recentEntry = log.find(e => e.date === today && e._quickLog && new Date(`${e.date}T${e.time || '12:00'}`).getTime() > recentCutoff);
+
+  if (recentEntry && !recentEntry.symptoms.includes(symptom)) {
+    // Append to recent quick-log entry
+    recentEntry.symptoms.push(symptom);
+    recentEntry.severity = severity;
+    saveJournalLog(log);
+    syncJournalToSupabase(recentEntry);
+  } else if (recentEntry && recentEntry.symptoms.includes(symptom)) {
+    // Already logged — remove it (toggle off)
+    recentEntry.symptoms = recentEntry.symptoms.filter(s => s !== symptom);
+    if (recentEntry.symptoms.length === 0) {
+      // Delete empty entry
+      const newLog = log.filter(e => e.id !== recentEntry.id);
+      saveJournalLog(newLog);
+      deleteJournalFromSupabase(recentEntry);
+    } else {
+      saveJournalLog(log);
+      syncJournalToSupabase(recentEntry);
+    }
+  } else {
+    // Create new quick-log entry
+    const entry = {
+      id: generateEntryId(), date: today, time, severity,
+      symptoms: [symptom], notes: '', medications_taken: [], migraine: null, _quickLog: true
+    };
+    log.unshift(entry);
+    log.sort((a, b) => {
+      const dc = b.date.localeCompare(a.date);
+      if (dc !== 0) return dc;
+      return (b.time || '12:00').localeCompare(a.time || '12:00');
+    });
+    saveJournalLog(log);
+    syncJournalToSupabase(entry);
+  }
+  renderJournalScreen();
+  // Show brief feedback
+  showToast(`${symptom} logged`);
+}
+
+function showToast(msg) {
+  let toast = document.getElementById('mira-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'mira-toast';
+    toast.className = 'mira-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.classList.add('visible');
+  setTimeout(() => toast.classList.remove('visible'), 2000);
+}
+
+function createNewJournalEntry() {
+  // Check for existing draft first
+  const draft = loadJournalDraft();
+  if (draft) {
+    openJournalEntryForm(draft, true);
+    return;
+  }
+  const today = new Date().toISOString().slice(0,10);
+  const now = new Date();
+  const time = now.toTimeString().slice(0,5);
   const entry = { id: generateEntryId(), date: today, time, symptoms: [], severity: 3, notes: '', medications_taken: [], migraine: null };
   openJournalEntryForm(entry, true);
 }
@@ -3791,7 +3939,7 @@ function openJournalEntryForm(entry, isNew) {
 
   const container = document.getElementById('journal-content');
   container.innerHTML = `
-    <button class="back-btn" onclick="renderJournalScreen()">← Back</button>
+    <button class="back-btn" onclick="saveJournalDraft();renderJournalScreen()">← Back</button>
     <div class="feature-title-mb16">📓 ${date}${timeDisplay ? ` · ${timeDisplay}` : ''}</div>
 
     <div class="section-label">Time</div>
@@ -3801,7 +3949,7 @@ function openJournalEntryForm(entry, isNew) {
     <div class="distance-chips mb-16">
       ${[1,2,3,4,5].map(n => `
         <button class="dist-chip ${(entry.severity||3) === n ? 'active' : ''}" data-sev="${n}"
-          onclick="document.querySelectorAll('.dist-chip[data-sev]').forEach(b=>b.classList.remove('active'));this.classList.add('active');">
+          onclick="document.querySelectorAll('.dist-chip[data-sev]').forEach(b=>b.classList.remove('active'));this.classList.add('active');debouncedAutoSave();">
           ${n}${n===1?' 😊':n===5?' 😰':''}
         </button>`).join('')}
     </div>
@@ -3819,7 +3967,7 @@ function openJournalEntryForm(entry, isNew) {
         <div class="symptom-cat-body">
           ${cat.symptoms.map(s => `
             <button class="post-filter-chip symptom-chip ${(entry.symptoms||[]).includes(s) ? 'active' : ''}"
-              onclick="this.classList.toggle('active');updateCatCount('${cat.id}')">${s}</button>
+              onclick="this.classList.toggle('active');updateCatCount('${cat.id}');debouncedAutoSave()">${s}</button>
           `).join('')}
         </div>
       </div>`;
@@ -3838,7 +3986,7 @@ function openJournalEntryForm(entry, isNew) {
       <div class="flex-wrap-gap">
         ${getActiveMedsForJournal().map(m => `
           <button class="post-filter-chip med-check-chip ${(entry.medications_taken||[]).includes(m.name) ? 'active' : ''}"
-            onclick="this.classList.toggle('active')">💊 ${escHtml(m.name)}</button>
+            onclick="this.classList.toggle('active');debouncedAutoSave()">💊 ${escHtml(m.name)}</button>
         `).join('')}
       </div>` : ''}
 
@@ -3852,7 +4000,73 @@ function openJournalEntryForm(entry, isNew) {
 
     <button class="meal-log-save-btn" onclick="saveJournalEntry()">Save Entry</button>
     ${!isNew ? `<button class="meal-log-cancel-btn journal-delete-btn-mt" onclick="deleteJournalEntry('${entry.id}')">🗑️ Delete Entry</button>` : ''}
+    <div id="journal-autosave-status" style="text-align:center;font-size:0.68rem;font-weight:600;color:var(--text-muted);margin-top:6px;"></div>
   `;
+
+  // Auto-save: debounced save on any interaction
+  initJournalAutoSave();
+}
+
+let _journalAutoSaveTimer = null;
+
+function initJournalAutoSave() {
+  const container = document.getElementById('journal-content');
+  if (!container) return;
+
+  // Save draft on notes input
+  const notes = document.getElementById('journal-notes');
+  if (notes) notes.addEventListener('input', () => debouncedAutoSave());
+
+  // Save draft on time change
+  const timeInput = document.getElementById('journal-entry-time');
+  if (timeInput) timeInput.addEventListener('change', () => debouncedAutoSave());
+
+  // Check for existing draft
+  const entryId = document.getElementById('journal-entry-id')?.value;
+  const isNew = document.getElementById('journal-entry-isnew')?.value === '1';
+  if (isNew) {
+    const draft = loadJournalDraft();
+    if (draft && draft.id === entryId) {
+      // Restore draft — already populated from entry param
+    }
+  }
+}
+
+function debouncedAutoSave() {
+  clearTimeout(_journalAutoSaveTimer);
+  _journalAutoSaveTimer = setTimeout(() => {
+    saveJournalDraft();
+    const status = document.getElementById('journal-autosave-status');
+    if (status) { status.textContent = '✓ Draft saved'; setTimeout(() => { if (status) status.textContent = ''; }, 2000); }
+  }, 1500);
+}
+
+function saveJournalDraft() {
+  const id = document.getElementById('journal-entry-id')?.value;
+  const date = document.getElementById('journal-entry-date')?.value;
+  const time = document.getElementById('journal-entry-time')?.value || '12:00';
+  if (!id || !date) return;
+  const severity = parseInt(document.querySelector('.dist-chip[data-sev].active')?.dataset.sev || '3');
+  const symptoms = [...document.querySelectorAll('.symptom-chip.active')].map(b => b.textContent);
+  const medications_taken = [...document.querySelectorAll('.med-check-chip.active')].map(b => b.textContent.replace('💊 ', ''));
+  const notes = document.getElementById('journal-notes')?.value.trim() || '';
+  const migraine = collectMigraineData();
+  const draft = { id, date, time, severity, symptoms, notes, medications_taken, migraine, _draftAt: Date.now() };
+  safeSetItem('mira_journal_draft', JSON.stringify(draft));
+}
+
+function loadJournalDraft() {
+  try {
+    const draft = JSON.parse(localStorage.getItem('mira_journal_draft'));
+    // Drafts expire after 24 hours
+    if (draft && Date.now() - draft._draftAt < 86400000) return draft;
+    localStorage.removeItem('mira_journal_draft');
+    return null;
+  } catch { return null; }
+}
+
+function clearJournalDraft() {
+  localStorage.removeItem('mira_journal_draft');
 }
 
 function updateCatCount(catId) {
@@ -4006,6 +4220,8 @@ function saveJournalEntry() {
   });
   saveJournalLog(log);
   syncJournalToSupabase(entry);
+  clearJournalDraft();
+  showToast('Entry saved ✓');
   renderJournalScreen();
 }
 
@@ -5573,6 +5789,16 @@ const MED_TYPES = [
   { id: 'prokinetic', label: '⚡ Prokinetic', css: 'med-type-prokinetic' },
   { id: 'supplement', label: '🌿 Supplement', css: 'med-type-supplement' },
   { id: 'probiotic', label: '🦠 Probiotic', css: 'med-type-probiotic' },
+  { id: 'antihistamine', label: '🛡️ Antihistamine', css: 'med-type-antihistamine' },
+  { id: 'betablocker', label: '💓 Beta Blocker', css: 'med-type-betablocker' },
+  { id: 'antidepressant', label: '🧠 Antidepressant', css: 'med-type-antidepressant' },
+  { id: 'painkiller', label: '💢 Pain Relief', css: 'med-type-painkiller' },
+  { id: 'antacid', label: '🔥 Antacid / PPI', css: 'med-type-antacid' },
+  { id: 'antimigraine', label: '⚡ Anti-Migraine', css: 'med-type-antimigraine' },
+  { id: 'immunosuppressant', label: '🩺 Immunosuppressant', css: 'med-type-immunosuppressant' },
+  { id: 'hormone', label: '🔬 Hormone / Thyroid', css: 'med-type-hormone' },
+  { id: 'antifungal', label: '🧫 Antifungal', css: 'med-type-antifungal' },
+  { id: 'enzyme', label: '🧪 Digestive Enzyme', css: 'med-type-enzyme' },
   { id: 'other', label: '📦 Other', css: 'med-type-other' },
 ];
 
@@ -5588,6 +5814,96 @@ function initMeds() {
   renderMeds();
 }
 
+// ── MEDICATION ADHERENCE ──────────────────────────────────────
+function loadMedAdherence() {
+  try { return JSON.parse(localStorage.getItem('mira_med_adherence') || '{}'); } catch { return {}; }
+}
+function saveMedAdherence(data) { safeSetItem('mira_med_adherence', JSON.stringify(data)); }
+
+function toggleMedTaken(medId, date) {
+  const adh = loadMedAdherence();
+  const key = `${date}_${medId}`;
+  if (adh[key]) delete adh[key]; else adh[key] = { taken: true, time: new Date().toTimeString().slice(0,5) };
+  saveMedAdherence(adh);
+  renderMeds();
+}
+
+function getMedAdherenceWeek(medId) {
+  const adh = loadMedAdherence();
+  const result = [];
+  const today = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().slice(0,10);
+    const key = `${dateStr}_${medId}`;
+    result.push({ date: dateStr, day: d.toLocaleDateString('en-US', { weekday: 'short' }), taken: !!adh[key] });
+  }
+  return result;
+}
+
+function renderMedAdherenceChecklist() {
+  const meds = loadMeds().filter(m => m.active !== false);
+  if (!meds.length) return '';
+  const today = new Date().toISOString().slice(0,10);
+  const adh = loadMedAdherence();
+  const taken = meds.filter(m => adh[`${today}_${m.id}`]);
+  const pct = Math.round((taken.length / meds.length) * 100);
+  const barColor = pct === 100 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+
+  let html = `
+    <div class="card med-checklist-card">
+      <div class="flex-row-between" style="margin-bottom:10px;">
+        <div class="feature-title">Today's Meds</div>
+        <div style="font-size:0.82rem;font-weight:800;color:${barColor};">${taken.length}/${meds.length}</div>
+      </div>
+      <div class="med-progress-bar"><div class="med-progress-fill" style="width:${pct}%;background:${barColor};"></div></div>
+      <div class="med-checklist">`;
+
+  meds.forEach(m => {
+    const isTaken = !!adh[`${today}_${m.id}`];
+    const takenTime = adh[`${today}_${m.id}`]?.time;
+    const typeInfo = MED_TYPES.find(t => t.id === m.type) || MED_TYPES[MED_TYPES.length - 1];
+    html += `
+      <button class="med-checklist-item ${isTaken ? 'taken' : ''}" onclick="toggleMedTaken('${m.id}','${today}')">
+        <span class="med-check-icon">${isTaken ? '✅' : '⬜'}</span>
+        <span class="med-check-info">
+          <span class="med-check-name">${escHtml(m.name)}</span>
+          <span class="med-check-dose">${escHtml(m.dose || '')}${m.frequency ? ' · ' + escHtml(m.frequency) : ''}</span>
+        </span>
+        ${isTaken && takenTime ? `<span class="med-check-time">${formatEntryTime(takenTime)}</span>` : ''}
+      </button>`;
+  });
+
+  html += `</div></div>`;
+
+  // Weekly compliance mini-view
+  html += `<div class="card" style="padding:12px 14px;">
+    <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:8px;">7-Day Adherence</div>
+    <div class="med-week-grid">`;
+  const weekDays = [];
+  const todayD = new Date();
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(todayD);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().slice(0,10);
+    const dayTaken = meds.filter(m => adh[`${dateStr}_${m.id}`]).length;
+    const dayPct = meds.length ? Math.round((dayTaken / meds.length) * 100) : 0;
+    const dayLabel = d.toLocaleDateString('en-US', { weekday: 'narrow' });
+    const isToday = i === 0;
+    const dotColor = dayPct === 100 ? 'var(--green)' : dayPct > 0 ? 'var(--yellow)' : 'var(--border)';
+    html += `
+      <div class="med-week-day ${isToday ? 'today' : ''}">
+        <div class="med-week-label">${dayLabel}</div>
+        <div class="med-week-dot" style="background:${dotColor};">${dayPct === 100 ? '✓' : dayPct > 0 ? '½' : ''}</div>
+        <div class="med-week-count">${dayTaken}/${meds.length}</div>
+      </div>`;
+  }
+  html += `</div></div>`;
+
+  return html;
+}
+
 function renderMeds() {
   const container = document.getElementById('meds-content');
   const meds = loadMeds();
@@ -5597,8 +5913,13 @@ function renderMeds() {
   let html = `
     <div class="card meds-header-card">
       <div class="feature-title">💊 Medications & Supplements</div>
-      <div class="journal-feature-desc">Track your meds and supplements. They'll show up in your journal so you can see how they affect your symptoms.</div>
-    </div>
+      <div class="journal-feature-desc">Track your meds, check them off daily, and see how they affect your symptoms.</div>
+    </div>`;
+
+  // Daily adherence checklist
+  html += renderMedAdherenceChecklist();
+
+  html += `
     <button class="med-add-btn" onclick="showMedForm()">+ Add Medication or Supplement</button>
     <div id="med-form-container"></div>`;
 
