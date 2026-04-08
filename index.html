@@ -1155,6 +1155,52 @@
   .journal-meal-card { background: var(--card); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.7; }
   .journal-delete-btn-mt { margin-top: 8px; }
 
+  /* ── Pokédex ── */
+  .pokemon-reveal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 5000; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; }
+  .pokemon-reveal-card { background: var(--card); border-radius: 28px; padding: 32px 28px 24px; text-align: center; max-width: 320px; width: 90%; position: relative; overflow: hidden; animation: pokePop 0.5s cubic-bezier(0.175,0.885,0.32,1.275); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .pokemon-reveal-sparkles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .pokemon-reveal-sparkle { position: absolute; width: 8px; height: 8px; border-radius: 50%; animation: sparkleFloat 1.5s ease-out forwards; }
+  .pokemon-reveal-img { width: 180px; height: 180px; object-fit: contain; filter: drop-shadow(0 4px 20px rgba(139,92,246,0.4)); animation: pokeFloat 3s ease-in-out infinite; margin: 0 auto; display: block; }
+  .pokemon-reveal-name { font-family: 'Fredoka One', cursive; font-size: 1.6rem; margin: 12px 0 4px; text-transform: capitalize; background: linear-gradient(135deg, var(--purple), var(--pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .pokemon-reveal-subtitle { font-size: 0.82rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
+  .pokemon-reveal-type { display: inline-block; padding: 3px 12px; border-radius: 12px; font-size: 0.72rem; font-weight: 800; color: white; margin: 4px 3px; text-transform: capitalize; }
+  .pokemon-reveal-streak { font-size: 0.78rem; font-weight: 800; color: var(--yellow-dark, #D97706); margin: 12px 0 4px; }
+  .pokemon-reveal-msg { font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin: 8px 0 16px; line-height: 1.5; }
+  .pokemon-reveal-btn { width: 100%; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; border: none; font-family: inherit; font-size: 0.92rem; font-weight: 800; cursor: pointer; }
+  .pokemon-reveal-btn:active { transform: scale(0.97); }
+  @keyframes pokePop { 0% { transform: scale(0.3) rotate(-5deg); opacity: 0; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+  @keyframes pokeFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  @keyframes sparkleFloat { 0% { transform: scale(0) translateY(0); opacity: 1; } 100% { transform: scale(1) translateY(-80px); opacity: 0; } }
+  @keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
+
+  .pokedex-header { background: linear-gradient(135deg, #FFF3E0, #FFE0EC); border-color: var(--pink); margin-bottom: 16px; }
+  [data-theme="dark"] .pokedex-header { background: linear-gradient(135deg, #2A1E12, #2A1225); border-color: var(--border); }
+  .pokedex-stats { display: flex; gap: 12px; margin: 12px 0; }
+  .pokedex-stat { flex: 1; text-align: center; background: var(--bg); border-radius: 12px; padding: 10px 6px; }
+  .pokedex-stat-num { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: var(--purple); }
+  .pokedex-stat-label { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); }
+  .pokedex-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .pokedex-cell { background: var(--card); border: 2px solid var(--border); border-radius: 16px; padding: 10px 6px 8px; text-align: center; position: relative; transition: all 0.2s; }
+  .pokedex-cell.legendary { border-color: #F59E0B; box-shadow: 0 0 12px rgba(245,158,11,0.3); }
+  .pokedex-cell.today { border-color: var(--purple); box-shadow: 0 0 12px rgba(139,92,246,0.3); }
+  .pokedex-cell img { width: 72px; height: 72px; object-fit: contain; }
+  .pokedex-cell-name { font-size: 0.7rem; font-weight: 800; text-transform: capitalize; margin-top: 4px; }
+  .pokedex-cell-date { font-size: 0.6rem; font-weight: 600; color: var(--text-muted); }
+  .pokedex-cell-badge { position: absolute; top: 4px; right: 4px; font-size: 0.6rem; }
+  .pokedex-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+  .pokedex-empty-pokeball { font-size: 3rem; margin-bottom: 12px; }
+  .pokedex-streak-banner { background: linear-gradient(135deg, #FEF3C7, #FDE68A); border-radius: 16px; padding: 14px; text-align: center; margin-bottom: 16px; border: 2px solid #F59E0B; }
+  [data-theme="dark"] .pokedex-streak-banner { background: linear-gradient(135deg, #2A2412, #2A2005); }
+  .pokedex-streak-num { font-family: 'Fredoka One', cursive; font-size: 1.8rem; color: #D97706; }
+  .pokedex-streak-label { font-size: 0.78rem; font-weight: 700; color: #92400E; }
+  [data-theme="dark"] .pokedex-streak-label { color: #FCD34D; }
+  .pokemon-type-normal { background: #A8A77A; } .pokemon-type-fire { background: #EE8130; } .pokemon-type-water { background: #6390F0; }
+  .pokemon-type-electric { background: #F7D02C; } .pokemon-type-grass { background: #7AC74C; } .pokemon-type-ice { background: #96D9D6; }
+  .pokemon-type-fighting { background: #C22E28; } .pokemon-type-poison { background: #A33EA1; } .pokemon-type-ground { background: #E2BF65; }
+  .pokemon-type-flying { background: #A98FF3; } .pokemon-type-psychic { background: #F95587; } .pokemon-type-bug { background: #A6B91A; }
+  .pokemon-type-rock { background: #B6A136; } .pokemon-type-ghost { background: #735797; } .pokemon-type-dragon { background: #6F35FC; }
+  .pokemon-type-dark { background: #705746; } .pokemon-type-steel { background: #B7B7CE; } .pokemon-type-fairy { background: #D685AD; }
+
   /* Grocery List */
   .grocery-header-card { background: linear-gradient(135deg, #D6FAF0, #EEE5FF); border-color: var(--green-mid); margin-bottom: 16px; }
   .grocery-subtitle { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
@@ -1394,6 +1440,7 @@
   <div class="more-title">More</div>
   <button class="more-item" onclick="initMeds();closeMore()"><span class="more-icon">💊</span><span>Medications & Supplements</span></button>
   <button class="more-item" onclick="initAnalytics();closeMore()"><span class="more-icon">📊</span><span>Analytics & Insights</span></button>
+  <button class="more-item" onclick="initPokedex();closeMore()"><span class="more-icon">🎮</span><span>My Pokédex</span></button>
   <button class="more-item" onclick="showScreen('snacks');closeMore()"><span class="more-icon">🎒</span><span>Snacks</span></button>
   <button class="more-item" onclick="showScreen('foods');closeMore()"><span class="more-icon">📋</span><span>Food Guide</span></button>
   <button class="more-item" onclick="showScreen('grocery');renderGroceryList();closeMore()"><span class="more-icon">🛒</span><span>Grocery List</span></button>
@@ -1596,6 +1643,19 @@
 <!-- ══════════════ ANALYTICS SCREEN ══════════════ -->
 <div class="screen" id="screen-analytics">
   <div id="analytics-content"></div>
+</div>
+
+<!-- ══════════════ POKÉDEX SCREEN ══════════════ -->
+<div class="screen" id="screen-pokedex">
+  <div id="pokedex-content"></div>
+</div>
+
+<!-- Pokémon Reveal Overlay -->
+<div class="pokemon-reveal-overlay" id="pokemon-reveal-overlay" style="display:none" onclick="closePokemonReveal()">
+  <div class="pokemon-reveal-card" onclick="event.stopPropagation()">
+    <div class="pokemon-reveal-sparkles" id="pokemon-reveal-sparkles"></div>
+    <div id="pokemon-reveal-body"></div>
+  </div>
 </div>
 
 <!-- ══════════════ PANTRY / CRAVE SCREEN ══════════════ -->
@@ -2334,7 +2394,7 @@ function showScreen(name) {
 
   // Highlight the correct bottom nav button
   const directMap = { meal: 'meal', journal: 'journal', nearby: 'nearby', favorites: 'favorites' };
-  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'snacks', 'pantry', 'profile', 'grocery', 'history', 'meds', 'caregiver', 'analytics'];
+  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'snacks', 'pantry', 'profile', 'grocery', 'history', 'meds', 'caregiver', 'analytics', 'pokedex'];
   const bscreen = directMap[name] || (moreScreens.includes(name) ? 'more' : null);
   if (bscreen) {
     const btn = document.querySelector(`[data-bscreen="${bscreen}"]`);
@@ -3845,6 +3905,7 @@ function renderJournalScreen() {
         ${log.length ? `<button class="share-btn" onclick="shareContent('Journal Summary', formatInsightsForShare())">📤</button>` : ''}
       </div>
     </div>
+    ${renderPokemonTeaser()}
     ${quickLogHtml}
     <button class="search-submit-btn mb-16" onclick="createNewJournalEntry()">
       + Full Entry${todayEntries.length ? ` (${todayEntries.length} today)` : ''}
@@ -3934,6 +3995,8 @@ function quickLogSymptom(symptom) {
   renderJournalScreen();
   // Show brief feedback
   showToast(`${symptom} logged`);
+  // 🎮 Daily Pokémon reward!
+  if (!hasUnlockedToday()) unlockDailyPokemon();
 }
 
 function showToast(msg) {
@@ -4261,6 +4324,8 @@ function saveJournalEntry() {
   clearJournalDraft();
   showToast('Entry saved ✓');
   renderJournalScreen();
+  // 🎮 Daily Pokémon reward!
+  if (!hasUnlockedToday()) unlockDailyPokemon();
 }
 
 function deleteJournalEntry(entryId) {
@@ -5702,6 +5767,291 @@ function formatInsightsForShare() {
 }
 
 // ══════════════════════════════════════════════════════════════
+// ── FEATURE: DAILY POKÉMON REWARDS ──────────────────────────
+
+const POKEMON_MESSAGES = [
+  "You're doing amazing, bestie! 💜",
+  "Proud of you for tracking today! ✨",
+  "Look who showed up to cheer you on! 🌟",
+  "A wild friend appeared! They believe in you! 💕",
+  "You earned this cutie! Keep going! 🎉",
+  "Today's buddy is here to protect you! 🛡️",
+  "This one picked YOU! Must be special! 💫",
+  "Logging = self-care = Pokémon! Fair trade! 🎮",
+  "Your collection grows and so does your strength! 💪",
+  "This little one says: you've got this! 🌈"
+];
+
+const LEGENDARY_IDS = [144,145,146,150,151,243,244,245,249,250,251,377,378,379,380,381,382,383,384,385,386,480,481,482,483,484,485,486,487,488,489,490,491,492,493,494,638,639,640,641,642,643,644,645,646,647,648,649];
+
+function loadPokedex() {
+  try { return JSON.parse(localStorage.getItem('mira_pokedex') || '[]'); } catch { return []; }
+}
+function savePokedex(dex) { localStorage.setItem('mira_pokedex', JSON.stringify(dex)); }
+
+function getPokedexStreak() {
+  const dex = loadPokedex();
+  if (!dex.length) return 0;
+  const dates = [...new Set(dex.map(p => p.date))].sort((a, b) => b.localeCompare(a));
+  const today = new Date().toISOString().slice(0, 10);
+  // Must include today or yesterday to have active streak
+  const d0 = new Date(dates[0] + 'T12:00:00');
+  const now = new Date(today + 'T12:00:00');
+  const diffDays = Math.round((now - d0) / 86400000);
+  if (diffDays > 1) return 0;
+  let streak = 1;
+  for (let i = 1; i < dates.length; i++) {
+    const prev = new Date(dates[i - 1] + 'T12:00:00');
+    const curr = new Date(dates[i] + 'T12:00:00');
+    if (Math.round((prev - curr) / 86400000) === 1) streak++;
+    else break;
+  }
+  return streak;
+}
+
+function hasUnlockedToday() {
+  const dex = loadPokedex();
+  const today = new Date().toISOString().slice(0, 10);
+  return dex.some(p => p.date === today);
+}
+
+function pickDailyPokemon() {
+  const dex = loadPokedex();
+  const streak = getPokedexStreak();
+  const usedIds = new Set(dex.map(p => p.pokemon_id));
+
+  // Streak bonus: every 7 days, guarantee a legendary!
+  const isLegendaryDay = streak > 0 && streak % 7 === 0;
+
+  let pool;
+  if (isLegendaryDay) {
+    pool = LEGENDARY_IDS.filter(id => !usedIds.has(id));
+    if (!pool.length) pool = LEGENDARY_IDS; // allow repeats if all caught
+  } else {
+    // Normal: Gen 1-5 non-legendary (1-649 minus legendaries)
+    const legendarySet = new Set(LEGENDARY_IDS);
+    pool = [];
+    for (let i = 1; i <= 649; i++) {
+      if (!legendarySet.has(i) && !usedIds.has(i)) pool.push(i);
+    }
+    if (!pool.length) {
+      // All caught! Allow repeats
+      for (let i = 1; i <= 649; i++) { if (!legendarySet.has(i)) pool.push(i); }
+    }
+  }
+
+  // Seeded random based on today's date for consistency
+  const today = new Date().toISOString().slice(0, 10);
+  let seed = 0;
+  for (let i = 0; i < today.length; i++) seed = ((seed << 5) - seed + today.charCodeAt(i)) | 0;
+  const idx = Math.abs(seed) % pool.length;
+  return { pokemonId: pool[idx], isLegendary: isLegendaryDay };
+}
+
+async function fetchPokemonData(pokemonId) {
+  try {
+    const resp = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+    if (!resp.ok) throw new Error('API error');
+    const data = await resp.json();
+    return {
+      id: data.id,
+      name: data.name,
+      types: data.types.map(t => t.type.name),
+      sprite: data.sprites?.other?.['official-artwork']?.front_default
+        || data.sprites?.front_default
+        || `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`
+    };
+  } catch {
+    // Fallback if API is down
+    return {
+      id: pokemonId,
+      name: `pokemon-${pokemonId}`,
+      types: ['normal'],
+      sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonId}.png`
+    };
+  }
+}
+
+async function unlockDailyPokemon() {
+  if (hasUnlockedToday()) return; // Already unlocked today
+
+  const { pokemonId, isLegendary } = pickDailyPokemon();
+  const data = await fetchPokemonData(pokemonId);
+  const today = new Date().toISOString().slice(0, 10);
+  const streak = getPokedexStreak() + 1; // +1 because today is being added
+
+  const entry = {
+    pokemon_id: data.id,
+    name: data.name,
+    types: data.types,
+    sprite: data.sprite,
+    date: today,
+    is_legendary: isLegendary
+  };
+
+  const dex = loadPokedex();
+  dex.unshift(entry);
+  savePokedex(dex);
+
+  // Show the reveal!
+  showPokemonReveal(entry, streak);
+}
+
+function showPokemonReveal(entry, streak) {
+  const overlay = document.getElementById('pokemon-reveal-overlay');
+  const body = document.getElementById('pokemon-reveal-body');
+  const sparkles = document.getElementById('pokemon-reveal-sparkles');
+
+  // Generate sparkles
+  const colors = ['#F59E0B', '#8B5CF6', '#EC4899', '#10B981', '#3B82F6', '#F43F5E'];
+  let sparkleHtml = '';
+  for (let i = 0; i < 20; i++) {
+    const color = colors[i % colors.length];
+    const left = Math.random() * 100;
+    const top = 30 + Math.random() * 40;
+    const delay = Math.random() * 0.8;
+    const size = 4 + Math.random() * 8;
+    sparkleHtml += `<div class="pokemon-reveal-sparkle" style="left:${left}%;top:${top}%;background:${color};width:${size}px;height:${size}px;animation-delay:${delay}s;"></div>`;
+  }
+  sparkles.innerHTML = sparkleHtml;
+
+  const typeBadges = entry.types.map(t => `<span class="pokemon-reveal-type pokemon-type-${t}">${t}</span>`).join('');
+  const msg = POKEMON_MESSAGES[Math.floor(Math.random() * POKEMON_MESSAGES.length)];
+  const legendaryBadge = entry.is_legendary ? '<div style="font-size:1.1rem;font-weight:900;color:#F59E0B;margin-bottom:4px;">⭐ LEGENDARY! ⭐</div>' : '';
+  const streakText = streak > 1 ? `<div class="pokemon-reveal-streak">🔥 ${streak}-day streak!</div>` : '';
+
+  body.innerHTML = `
+    ${legendaryBadge}
+    <img class="pokemon-reveal-img" src="${entry.sprite}" alt="${entry.name}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${entry.pokemon_id}.png'">
+    <div class="pokemon-reveal-name">${entry.name}</div>
+    <div class="pokemon-reveal-subtitle">#${String(entry.pokemon_id).padStart(3, '0')}</div>
+    <div>${typeBadges}</div>
+    ${streakText}
+    <div class="pokemon-reveal-msg">${msg}</div>
+    <button class="pokemon-reveal-btn" onclick="closePokemonReveal()">Yay! Add to Pokédex!</button>
+  `;
+
+  overlay.style.display = 'flex';
+}
+
+function closePokemonReveal() {
+  document.getElementById('pokemon-reveal-overlay').style.display = 'none';
+}
+
+function initPokedex() {
+  showScreen('pokedex');
+  renderPokedex();
+}
+
+function renderPokedex() {
+  const container = document.getElementById('pokedex-content');
+  const dex = loadPokedex();
+  const streak = getPokedexStreak();
+  const legendaryCount = dex.filter(p => p.is_legendary).length;
+  const uniqueCount = new Set(dex.map(p => p.pokemon_id)).size;
+  const today = new Date().toISOString().slice(0, 10);
+  const todayUnlocked = hasUnlockedToday();
+
+  const streakBanner = streak > 0 ? `
+    <div class="pokedex-streak-banner">
+      <div class="pokedex-streak-num">🔥 ${streak}</div>
+      <div class="pokedex-streak-label">${streak === 1 ? 'day streak — keep it going!' : 'day streak! ' + (7 - (streak % 7)) + ' more for a legendary!'}</div>
+    </div>
+  ` : '';
+
+  const todayCard = !todayUnlocked ? `
+    <div class="card" style="text-align:center;padding:20px;margin-bottom:16px;border:2px dashed var(--purple);background:var(--bg);">
+      <div style="font-size:2rem;margin-bottom:8px;">❓</div>
+      <div style="font-size:0.88rem;font-weight:800;color:var(--purple);">Today's Pokémon is waiting!</div>
+      <div style="font-size:0.78rem;font-weight:600;color:var(--text-muted);margin-top:4px;">Log a journal entry to unlock it 📓</div>
+    </div>
+  ` : '';
+
+  const gridHtml = dex.length ? dex.map(p => {
+    const isToday = p.date === today;
+    const cls = p.is_legendary ? 'legendary' : (isToday ? 'today' : '');
+    return `
+      <div class="pokedex-cell ${cls}">
+        ${p.is_legendary ? '<div class="pokedex-cell-badge">⭐</div>' : ''}
+        <img src="${p.sprite}" alt="${p.name}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.pokemon_id}.png'" loading="lazy">
+        <div class="pokedex-cell-name">${p.name}</div>
+        <div class="pokedex-cell-date">${isToday ? '✨ Today!' : p.date}</div>
+      </div>
+    `;
+  }).join('') : '';
+
+  const emptyState = !dex.length ? `
+    <div class="pokedex-empty">
+      <div class="pokedex-empty-pokeball">🎮</div>
+      <div style="font-size:0.92rem;font-weight:800;margin-bottom:8px;">Your Pokédex is empty!</div>
+      <div style="font-size:0.82rem;font-weight:600;color:var(--text-muted);">Log your first journal entry to catch your first Pokémon! Every day you log, a new one appears. 🌟</div>
+      <button class="search-submit-btn" style="margin-top:16px;" onclick="showScreen('journal')">📓 Go to Journal</button>
+    </div>
+  ` : '';
+
+  const nextLegendary = streak > 0 ? 7 - (streak % 7) : 7;
+
+  container.innerHTML = `
+    <div class="card pokedex-header">
+      <div class="feature-title">🎮 Mira's Pokédex</div>
+      <div style="font-size:0.82rem;font-weight:600;color:var(--text-muted);margin-top:4px;">
+        Log a journal entry every day to unlock a new Pokémon!<br>
+        Every 7-day streak = a <span style="color:#F59E0B;font-weight:800;">⭐ Legendary</span>!
+      </div>
+      <div class="pokedex-stats">
+        <div class="pokedex-stat">
+          <div class="pokedex-stat-num">${uniqueCount}</div>
+          <div class="pokedex-stat-label">Caught</div>
+        </div>
+        <div class="pokedex-stat">
+          <div class="pokedex-stat-num">${legendaryCount}</div>
+          <div class="pokedex-stat-label">Legendary</div>
+        </div>
+        <div class="pokedex-stat">
+          <div class="pokedex-stat-num">${streak}</div>
+          <div class="pokedex-stat-label">Streak</div>
+        </div>
+      </div>
+    </div>
+    ${streakBanner}
+    ${todayCard}
+    ${emptyState}
+    ${gridHtml ? `<div class="pokedex-grid">${gridHtml}</div>` : ''}
+  `;
+}
+
+function renderPokemonTeaser() {
+  const dex = loadPokedex();
+  const today = new Date().toISOString().slice(0, 10);
+  const todayPoke = dex.find(p => p.date === today);
+  const streak = getPokedexStreak();
+
+  if (todayPoke) {
+    // Already unlocked — show today's catch
+    return `
+      <div class="card" style="display:flex;align-items:center;gap:12px;padding:12px 16px;margin-bottom:12px;cursor:pointer;border:2px solid ${todayPoke.is_legendary ? '#F59E0B' : 'var(--purple)'};" onclick="initPokedex()">
+        <img src="${todayPoke.sprite}" alt="${todayPoke.name}" style="width:48px;height:48px;object-fit:contain;" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${todayPoke.pokemon_id}.png'">
+        <div style="flex:1;">
+          <div style="font-size:0.82rem;font-weight:800;text-transform:capitalize;">${todayPoke.is_legendary ? '⭐ ' : ''}Today's catch: ${todayPoke.name}!</div>
+          <div style="font-size:0.72rem;font-weight:600;color:var(--text-muted);">${dex.length} caught${streak > 1 ? ` · 🔥 ${streak}-day streak` : ''} · Tap to view Pokédex</div>
+        </div>
+        <div style="font-size:1.4rem;">🎮</div>
+      </div>
+    `;
+  } else {
+    // Not yet unlocked — tease
+    return `
+      <div class="card" style="display:flex;align-items:center;gap:12px;padding:12px 16px;margin-bottom:12px;border:2px dashed var(--purple);background:var(--bg);">
+        <div style="font-size:2rem;">❓</div>
+        <div style="flex:1;">
+          <div style="font-size:0.82rem;font-weight:800;color:var(--purple);">A Pokémon is waiting for you!</div>
+          <div style="font-size:0.72rem;font-weight:600;color:var(--text-muted);">Log an entry to unlock today's catch 🎮${dex.length ? ` · ${dex.length} caught so far` : ''}</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
 // ── FEATURE: ANALYTICS & INSIGHTS SCREEN ────────────────────
 
 function initAnalytics() {
@@ -6593,7 +6943,7 @@ window.addEventListener('offline', updateOfflineBanner);
 updateOfflineBanner();
 
 // Register service worker + force update on new versions
-const APP_VERSION = 'v7';
+const APP_VERSION = 'v8';
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
     // Check for SW updates immediately, then every 30 min

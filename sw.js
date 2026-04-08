@@ -1,5 +1,5 @@
 // Mira's SIBO Toolkit — Service Worker
-const CACHE_VERSION = 'mira-v7';
+const CACHE_VERSION = 'mira-v8';
 const CORE_ASSETS = [
   './',
   './index.html',
