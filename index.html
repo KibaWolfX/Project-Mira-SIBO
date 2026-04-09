@@ -1353,10 +1353,12 @@
   .med-check-times { font-size: 0.66rem; font-weight: 600; color: var(--green); }
   .med-check-undo { font-size: 0.82rem; color: var(--text-muted); flex-shrink: 0; }
   .med-checklist-row { margin-bottom: 2px; }
-  .med-extra-row { display: flex; gap: 6px; align-items: center; padding: 2px 0 0 42px; }
-  .med-extra-btn { background: none; border: none; padding: 2px 0; font-family: inherit; font-size: 0.65rem; font-weight: 700; color: var(--text-muted); cursor: pointer; opacity: 0.6; transition: opacity 0.15s; }
-  .med-extra-btn:active { opacity: 1; }
-  .med-extra-undo-btn { background: none; border: none; padding: 2px 0; font-family: inherit; font-size: 0.65rem; font-weight: 700; color: var(--text-muted); cursor: pointer; opacity: 0.6; }
+  .med-extra-row { display: none; gap: 8px; align-items: center; padding: 4px 0 2px 42px; }
+  .med-checklist-row.show-extra .med-extra-row { display: flex; }
+  .med-extra-btn { background: none; border: 1.5px solid #3DBAB3; border-radius: 10px; padding: 5px 14px; font-family: inherit; font-size: 0.72rem; font-weight: 800; color: #3DBAB3; cursor: pointer; transition: all 0.15s; }
+  .med-extra-btn:active { transform: scale(0.96); background: rgba(61,186,179,0.1); }
+  .med-extra-undo-btn { background: none; border: none; padding: 4px 8px; font-family: inherit; font-size: 0.72rem; font-weight: 700; color: var(--text-muted); cursor: pointer; }
+  .med-extra-toggle { background: none; border: none; padding: 4px; font-size: 0.72rem; font-weight: 700; color: #3DBAB3; cursor: pointer; margin-left: auto; flex-shrink: 0; }
   .med-checklist-item.partial { border-color: var(--yellow); background: #FFF8E120; }
   .med-dose-count { font-size: 0.68rem; font-weight: 800; color: var(--purple); background: var(--purple-light); padding: 1px 6px; border-radius: 6px; margin-left: 4px; }
   .med-dose-dots { display: inline-flex; gap: 3px; margin-left: 6px; vertical-align: middle; }
@@ -6759,7 +6761,7 @@ function renderMedAdherenceChecklist() {
     <div class="card med-checklist-card">
       <div class="flex-row-between" style="margin-bottom:10px;">
         <div class="feature-title">Today's Meds</div>
-        <div style="font-size:0.82rem;font-weight:800;color:${barColor};">${totalTaken}/${totalExpected} doses${totalExtra ? ` <span style="color:var(--orange);font-size:0.72rem;">+${totalExtra} extra</span>` : ''}</div>
+        <div style="font-size:0.82rem;font-weight:800;color:${barColor};">${totalTaken}/${totalExpected} doses${totalExtra ? ` <span style="color:#3DBAB3;font-size:0.72rem;">+${totalExtra} extra</span>` : ''}</div>
       </div>
       <div class="med-progress-bar"><div class="med-progress-fill" style="width:${pct}%;background:${barColor};"></div></div>
       <div class="med-checklist">`;
@@ -6782,22 +6784,24 @@ function renderMedAdherenceChecklist() {
     const timeStamps = doses.length ? doses.map(t => formatEntryTime(t)).join(', ') : '';
 
     const extraCount = adh[`${today}_${m.id}`]?.extra || 0;
-    const extraLabel = extraCount ? `<span style="font-size:0.68rem;font-weight:800;color:var(--orange);margin-left:4px;">+${extraCount} extra</span>` : '';
+    const extraLabel = extraCount ? `<span style="font-size:0.68rem;font-weight:800;color:#3DBAB3;margin-left:4px;">+${extraCount} extra</span>` : '';
 
     html += `
-      <div class="med-checklist-row">
-        <button class="med-checklist-item ${stateClass}" onclick="toggleMedDose('${m.id}','${today}',${expected})">
-          <span class="med-check-icon">${icon}</span>
-          <span class="med-check-info">
-            <span class="med-check-name">${escHtml(m.name)}${expected > 1 ? ` <span class="med-dose-count">${doseCount}/${expected}</span>` : ''}${extraLabel}</span>
-            <span class="med-check-dose">${escHtml(m.dose || '')}${m.frequency ? ' · ' + escHtml(m.frequency) : ''}${doseDots}</span>
-            ${timeStamps ? `<span class="med-check-times">${timeStamps}</span>` : ''}
-          </span>
-          ${isComplete && !extraCount ? `<span class="med-check-undo" title="Tap to undo last dose">↩</span>` : ''}
-        </button>
+      <div class="med-checklist-row" id="med-row-${m.id}">
+        <div style="display:flex;align-items:center;gap:0;">
+          <button class="med-checklist-item ${stateClass}" style="flex:1;" onclick="toggleMedDose('${m.id}','${today}',${expected})">
+            <span class="med-check-icon">${icon}</span>
+            <span class="med-check-info">
+              <span class="med-check-name">${escHtml(m.name)}${expected > 1 ? ` <span class="med-dose-count">${doseCount}/${expected}</span>` : ''}${extraLabel}</span>
+              <span class="med-check-dose">${escHtml(m.dose || '')}${m.frequency ? ' · ' + escHtml(m.frequency) : ''}${doseDots}</span>
+              ${timeStamps ? `<span class="med-check-times">${timeStamps}</span>` : ''}
+            </span>
+          </button>
+          <button class="med-extra-toggle" onclick="event.stopPropagation();document.getElementById('med-row-${m.id}').classList.toggle('show-extra')" title="Extra dose">＋</button>
+        </div>
         <div class="med-extra-row">
-          <button class="med-extra-btn" onclick="event.stopPropagation();addExtraDose('${m.id}','${today}')">+ extra dose</button>
-          ${extraCount ? `<button class="med-extra-undo-btn" onclick="event.stopPropagation();undoExtraDose('${m.id}','${today}')">· undo</button>` : ''}
+          <button class="med-extra-btn" onclick="event.stopPropagation();addExtraDose('${m.id}','${today}')">+ Extra Dose</button>
+          ${extraCount ? `<button class="med-extra-undo-btn" onclick="event.stopPropagation();undoExtraDose('${m.id}','${today}')">↩ undo</button>` : ''}
         </div>
       </div>`;
   });
