@@ -196,18 +196,20 @@
     bottom: 0;
     left: 0;
     right: 0;
-    max-height: 85vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    max-height: 80vh;
     background: white;
     border-radius: 24px 24px 0 0;
-    padding: 12px 20px calc(20px + env(safe-area-inset-bottom));
+    padding: 0;
     z-index: 400;
     transform: translateY(100%);
     transition: transform 0.32s cubic-bezier(0.32,0.72,0,1);
     box-shadow: 0 -8px 40px rgba(255,126,179,0.18);
+    display: flex;
+    flex-direction: column;
   }
   .more-sheet.open { transform: translateY(0); }
+  .more-sheet-header { padding: 12px 20px 0; flex-shrink: 0; }
+  .more-sheet-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 0 20px calc(20px + env(safe-area-inset-bottom)); }
   .more-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
   .more-title { font-size: 0.7rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 10px; }
   .more-item {
@@ -1439,22 +1441,26 @@
 <!-- MORE SHEET OVERLAY -->
 <div class="more-overlay" id="moreOverlay" onclick="closeMore()"></div>
 <div class="more-sheet" id="moreSheet" role="dialog" aria-modal="true" aria-label="More options">
-  <div class="more-handle"></div>
-  <div class="more-title">More</div>
-  <button class="more-item" onclick="initMeds();closeMore()"><span class="more-icon">💊</span><span>Medications & Supplements</span></button>
-  <button class="more-item" onclick="initAnalytics();closeMore()"><span class="more-icon">📊</span><span>Analytics & Insights</span></button>
-  <button class="more-item" onclick="initPokedex();closeMore()"><span class="more-icon">🎮</span><span>My Pokédex</span></button>
-  <button class="more-item" onclick="showScreen('snacks');closeMore()"><span class="more-icon">🎒</span><span>Snacks</span></button>
-  <button class="more-item" onclick="showScreen('foods');closeMore()"><span class="more-icon">📋</span><span>Food Guide</span></button>
-  <button class="more-item" onclick="showScreen('grocery');renderGroceryList();closeMore()"><span class="more-icon">🛒</span><span>Grocery List</span></button>
-  <button class="more-item" onclick="showScreen('pantry');loadCookingPrefs();closeMore()"><span class="more-icon">🍳</span><span>Pantry & Crave</span></button>
-  <button class="more-item" onclick="showScreen('breakfast');closeMore()"><span class="more-icon">🌅</span><span>Grab & Go Breakfasts</span></button>
-  <button class="more-item" onclick="initHistory();closeMore()"><span class="more-icon">📍</span><span>Restaurant History</span></button>
-  <button class="more-item" onclick="showScreen('convention');closeMore()"><span class="more-icon">🎉</span><span>Convention Pack</span></button>
-  <button class="more-item" onclick="showScreen('tips');closeMore()"><span class="more-icon">💜</span><span>Autism Tips</span></button>
-  <button class="more-item" id="caregiver-menu-btn" onclick="openCaregiverScreen();closeMore()" style="display:none;"><span class="more-icon">💜</span><span id="caregiver-menu-label">Caregiver Dashboard</span></button>
-  <button class="more-item" onclick="showProfile();closeMore()"><span class="more-icon">👤</span><span>My Profile</span></button>
-  <button class="more-item" onclick="toggleDarkMode();closeMore()" id="dark-mode-btn"><span class="more-icon" id="dark-mode-icon">🌙</span><span id="dark-mode-label">Dark Mode</span></button>
+  <div class="more-sheet-header">
+    <div class="more-handle"></div>
+    <div class="more-title">More</div>
+  </div>
+  <div class="more-sheet-scroll">
+    <button class="more-item" onclick="initMeds();closeMore()"><span class="more-icon">💊</span><span>Medications & Supplements</span></button>
+    <button class="more-item" onclick="initAnalytics();closeMore()"><span class="more-icon">📊</span><span>Analytics & Insights</span></button>
+    <button class="more-item" onclick="initPokedex();closeMore()"><span class="more-icon">🎮</span><span>My Pokédex</span></button>
+    <button class="more-item" onclick="showScreen('snacks');closeMore()"><span class="more-icon">🎒</span><span>Snacks</span></button>
+    <button class="more-item" onclick="showScreen('foods');closeMore()"><span class="more-icon">📋</span><span>Food Guide</span></button>
+    <button class="more-item" onclick="showScreen('grocery');renderGroceryList();closeMore()"><span class="more-icon">🛒</span><span>Grocery List</span></button>
+    <button class="more-item" onclick="showScreen('pantry');loadCookingPrefs();closeMore()"><span class="more-icon">🍳</span><span>Pantry & Crave</span></button>
+    <button class="more-item" onclick="showScreen('breakfast');closeMore()"><span class="more-icon">🌅</span><span>Grab & Go Breakfasts</span></button>
+    <button class="more-item" onclick="initHistory();closeMore()"><span class="more-icon">📍</span><span>Restaurant History</span></button>
+    <button class="more-item" onclick="showScreen('convention');closeMore()"><span class="more-icon">🎉</span><span>Convention Pack</span></button>
+    <button class="more-item" onclick="showScreen('tips');closeMore()"><span class="more-icon">💜</span><span>Autism Tips</span></button>
+    <button class="more-item" id="caregiver-menu-btn" onclick="openCaregiverScreen();closeMore()" style="display:none;"><span class="more-icon">💜</span><span id="caregiver-menu-label">Caregiver Dashboard</span></button>
+    <button class="more-item" onclick="showProfile();closeMore()"><span class="more-icon">👤</span><span>My Profile</span></button>
+    <button class="more-item" onclick="toggleDarkMode();closeMore()" id="dark-mode-btn"><span class="more-icon" id="dark-mode-icon">🌙</span><span id="dark-mode-label">Dark Mode</span></button>
+  </div>
 </div>
 
 <!-- ══════════════ MEAL PLAN SCREEN ══════════════ -->
