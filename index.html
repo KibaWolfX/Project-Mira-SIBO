@@ -6795,10 +6795,10 @@ function renderMedAdherenceChecklist() {
           </span>
           ${isComplete && !extraCount ? `<span class="med-check-undo" title="Tap to undo last dose">↩</span>` : ''}
         </button>
-        ${isComplete ? `<div class="med-extra-row">
+        <div class="med-extra-row">
           <button class="med-extra-btn" onclick="event.stopPropagation();addExtraDose('${m.id}','${today}')">+1 Extra Dose</button>
           ${extraCount ? `<button class="med-extra-undo-btn" onclick="event.stopPropagation();undoExtraDose('${m.id}','${today}')">↩ Undo extra</button>` : ''}
-        </div>` : ''}
+        </div>
       </div>`;
   });
 
