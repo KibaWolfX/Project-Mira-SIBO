@@ -1352,6 +1352,11 @@
   .med-check-time { font-size: 0.68rem; font-weight: 700; color: var(--green); }
   .med-check-times { font-size: 0.66rem; font-weight: 600; color: var(--green); }
   .med-check-undo { font-size: 0.82rem; color: var(--text-muted); flex-shrink: 0; }
+  .med-checklist-row { margin-bottom: 2px; }
+  .med-extra-row { display: flex; gap: 8px; padding: 4px 0 2px 42px; }
+  .med-extra-btn { background: none; border: 1.5px dashed var(--orange); border-radius: 10px; padding: 4px 12px; font-family: inherit; font-size: 0.7rem; font-weight: 800; color: var(--orange); cursor: pointer; transition: all 0.15s; }
+  .med-extra-btn:active { transform: scale(0.95); background: rgba(249,115,22,0.08); }
+  .med-extra-undo-btn { background: none; border: none; padding: 4px 8px; font-family: inherit; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); cursor: pointer; }
   .med-checklist-item.partial { border-color: var(--yellow); background: #FFF8E120; }
   .med-dose-count { font-size: 0.68rem; font-weight: 800; color: var(--purple); background: var(--purple-light); padding: 1px 6px; border-radius: 6px; margin-left: 4px; }
   .med-dose-dots { display: inline-flex; gap: 3px; margin-left: 6px; vertical-align: middle; }
@@ -3811,6 +3816,7 @@ const SYMPTOM_CATEGORIES = [
   { id: 'pain', label: '💢 Pain', symptoms: ['Joint Pain','Muscle Aches','Back Pain','Chest Tightness','Pelvic Pain','Shoulder Pain'] },
   { id: 'mood', label: '💭 Mood', symptoms: ['Anxiety','Irritability','Depression','Mood Swings','Panic','Overwhelm','Emotional Dysregulation'] },
   { id: 'skin', label: '🧴 Skin & Other', symptoms: ['Rash','Acne','Eczema Flare','Hives','Flushing','Heart Palpitations','Shortness of Breath','Sweating'] },
+  { id: 'meds', label: '💊 Missed Meds', symptoms: ['Missed Morning Dose','Missed Evening Dose','Missed Full Day','Late Dose','Double Dose (catch-up)','Ran Out of Meds','Side Effect Flare','Withdrawal Symptoms'] },
 ];
 
 // Migraine tracking descriptors
@@ -6700,6 +6706,31 @@ function toggleMedDose(medId, date, expectedDoses) {
   renderMeds();
 }
 
+function addExtraDose(medId, date) {
+  const adh = loadMedAdherence();
+  const key = `${date}_${medId}`;
+  if (!adh[key]) adh[key] = { doses: [] };
+  const now = new Date().toTimeString().slice(0,5);
+  adh[key].doses.push(now);
+  if (!adh[key].extra) adh[key].extra = 0;
+  adh[key].extra++;
+  saveMedAdherence(adh);
+  showToast('Extra dose logged');
+  renderMeds();
+}
+
+function undoExtraDose(medId, date) {
+  const adh = loadMedAdherence();
+  const key = `${date}_${medId}`;
+  if (!adh[key] || !adh[key].extra || adh[key].extra <= 0) return;
+  adh[key].doses.pop();
+  adh[key].extra--;
+  if (adh[key].extra === 0) delete adh[key].extra;
+  if (adh[key].doses.length === 0) delete adh[key];
+  saveMedAdherence(adh);
+  renderMeds();
+}
+
 function getMedDosesTaken(adh, date, medId) {
   const key = `${date}_${medId}`;
   return adh[key]?.doses || [];
@@ -6712,12 +6743,14 @@ function renderMedAdherenceChecklist() {
   const adh = loadMedAdherence();
 
   // Calculate total doses expected vs taken today
-  let totalExpected = 0, totalTaken = 0;
+  let totalExpected = 0, totalTaken = 0, totalExtra = 0;
   meds.forEach(m => {
     const expected = parseDailyDoses(m.frequency);
     const taken = getMedDosesTaken(adh, today, m.id).length;
+    const extra = adh[`${today}_${m.id}`]?.extra || 0;
     totalExpected += expected;
     totalTaken += Math.min(taken, expected);
+    totalExtra += extra;
   });
   const pct = totalExpected ? Math.round((totalTaken / totalExpected) * 100) : 0;
   const barColor = pct === 100 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
@@ -6726,7 +6759,7 @@ function renderMedAdherenceChecklist() {
     <div class="card med-checklist-card">
       <div class="flex-row-between" style="margin-bottom:10px;">
         <div class="feature-title">Today's Meds</div>
-        <div style="font-size:0.82rem;font-weight:800;color:${barColor};">${totalTaken}/${totalExpected} doses</div>
+        <div style="font-size:0.82rem;font-weight:800;color:${barColor};">${totalTaken}/${totalExpected} doses${totalExtra ? ` <span style="color:var(--orange);font-size:0.72rem;">+${totalExtra} extra</span>` : ''}</div>
       </div>
       <div class="med-progress-bar"><div class="med-progress-fill" style="width:${pct}%;background:${barColor};"></div></div>
       <div class="med-checklist">`;
@@ -6748,16 +6781,25 @@ function renderMedAdherenceChecklist() {
     // Timestamps for taken doses
     const timeStamps = doses.length ? doses.map(t => formatEntryTime(t)).join(', ') : '';
 
+    const extraCount = adh[`${today}_${m.id}`]?.extra || 0;
+    const extraLabel = extraCount ? `<span style="font-size:0.68rem;font-weight:800;color:var(--orange);margin-left:4px;">+${extraCount} extra</span>` : '';
+
     html += `
-      <button class="med-checklist-item ${stateClass}" onclick="toggleMedDose('${m.id}','${today}',${expected})">
-        <span class="med-check-icon">${icon}</span>
-        <span class="med-check-info">
-          <span class="med-check-name">${escHtml(m.name)}${expected > 1 ? ` <span class="med-dose-count">${doseCount}/${expected}</span>` : ''}</span>
-          <span class="med-check-dose">${escHtml(m.dose || '')}${m.frequency ? ' · ' + escHtml(m.frequency) : ''}${doseDots}</span>
-          ${timeStamps ? `<span class="med-check-times">${timeStamps}</span>` : ''}
-        </span>
-        ${isComplete ? `<span class="med-check-undo" title="Tap to undo last dose">↩</span>` : ''}
-      </button>`;
+      <div class="med-checklist-row">
+        <button class="med-checklist-item ${stateClass}" onclick="toggleMedDose('${m.id}','${today}',${expected})">
+          <span class="med-check-icon">${icon}</span>
+          <span class="med-check-info">
+            <span class="med-check-name">${escHtml(m.name)}${expected > 1 ? ` <span class="med-dose-count">${doseCount}/${expected}</span>` : ''}${extraLabel}</span>
+            <span class="med-check-dose">${escHtml(m.dose || '')}${m.frequency ? ' · ' + escHtml(m.frequency) : ''}${doseDots}</span>
+            ${timeStamps ? `<span class="med-check-times">${timeStamps}</span>` : ''}
+          </span>
+          ${isComplete && !extraCount ? `<span class="med-check-undo" title="Tap to undo last dose">↩</span>` : ''}
+        </button>
+        ${isComplete ? `<div class="med-extra-row">
+          <button class="med-extra-btn" onclick="event.stopPropagation();addExtraDose('${m.id}','${today}')">+1 Extra Dose</button>
+          ${extraCount ? `<button class="med-extra-undo-btn" onclick="event.stopPropagation();undoExtraDose('${m.id}','${today}')">↩ Undo extra</button>` : ''}
+        </div>` : ''}
+      </div>`;
   });
 
   html += `</div></div>`;
