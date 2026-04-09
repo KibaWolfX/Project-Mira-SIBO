@@ -1350,7 +1350,11 @@
   .med-check-name { font-weight: 800; font-size: 0.88rem; color: var(--text); }
   .med-check-dose { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); }
   .med-check-time { font-size: 0.68rem; font-weight: 700; color: var(--green); }
-  .med-check-times { font-size: 0.66rem; font-weight: 600; color: var(--green); }
+  .med-check-times { font-size: 0.7rem; font-weight: 700; color: var(--green); display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+  .med-time-pill { background: rgba(16,185,129,0.1); padding: 1px 8px; border-radius: 8px; font-size: 0.66rem; font-weight: 700; color: var(--green); }
+  .med-time-pill.extra { color: #3DBAB3; background: rgba(61,186,179,0.1); }
+  [data-theme="dark"] .med-time-pill { background: rgba(16,185,129,0.15); }
+  [data-theme="dark"] .med-time-pill.extra { background: rgba(61,186,179,0.15); }
   .med-check-undo { font-size: 0.82rem; color: var(--text-muted); flex-shrink: 0; }
   .med-checklist-row { margin-bottom: 2px; }
   .med-extra-row { display: none; gap: 8px; align-items: center; padding: 4px 0 2px 42px; }
@@ -6780,10 +6784,14 @@ function renderMedAdherenceChecklist() {
       `<span class="med-dose-dot ${i < doseCount ? 'filled' : ''}"></span>`
     ).join('')}</span>` : '';
 
-    // Timestamps for taken doses
-    const timeStamps = doses.length ? doses.map(t => formatEntryTime(t)).join(', ') : '';
-
+    // Timestamps for taken doses — label regular vs extra
     const extraCount = adh[`${today}_${m.id}`]?.extra || 0;
+    const regularCount = doseCount - extraCount;
+    const timeStamps = doses.length ? doses.map((t, i) => {
+      const isExtra = i >= regularCount;
+      const label = expected > 1 || isExtra ? (isExtra ? 'Extra' : `Dose ${i + 1}`) : '';
+      return `<span class="med-time-pill${isExtra ? ' extra' : ''}">${label ? label + ' · ' : ''}${formatEntryTime(t)}</span>`;
+    }).join('') : '';
     const extraLabel = extraCount ? `<span style="font-size:0.68rem;font-weight:800;color:#3DBAB3;margin-left:4px;">+${extraCount} extra</span>` : '';
 
     html += `
