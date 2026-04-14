@@ -1177,6 +1177,46 @@
   .cabbage-toggle.active .cabbage-status { color: #4CAF50; font-weight: 800; }
   @keyframes cabbageTumble { 0% { transform: rotate(0) scale(1); } 25% { transform: rotate(-20deg) scale(1.3); } 50% { transform: rotate(10deg) scale(1.1); } 75% { transform: rotate(-10deg) scale(1.2); } 100% { transform: rotate(-15deg) scale(1.2); } }
 
+  /* ── Period Tracker ── */
+  .period-header { background: linear-gradient(135deg, #FCE4EC, #F3E5F5); border-color: #E91E63; margin-bottom: 16px; }
+  [data-theme="dark"] .period-header { background: linear-gradient(135deg, #2A1520, #251A2A); border-color: var(--border); }
+  .period-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 16px; }
+  .period-cal-label { text-align: center; font-size: 0.6rem; font-weight: 800; color: var(--text-muted); padding: 4px 0; }
+  .period-cal-day { aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 700; background: var(--bg); cursor: pointer; position: relative; transition: background 0.15s, border-color 0.15s; border: 2px solid transparent; }
+  .period-cal-day:active { transform: scale(0.92); }
+  .period-cal-day.empty { background: none; cursor: default; }
+  .period-cal-day.period { background: #F48FB1; color: white; font-weight: 800; }
+  .period-cal-day.period.light { background: #F8BBD0; color: #880E4F; }
+  .period-cal-day.period.heavy { background: #E91E63; color: white; }
+  .period-cal-day.predicted { border: 2px dashed #F48FB1; color: #E91E63; }
+  .period-cal-day.today { box-shadow: 0 0 0 2px var(--purple); }
+  .period-cal-day.selected { box-shadow: 0 0 0 2px #E91E63; }
+  [data-theme="dark"] .period-cal-day { background: var(--card); }
+  [data-theme="dark"] .period-cal-day.empty { background: none; }
+  .period-cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .period-cal-nav-btn { background: none; border: 1.5px solid var(--border); border-radius: 10px; padding: 6px 14px; font-family: inherit; font-size: 0.82rem; font-weight: 800; color: var(--text); cursor: pointer; }
+  .period-cal-nav-title { font-size: 0.92rem; font-weight: 900; }
+  .period-flow-chips { display: flex; gap: 6px; margin: 8px 0 12px; flex-wrap: wrap; }
+  .period-flow-chip { padding: 8px 16px; border-radius: 14px; border: 2px solid var(--border); background: var(--card); font-family: inherit; font-size: 0.78rem; font-weight: 800; color: var(--text); cursor: pointer; transition: all 0.15s; }
+  .period-flow-chip:active { transform: scale(0.95); }
+  .period-flow-chip.active { border-color: #E91E63; background: #FCE4EC; color: #E91E63; }
+  [data-theme="dark"] .period-flow-chip.active { background: #2A1520; }
+  .period-symptom-chip { padding: 7px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--bg); font-family: inherit; font-size: 0.78rem; font-weight: 700; color: var(--text); cursor: pointer; transition: all 0.15s; }
+  .period-symptom-chip.active { border-color: #E91E63; background: #FCE4EC; color: #E91E63; }
+  [data-theme="dark"] .period-symptom-chip.active { background: #2A1520; border-color: #E91E63; }
+  .period-stats { display: flex; gap: 10px; margin-bottom: 16px; }
+  .period-stat { flex: 1; text-align: center; background: var(--card); border-radius: 14px; padding: 12px 6px; border: 1.5px solid var(--border); }
+  .period-stat-num { font-family: 'Fredoka One', cursive; font-size: 1.3rem; color: #E91E63; }
+  .period-stat-label { font-size: 0.66rem; font-weight: 700; color: var(--text-muted); }
+  .period-log-card { background: var(--card); border-radius: 14px; border: 1.5px solid var(--border); padding: 14px; margin-bottom: 10px; }
+  .period-log-date { font-size: 0.82rem; font-weight: 900; }
+  .period-log-flow { font-size: 0.72rem; font-weight: 700; display: inline-block; padding: 2px 8px; border-radius: 8px; margin-left: 6px; }
+  .period-notes-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 14px; font-size: 0.85rem; font-family: inherit; color: var(--text); background: var(--card); outline: none; resize: none; box-sizing: border-box; margin-top: 8px; }
+  .period-notes-input:focus { border-color: #E91E63; }
+  .period-toggle-btn { width: 100%; padding: 14px; border-radius: 16px; border: none; font-family: inherit; font-size: 0.92rem; font-weight: 800; cursor: pointer; margin-bottom: 12px; transition: all 0.15s; }
+  .period-toggle-btn.start { background: linear-gradient(135deg, #E91E63, #AD1457); color: white; }
+  .period-toggle-btn.end { background: var(--card); border: 2px solid #E91E63; color: #E91E63; }
+
   /* ── Pokédex ── */
   .pokemon-reveal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 5000; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; will-change: opacity; }
   .pokemon-reveal-card { background: var(--card); border-radius: 28px; padding: 32px 28px 24px; text-align: center; max-width: 320px; width: 90%; position: relative; overflow: hidden; animation: pokePop 0.5s cubic-bezier(0.175,0.885,0.32,1.275); box-shadow: 0 20px 60px rgba(0,0,0,0.3); will-change: transform, opacity; }
@@ -1476,6 +1516,7 @@
   <div class="more-sheet-scroll">
     <button class="more-item" onclick="initMeds();closeMore()"><span class="more-icon">💊</span><span>Medications & Supplements</span></button>
     <button class="more-item" onclick="initAnalytics();closeMore()"><span class="more-icon">📊</span><span>Analytics & Insights</span></button>
+    <button class="more-item" onclick="initPeriodTracker();closeMore()"><span class="more-icon">🌙</span><span>Period Tracker</span></button>
     <button class="more-item" onclick="initPokedex();closeMore()"><span class="more-icon">🎮</span><span>My Pokédex</span></button>
     <button class="more-item" onclick="showScreen('snacks');closeMore()"><span class="more-icon">🎒</span><span>Snacks</span></button>
     <button class="more-item" onclick="showScreen('foods');closeMore()"><span class="more-icon">📋</span><span>Food Guide</span></button>
@@ -1680,6 +1721,11 @@
 <!-- ══════════════ ANALYTICS SCREEN ══════════════ -->
 <div class="screen" id="screen-analytics">
   <div id="analytics-content"></div>
+</div>
+
+<!-- ══════════════ PERIOD TRACKER SCREEN ══════════════ -->
+<div class="screen" id="screen-period">
+  <div id="period-content"></div>
 </div>
 
 <!-- ══════════════ POKÉDEX SCREEN ══════════════ -->
@@ -2430,7 +2476,7 @@ function showScreen(name) {
   const nextScreen = document.getElementById('screen-' + name);
 
   const directMap = { meal: 'meal', journal: 'journal', nearby: 'nearby', favorites: 'favorites' };
-  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'snacks', 'pantry', 'profile', 'grocery', 'history', 'meds', 'caregiver', 'analytics', 'pokedex'];
+  const moreScreens = ['convention', 'foods', 'breakfast', 'tips', 'snacks', 'pantry', 'profile', 'grocery', 'history', 'meds', 'caregiver', 'analytics', 'pokedex', 'period'];
   const bscreen = directMap[name] || (moreScreens.includes(name) ? 'more' : null);
   const nextBtn = bscreen ? document.querySelector(`[data-bscreen="${bscreen}"]`) : null;
 
@@ -5819,6 +5865,301 @@ function formatInsightsForShare() {
 }
 
 // ══════════════════════════════════════════════════════════════
+// ── FEATURE: PERIOD TRACKER ─────────────────────────────────
+
+const PERIOD_SYMPTOMS = [
+  'Cramps','Bloating','Headache','Back Pain','Breast Tenderness','Fatigue',
+  'Mood Swings','Irritability','Anxiety','Nausea','Acne','Cravings',
+  'Insomnia','Dizziness','Hot Flashes','Joint Pain','Brain Fog','Diarrhea'
+];
+
+const PERIOD_FLOW = [
+  { id: 'spotting', label: 'Spotting', color: '#F8BBD0', textColor: '#880E4F' },
+  { id: 'light', label: 'Light', color: '#F48FB1', textColor: '#fff' },
+  { id: 'medium', label: 'Medium', color: '#EC407A', textColor: '#fff' },
+  { id: 'heavy', label: 'Heavy', color: '#C2185B', textColor: '#fff' },
+  { id: 'very_heavy', label: 'Very Heavy', color: '#880E4F', textColor: '#fff' }
+];
+
+let periodCalMonth = new Date().getMonth();
+let periodCalYear = new Date().getFullYear();
+let periodSelectedDate = null;
+
+function loadPeriodLog() {
+  try { return JSON.parse(localStorage.getItem('mira_period_log') || '{}'); } catch { return {}; }
+}
+function savePeriodLog(log) { safeSetItem('mira_period_log', JSON.stringify(log)); }
+
+function loadPeriodSettings() {
+  try { return JSON.parse(localStorage.getItem('mira_period_settings') || '{}'); } catch { return {}; }
+}
+function savePeriodSettings(s) { safeSetItem('mira_period_settings', JSON.stringify(s)); }
+
+function getPeriodDates() {
+  const log = loadPeriodLog();
+  return Object.keys(log).filter(d => log[d].flow).sort();
+}
+
+function getCycleStats() {
+  const dates = getPeriodDates();
+  if (dates.length < 2) return null;
+
+  // Find period start dates (first day of each period = gap > 3 days from previous)
+  const starts = [dates[0]];
+  for (let i = 1; i < dates.length; i++) {
+    const prev = new Date(dates[i - 1] + 'T12:00:00');
+    const curr = new Date(dates[i] + 'T12:00:00');
+    if ((curr - prev) / 86400000 > 3) starts.push(dates[i]);
+  }
+
+  // Calculate cycle lengths (days between period starts)
+  const cycleLengths = [];
+  for (let i = 1; i < starts.length; i++) {
+    const d1 = new Date(starts[i - 1] + 'T12:00:00');
+    const d2 = new Date(starts[i] + 'T12:00:00');
+    const len = Math.round((d2 - d1) / 86400000);
+    if (len >= 15 && len <= 60) cycleLengths.push(len);
+  }
+
+  // Period lengths (consecutive days in each period)
+  const periodLengths = [];
+  let currentRun = 1;
+  for (let i = 1; i < dates.length; i++) {
+    const prev = new Date(dates[i - 1] + 'T12:00:00');
+    const curr = new Date(dates[i] + 'T12:00:00');
+    if ((curr - prev) / 86400000 <= 2) currentRun++;
+    else { periodLengths.push(currentRun); currentRun = 1; }
+  }
+  periodLengths.push(currentRun);
+
+  const avgCycle = cycleLengths.length ? Math.round(cycleLengths.reduce((a, b) => a + b, 0) / cycleLengths.length) : 28;
+  const avgPeriod = periodLengths.length ? Math.round(periodLengths.reduce((a, b) => a + b, 0) / periodLengths.length) : 5;
+  const lastStart = starts[starts.length - 1];
+
+  return { avgCycle, avgPeriod, cycleLengths, periodLengths, starts, lastStart, totalPeriods: starts.length };
+}
+
+function getPredictedDates() {
+  const stats = getCycleStats();
+  if (!stats || !stats.lastStart) return [];
+  const predicted = [];
+  const start = new Date(stats.lastStart + 'T12:00:00');
+  const nextStart = new Date(start);
+  nextStart.setDate(nextStart.getDate() + stats.avgCycle);
+  for (let i = 0; i < stats.avgPeriod; i++) {
+    const d = new Date(nextStart);
+    d.setDate(d.getDate() + i);
+    predicted.push(d.toISOString().slice(0, 10));
+  }
+  return predicted;
+}
+
+function initPeriodTracker() {
+  showScreen('period');
+  periodCalMonth = new Date().getMonth();
+  periodCalYear = new Date().getFullYear();
+  periodSelectedDate = new Date().toISOString().slice(0, 10);
+  renderPeriodTracker();
+}
+
+function renderPeriodTracker() {
+  const container = document.getElementById('period-content');
+  const log = loadPeriodLog();
+  const stats = getCycleStats();
+  const predicted = getPredictedDates();
+  const today = new Date().toISOString().slice(0, 10);
+  const periodDates = new Set(getPeriodDates());
+  const predictedSet = new Set(predicted);
+
+  // Check if currently on period
+  const isOnPeriod = periodDates.has(today) || (getPeriodDates().length > 0 && (() => {
+    const sorted = getPeriodDates();
+    const last = sorted[sorted.length - 1];
+    const diff = (new Date(today + 'T12:00:00') - new Date(last + 'T12:00:00')) / 86400000;
+    return diff >= 0 && diff <= 1 && log[last]?.flow;
+  })());
+
+  // Build calendar
+  const firstDay = new Date(periodCalYear, periodCalMonth, 1).getDay();
+  const daysInMonth = new Date(periodCalYear, periodCalMonth + 1, 0).getDate();
+  const monthName = new Date(periodCalYear, periodCalMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+  let calHtml = '<div class="period-cal">';
+  ['S', 'M', 'T', 'W', 'T', 'F', 'S'].forEach(d => { calHtml += `<div class="period-cal-label">${d}</div>`; });
+  for (let i = 0; i < firstDay; i++) calHtml += '<div class="period-cal-day empty"></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${periodCalYear}-${String(periodCalMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const entry = log[dateStr];
+    const isPeriod = !!entry?.flow;
+    const isPredicted = predictedSet.has(dateStr) && !isPeriod;
+    const isToday = dateStr === today;
+    const isSelected = dateStr === periodSelectedDate;
+    const flowClass = isPeriod ? (entry.flow === 'heavy' || entry.flow === 'very_heavy' ? ' heavy' : entry.flow === 'spotting' || entry.flow === 'light' ? ' light' : '') : '';
+    const cls = `period-cal-day${isPeriod ? ' period' + flowClass : ''}${isPredicted ? ' predicted' : ''}${isToday ? ' today' : ''}${isSelected ? ' selected' : ''}`;
+    calHtml += `<div class="${cls}" onclick="selectPeriodDate('${dateStr}')">${d}</div>`;
+  }
+  calHtml += '</div>';
+
+  // Stats cards
+  const statsHtml = stats ? `
+    <div class="period-stats">
+      <div class="period-stat"><div class="period-stat-num">${stats.avgCycle}</div><div class="period-stat-label">Avg Cycle</div></div>
+      <div class="period-stat"><div class="period-stat-num">${stats.avgPeriod}d</div><div class="period-stat-label">Avg Period</div></div>
+      <div class="period-stat"><div class="period-stat-num">${stats.totalPeriods}</div><div class="period-stat-label">Tracked</div></div>
+    </div>
+  ` : '';
+
+  // Prediction info
+  const nextPredicted = predicted.length ? predicted[0] : null;
+  const predictionHtml = nextPredicted && nextPredicted > today ? `
+    <div class="card" style="text-align:center;padding:12px;margin-bottom:12px;border:1.5px dashed #E91E63;">
+      <div style="font-size:0.78rem;font-weight:800;color:#E91E63;">🔮 Next period predicted: ${new Date(nextPredicted + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+      <div style="font-size:0.68rem;font-weight:600;color:var(--text-muted);margin-top:2px;">Based on your ${stats?.avgCycle || 28}-day average cycle</div>
+    </div>
+  ` : '';
+
+  // Selected date detail editor
+  const selEntry = periodSelectedDate ? (log[periodSelectedDate] || {}) : {};
+  const selDateLabel = periodSelectedDate ? new Date(periodSelectedDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }) : '';
+
+  const dayEditorHtml = periodSelectedDate ? `
+    <div class="card period-log-card">
+      <div class="period-log-date">${selDateLabel}</div>
+
+      <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin:12px 0 6px;letter-spacing:0.8px;">Flow</div>
+      <div class="period-flow-chips">
+        <button class="period-flow-chip ${!selEntry.flow ? 'active' : ''}" style="${!selEntry.flow ? 'border-color:var(--green);background:#E8F5E9;color:var(--green);' : ''}" onclick="setPeriodFlow('${periodSelectedDate}', null)">None</button>
+        ${PERIOD_FLOW.map(f => `
+          <button class="period-flow-chip ${selEntry.flow === f.id ? 'active' : ''}" onclick="setPeriodFlow('${periodSelectedDate}', '${f.id}')">${f.label}</button>
+        `).join('')}
+      </div>
+
+      <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin:8px 0 6px;letter-spacing:0.8px;">Symptoms</div>
+      <div class="flex-wrap-gap" style="margin-bottom:8px;">
+        ${PERIOD_SYMPTOMS.map(s => `
+          <button class="period-symptom-chip ${(selEntry.symptoms || []).includes(s) ? 'active' : ''}" onclick="togglePeriodSymptom('${periodSelectedDate}','${s}')">${s}</button>
+        `).join('')}
+      </div>
+
+      <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin:8px 0 6px;letter-spacing:0.8px;">Mood</div>
+      <div class="flex-wrap-gap" style="margin-bottom:8px;">
+        ${['😊 Good','😐 Okay','😢 Low','😤 Irritable','😰 Anxious','🥰 Loving','😴 Exhausted'].map(m => {
+          const mood = m.split(' ').slice(1).join(' ');
+          return `<button class="period-symptom-chip ${selEntry.mood === mood ? 'active' : ''}" onclick="setPeriodMood('${periodSelectedDate}','${mood}')">${m}</button>`;
+        }).join('')}
+      </div>
+
+      <div style="font-size:0.72rem;font-weight:800;text-transform:uppercase;color:var(--text-muted);margin:8px 0 6px;letter-spacing:0.8px;">Notes</div>
+      <textarea class="period-notes-input" rows="3" placeholder="How are you feeling today..."
+        onblur="savePeriodNotes('${periodSelectedDate}', this.value)">${escHtml(selEntry.notes || '')}</textarea>
+    </div>
+  ` : '';
+
+  // Recent period log
+  const recentDates = Object.keys(log).filter(d => log[d].flow).sort((a, b) => b.localeCompare(a)).slice(0, 10);
+  const recentHtml = recentDates.length ? `
+    <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:16px 0 8px;">Recent Log</div>
+    ${recentDates.map(d => {
+      const e = log[d];
+      const flowInfo = PERIOD_FLOW.find(f => f.id === e.flow);
+      const sympCount = (e.symptoms || []).length;
+      return `
+        <div class="period-log-card" style="padding:10px 14px;cursor:pointer;" onclick="selectPeriodDate('${d}')">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div>
+              <span class="period-log-date">${d}</span>
+              ${flowInfo ? `<span class="period-log-flow" style="background:${flowInfo.color};color:${flowInfo.textColor};">${flowInfo.label}</span>` : ''}
+            </div>
+            <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);">
+              ${e.mood ? e.mood : ''}${sympCount ? ` · ${sympCount} symptoms` : ''}
+            </div>
+          </div>
+          ${e.notes ? `<div style="font-size:0.78rem;color:var(--text-muted);margin-top:4px;font-style:italic;">"${escHtml(e.notes.slice(0, 60))}${e.notes.length > 60 ? '…' : ''}"</div>` : ''}
+        </div>`;
+    }).join('')}
+  ` : '';
+
+  container.innerHTML = `
+    <div class="card period-header">
+      <div class="feature-title">🌙 Period Tracker</div>
+      <div style="font-size:0.82rem;font-weight:600;color:var(--text-muted);margin-top:4px;">
+        Track your cycle, symptoms, mood, and flow. Tap a day to log.
+      </div>
+    </div>
+    ${statsHtml}
+    ${predictionHtml}
+    <div class="card" style="padding:14px;">
+      <div class="period-cal-nav">
+        <button class="period-cal-nav-btn" onclick="shiftPeriodMonth(-1)">← Prev</button>
+        <div class="period-cal-nav-title">${monthName}</div>
+        <button class="period-cal-nav-btn" onclick="shiftPeriodMonth(1)">Next →</button>
+      </div>
+      ${calHtml}
+      <div style="display:flex;gap:12px;justify-content:center;font-size:0.62rem;font-weight:700;color:var(--text-muted);">
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:#F48FB1;vertical-align:middle;margin-right:3px;"></span>Period</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;border:1.5px dashed #F48FB1;vertical-align:middle;margin-right:3px;"></span>Predicted</span>
+        <span><span style="display:inline-block;width:10px;height:10px;border-radius:3px;box-shadow:0 0 0 2px var(--purple);vertical-align:middle;margin-right:3px;"></span>Today</span>
+      </div>
+    </div>
+    ${dayEditorHtml}
+    ${recentHtml}
+  `;
+}
+
+function selectPeriodDate(dateStr) {
+  periodSelectedDate = dateStr;
+  // Navigate calendar to that month
+  const d = new Date(dateStr + 'T12:00:00');
+  periodCalMonth = d.getMonth();
+  periodCalYear = d.getFullYear();
+  renderPeriodTracker();
+}
+
+function shiftPeriodMonth(delta) {
+  periodCalMonth += delta;
+  if (periodCalMonth > 11) { periodCalMonth = 0; periodCalYear++; }
+  if (periodCalMonth < 0) { periodCalMonth = 11; periodCalYear--; }
+  renderPeriodTracker();
+}
+
+function setPeriodFlow(dateStr, flowId) {
+  const log = loadPeriodLog();
+  if (!flowId) {
+    if (log[dateStr]) { delete log[dateStr].flow; if (!log[dateStr].symptoms?.length && !log[dateStr].notes && !log[dateStr].mood) delete log[dateStr]; }
+  } else {
+    if (!log[dateStr]) log[dateStr] = {};
+    log[dateStr].flow = flowId;
+  }
+  savePeriodLog(log);
+  renderPeriodTracker();
+}
+
+function togglePeriodSymptom(dateStr, symptom) {
+  const log = loadPeriodLog();
+  if (!log[dateStr]) log[dateStr] = {};
+  if (!log[dateStr].symptoms) log[dateStr].symptoms = [];
+  const idx = log[dateStr].symptoms.indexOf(symptom);
+  if (idx >= 0) log[dateStr].symptoms.splice(idx, 1);
+  else log[dateStr].symptoms.push(symptom);
+  savePeriodLog(log);
+  renderPeriodTracker();
+}
+
+function setPeriodMood(dateStr, mood) {
+  const log = loadPeriodLog();
+  if (!log[dateStr]) log[dateStr] = {};
+  log[dateStr].mood = log[dateStr].mood === mood ? null : mood;
+  savePeriodLog(log);
+  renderPeriodTracker();
+}
+
+function savePeriodNotes(dateStr, notes) {
+  const log = loadPeriodLog();
+  if (!log[dateStr]) log[dateStr] = {};
+  log[dateStr].notes = notes.trim();
+  savePeriodLog(log);
+}
+
 // ── FEATURE: DAILY POKÉMON REWARDS ──────────────────────────
 
 const POKEMON_MESSAGES = [
