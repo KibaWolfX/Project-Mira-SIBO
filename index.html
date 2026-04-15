@@ -5502,15 +5502,20 @@ function extractWeekIngredients() {
 }
 
 // Shared normalization — used by grocery list, inventory, and recipe matching
-const ING_PREP_WORDS = /\b(sliced|diced|chopped|grated|minced|shredded|julienned|cubed|crushed|mashed|peeled|trimmed|halved|quartered|melted|softened|roasted|toasted|cooked|poached|dried|fresh|thin|thinly|finely|roughly|optional|florets?)\b/gi;
-const ING_UNIT_WORDS = /^(cup|cups|tbsp|tsp|oz|lb|lbs|cloves?|small|medium|large|heads?|bunch|handful|pinch|dash|splash|florets?)\s+/i;
+function _ingRegexes() {
+  return {
+    prep: /\b(sliced|diced|chopped|grated|minced|shredded|julienned|cubed|crushed|mashed|peeled|trimmed|halved|quartered|melted|softened|roasted|toasted|cooked|poached|dried|fresh|thin|thinly|finely|roughly|optional|florets?)\b/gi,
+    unit: /^(cup|cups|tbsp|tsp|oz|lb|lbs|cloves?|small|medium|large|heads?|bunch|handful|pinch|dash|splash|florets?)\s+/i
+  };
+}
 
 function normalizeIngredientKey(raw) {
+  const { prep, unit } = _ingRegexes();
   let base = raw.replace(/^[\d½¼¾⅓⅔⅛\/]+\s*/g, '')
-                 .replace(ING_UNIT_WORDS, '')
+                 .replace(unit, '')
                  .replace(/^of\s+/i, '')
                  .trim();
-  base = base.replace(ING_PREP_WORDS, '').replace(/\s+/g, ' ').replace(/[,;—–-]+\s*$/, '').trim().toLowerCase();
+  base = base.replace(prep, '').replace(/\s+/g, ' ').replace(/[,;—–-]+\s*$/, '').trim().toLowerCase();
   let key = base.replace(/[^a-z ]/g, '').replace(/\s+/g, ' ').trim();
   key = key.replace(/\b(\w+)ies\b/g, '$1y')
            .replace(/\b(\w+)oes\b/g, '$1o')
@@ -5520,11 +5525,12 @@ function normalizeIngredientKey(raw) {
 }
 
 function normalizeIngredientDisplay(raw) {
+  const { prep, unit } = _ingRegexes();
   let base = raw.replace(/^[\d½¼¾⅓⅔⅛\/]+\s*/g, '')
-                 .replace(ING_UNIT_WORDS, '')
+                 .replace(unit, '')
                  .replace(/^of\s+/i, '')
                  .trim();
-  base = base.replace(ING_PREP_WORDS, '').replace(/\s+/g, ' ').replace(/[,;—–-]+\s*$/, '').trim().toLowerCase();
+  base = base.replace(prep, '').replace(/\s+/g, ' ').replace(/[,;—–-]+\s*$/, '').trim().toLowerCase();
   return base.replace(/\b\w/g, c => c.toUpperCase());
 }
 
