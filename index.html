@@ -3919,27 +3919,36 @@ async function initApp() {
   }
 
   sb.auth.onAuthStateChange(async (event, session) => {
+    console.log('[Auth]', event, !!session);
     if (session) {
       MiraState.auth.currentUser = session.user;
-      const profile = await loadProfileFromSupabase();
-      if (!profile) {
+      try {
+        const profile = await loadProfileFromSupabase();
+        if (!profile) {
+          hideAuthOverlay();
+          showOnboarding();
+        } else {
+          MiraState.auth.currentProfile = profile;
+          updateHeaderForProfile(MiraState.auth.currentProfile);
+          updateCaregiverMenuBtn();
+          hideAuthOverlay();
+          hideOnboardOverlay();
+        }
+      } catch (e) {
+        console.warn('[Auth] Profile load failed, proceeding anyway:', e);
         hideAuthOverlay();
         showOnboarding();
-      } else {
-        MiraState.auth.currentProfile = profile;
-        updateHeaderForProfile(MiraState.auth.currentProfile);
-        updateCaregiverMenuBtn();
-        hideAuthOverlay();
-        hideOnboardOverlay();
       }
-    } else {
+    } else if (event === 'SIGNED_OUT') {
       MiraState.auth.currentUser = null; MiraState.auth.currentProfile = null;
       showAuthOverlay();
     }
   });
 
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) showAuthOverlay();
+  // Only show auth overlay if there's no session AND we're not in the middle of an OAuth redirect
+  const isAuthCallback = window.location.hash.includes('access_token') || window.location.search.includes('code=');
+  if (!session && !isAuthCallback) showAuthOverlay();
 
   // iOS PWA: when user returns from Safari after clicking magic link,
   // immediately re-check session (covers the case where token landed in
