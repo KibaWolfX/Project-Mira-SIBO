@@ -3890,36 +3890,10 @@ async function initApp() {
 
   MiraState.auth.authConfigured = true;
 
-  // If auth callback landed here with hash tokens (magic link or Google OAuth)
-  const hash = window.location.hash;
-  const search = window.location.search;
-  if (hash && (hash.includes('access_token') || hash.includes('error'))) {
-    try {
-      const hashParams = new URLSearchParams(hash.substring(1));
-      // Check for auth errors first
-      const authError = hashParams.get('error_description') || hashParams.get('error');
-      if (authError) {
-        console.warn('Auth callback error:', authError);
-        // Clean URL and show auth screen
-        history.replaceState(null, '', window.location.pathname);
-      } else {
-        const accessToken = hashParams.get('access_token');
-        const refreshToken = hashParams.get('refresh_token');
-        if (accessToken && refreshToken) {
-          await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
-          history.replaceState(null, '', window.location.pathname);
-        }
-      }
-    } catch (e) { console.warn('Token extraction failed:', e); }
-  }
-  // Some OAuth flows use query params (?code=...) — Supabase handles these automatically
-  // but we clean the URL after to prevent re-processing
-  if (search && (search.includes('code=') || search.includes('error='))) {
-    setTimeout(() => history.replaceState(null, '', window.location.pathname), 2000);
-  }
-
+  // Register auth state listener FIRST so it catches all events including
+  // the automatic PKCE code exchange (Google OAuth returns ?code=)
   sb.auth.onAuthStateChange(async (event, session) => {
-    console.log('[Auth]', event, !!session);
+    console.log('[Auth] event:', event, 'hasSession:', !!session, 'user:', session?.user?.email);
     if (session) {
       MiraState.auth.currentUser = session.user;
       try {
@@ -3945,8 +3919,34 @@ async function initApp() {
     }
   });
 
+  // Handle hash tokens (magic link / implicit grant)
+  const hash = window.location.hash;
+  const search = window.location.search;
+  if (hash && (hash.includes('access_token') || hash.includes('error'))) {
+    try {
+      const hashParams = new URLSearchParams(hash.substring(1));
+      const authError = hashParams.get('error_description') || hashParams.get('error');
+      if (authError) {
+        console.warn('Auth callback error:', authError);
+        history.replaceState(null, '', window.location.pathname);
+      } else {
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        if (accessToken && refreshToken) {
+          await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+          history.replaceState(null, '', window.location.pathname);
+        }
+      }
+    } catch (e) { console.warn('Token extraction failed:', e); }
+  }
+  // PKCE flow (Google OAuth) returns ?code= — Supabase exchanges it automatically
+  // via detectSessionInUrl:true. Clean URL after exchange completes.
+  if (search && (search.includes('code=') || search.includes('error='))) {
+    // Wait for Supabase to process the code exchange, then clean URL
+    setTimeout(() => history.replaceState(null, '', window.location.pathname), 3000);
+  }
+
   const { data: { session } } = await sb.auth.getSession();
-  // Only show auth overlay if there's no session AND we're not in the middle of an OAuth redirect
   const isAuthCallback = window.location.hash.includes('access_token') || window.location.search.includes('code=');
   if (!session && !isAuthCallback) showAuthOverlay();
 
