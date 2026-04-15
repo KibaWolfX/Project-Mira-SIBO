@@ -7869,7 +7869,7 @@ window.addEventListener('offline', updateOfflineBanner);
 updateOfflineBanner();
 
 // Register service worker + force update on new versions
-const APP_VERSION = 'v10';
+const APP_VERSION = 'v11';
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
     // Check for SW updates immediately, then every 30 min
