@@ -1222,7 +1222,16 @@
   [data-theme="dark"] .inventory-header { background: linear-gradient(135deg, #1B2F1E, #2A2512); border-color: var(--border); }
   .inventory-item { display: flex; align-items: center; gap: 10px; background: var(--card); border-radius: 12px; padding: 11px 14px; margin-bottom: 5px; border: 1px solid var(--border); }
   .inventory-item.partial { border-left: 3px solid var(--yellow); }
-  .inventory-item.stale { border-left: 3px solid var(--orange); }
+  .inventory-item.stale { border-left: 3px solid var(--red); }
+  .inventory-item.expiring { border-left: 3px solid var(--orange); }
+  .inv-expiry-tag { font-size: 0.62rem; font-weight: 800; padding: 1px 6px; border-radius: 6px; margin-left: 4px; vertical-align: middle; }
+  .inv-expiry-tag.expiring { color: var(--orange); background: #FFF3E0; }
+  .inv-expiry-tag.stale { color: var(--red); background: #FFEBEE; }
+  [data-theme="dark"] .inv-expiry-tag.expiring { background: #2A2012; }
+  [data-theme="dark"] .inv-expiry-tag.stale { background: #2A1215; }
+  .inv-alert-banner { position: fixed; top: 70px; left: 12px; right: 12px; background: linear-gradient(135deg, #FFF3E0, #FFEBEE); border: 2px solid var(--orange); border-radius: 16px; padding: 14px 16px; z-index: 250; box-shadow: 0 8px 30px rgba(0,0,0,0.15); animation: slideDown 0.4s ease; }
+  [data-theme="dark"] .inv-alert-banner { background: linear-gradient(135deg, #2A2012, #2A1215); }
+  @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
   .inventory-item-info { flex: 1; }
   .inventory-item-name { font-size: 0.86rem; font-weight: 700; color: var(--text); }
   .inventory-item-meta { font-size: 0.68rem; font-weight: 600; color: var(--text-muted); margin-top: 2px; }
@@ -3936,6 +3945,8 @@ function initMainApp() {
   renderFoodGuide();
   renderConventionChecklist();
   renderBreakfasts();
+  // Check for expiring inventory items after a short delay (don't block first paint)
+  setTimeout(checkInventoryAlerts, 2000);
 }
 
 initApp(); // Entry point: auth check → profile check → app
@@ -5591,12 +5602,14 @@ function renderInventory() {
       itemsHtml += `<div class="grocery-category">${catLabel} <span style="font-size:0.66rem;font-weight:700;color:var(--text-muted);">(${groups[cat].length})</span></div>`;
       groups[cat].forEach(item => {
         const daysAgo = Math.round((Date.now() - new Date(item.addedDate + 'T12:00:00').getTime()) / 86400000);
-        const stale = daysAgo > 10;
+        const expiring = daysAgo >= 5 && daysAgo < 7;
+        const stale = daysAgo >= 7;
+        const warningMsg = stale ? '🫠 bestie this is ancient' : expiring ? '👀 use me soon!' : '';
         itemsHtml += `
-          <div class="inventory-item${item.partial ? ' partial' : ''}${stale ? ' stale' : ''}">
+          <div class="inventory-item${item.partial ? ' partial' : ''}${stale ? ' stale' : ''}${expiring ? ' expiring' : ''}">
             <div class="inventory-item-info">
-              <div class="inventory-item-name">${escHtml(item.name)}${item.partial ? ' <span class="inv-partial-badge">partial</span>' : ''}</div>
-              <div class="inventory-item-meta">${item.source === 'manual' ? 'Added manually' : 'From grocery list'} · ${daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + 'd ago'}${stale ? ' ⚠️' : ''}</div>
+              <div class="inventory-item-name">${escHtml(item.name)}${item.partial ? ' <span class="inv-partial-badge">partial</span>' : ''}${warningMsg ? ` <span class="inv-expiry-tag ${stale ? 'stale' : 'expiring'}">${warningMsg}</span>` : ''}</div>
+              <div class="inventory-item-meta">${item.source === 'manual' ? 'Added manually' : 'From grocery list'} · ${daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + 'd ago'}</div>
             </div>
             <button class="inventory-item-remove" onclick="removeFromInventory('${item.id}');renderInventory()">✕</button>
           </div>`;
@@ -5630,6 +5643,60 @@ function renderInventory() {
     ${emptyHtml}
     ${!inv.length ? '' : `<div id="inv-add-form"></div>`}
   `;
+}
+
+function checkInventoryAlerts() {
+  const inv = loadInventory();
+  if (!inv.length) return;
+  const now = Date.now();
+  const expiring = inv.filter(i => {
+    const days = Math.round((now - new Date(i.addedDate + 'T12:00:00').getTime()) / 86400000);
+    return days >= 5;
+  });
+  if (!expiring.length) return;
+
+  // Don't show if already dismissed today
+  const lastDismiss = localStorage.getItem('mira_inv_alert_dismiss');
+  const today = new Date().toISOString().slice(0, 10);
+  if (lastDismiss === today) return;
+
+  const ALERT_MSGS = [
+    "Hey bestie, some of your ingredients are getting lonely... 🥺",
+    "Your pantry items are plotting their escape! Use them! 🏃‍♀️",
+    "Some ingredients are giving 'forgotten leftovers' energy 😬",
+    "Girl, your groceries are aging like milk, not wine 🧈💀",
+    "Your ingredients are writing their will... cook something! 📜",
+    "These items said: 'do we mean nothing to you?!' 🥬😤",
+  ];
+  const msg = ALERT_MSGS[Math.floor(Math.random() * ALERT_MSGS.length)];
+
+  const staleCount = expiring.filter(i => Math.round((now - new Date(i.addedDate + 'T12:00:00').getTime()) / 86400000) >= 7).length;
+  const expiringCount = expiring.length - staleCount;
+  const names = expiring.slice(0, 3).map(i => i.name).join(', ') + (expiring.length > 3 ? ` + ${expiring.length - 3} more` : '');
+
+  const banner = document.createElement('div');
+  banner.className = 'inv-alert-banner';
+  banner.innerHTML = `
+    <div style="display:flex;align-items:start;gap:10px;">
+      <div style="font-size:1.8rem;flex-shrink:0;">🎒</div>
+      <div style="flex:1;">
+        <div style="font-size:0.82rem;font-weight:800;margin-bottom:4px;">${msg}</div>
+        <div style="font-size:0.75rem;font-weight:600;color:var(--text-muted);">${names}</div>
+        <div style="font-size:0.68rem;font-weight:700;color:var(--orange);margin-top:2px;">
+          ${expiringCount ? `${expiringCount} expiring soon` : ''}${expiringCount && staleCount ? ' · ' : ''}${staleCount ? `${staleCount} past their prime` : ''}
+        </div>
+      </div>
+      <button onclick="this.parentElement.parentElement.remove();localStorage.setItem('mira_inv_alert_dismiss','${today}')" style="background:none;border:none;font-size:1.2rem;cursor:pointer;padding:0;color:var(--text-muted);">✕</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button onclick="this.closest('.inv-alert-banner').remove();localStorage.setItem('mira_inv_alert_dismiss','${today}');initInventory();" style="flex:1;padding:8px;border-radius:10px;border:none;background:var(--orange);color:white;font-family:inherit;font-size:0.78rem;font-weight:800;cursor:pointer;">🎒 Check Inventory</button>
+      <button onclick="this.closest('.inv-alert-banner').remove();localStorage.setItem('mira_inv_alert_dismiss','${today}');" style="flex:1;padding:8px;border-radius:10px;border:1.5px solid var(--border);background:var(--card);color:var(--text-muted);font-family:inherit;font-size:0.78rem;font-weight:700;cursor:pointer;">Dismiss</button>
+    </div>
+  `;
+  document.body.appendChild(banner);
+
+  // Auto-dismiss after 15 seconds
+  setTimeout(() => { if (banner.parentElement) banner.remove(); }, 15000);
 }
 
 function showAddInventoryItem() {
