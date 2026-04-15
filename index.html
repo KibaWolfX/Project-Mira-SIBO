@@ -1155,7 +1155,7 @@
   .freq-count { font-size: 0.72rem; font-weight: 800; color: var(--text-muted); min-width: 30px; text-align: right; }
   .migraine-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
   .migraine-cal-day { aspect-ratio: 1; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.62rem; font-weight: 800; }
-  .drill-card { padding: 12px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; background: var(--bg-card); cursor: pointer; }
+  .drill-card { padding: 12px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; background: var(--card); cursor: pointer; }
   .drill-date { font-weight: 900; font-size: 0.82rem; }
   .drill-detail { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
   .export-btn { width: 100%; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; border: none; font-family: inherit; font-size: 0.92rem; font-weight: 800; cursor: pointer; margin-bottom: 12px; }
@@ -2961,8 +2961,13 @@ async function loadProfileFromSupabase() {
   if (cached) { try { profile = JSON.parse(cached); } catch {} }
   const sb = getSB();
   if (sb && MiraState.auth.currentUser) {
-    const { data } = await sb.from('profiles').select('*').eq('id', MiraState.auth.currentUser.id).single();
-    if (data) { profile = data; safeSetItem('mira_profile', JSON.stringify(data)); }
+    try {
+      const { data, error } = await sb.from('profiles').select('*').eq('id', MiraState.auth.currentUser.id).single();
+      if (error) throw error;
+      if (data) { profile = data; safeSetItem('mira_profile', JSON.stringify(data)); }
+    } catch (e) {
+      console.warn('[Profile] Supabase fetch failed, using cache:', e);
+    }
   }
   return profile;
 }
@@ -3404,7 +3409,7 @@ function showCaregiverEntryDetail(pi, ei) {
     html += `
       <div style="margin-bottom:14px;">
         <div style="font-weight:900;font-size:0.82rem;margin-bottom:8px;">📝 Notes</div>
-        <div style="font-size:0.88rem;line-height:1.5;color:var(--text);background:var(--bg-card);padding:12px;border-radius:10px;border:1px solid var(--border);">${escHtml(e.notes)}</div>
+        <div style="font-size:0.88rem;line-height:1.5;color:var(--text);background:var(--card);padding:12px;border-radius:10px;border:1px solid var(--border);">${escHtml(e.notes)}</div>
       </div>`;
   }
 
@@ -3424,7 +3429,7 @@ function showCaregiverMedsDetail(pi) {
     html += `<div style="font-weight:900;font-size:0.82rem;margin-bottom:10px;color:var(--green);">Active (${activeMeds.length})</div>`;
     activeMeds.forEach(m => {
       html += `
-        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
             <div style="font-weight:900;font-size:0.95rem;">${escHtml(m.name)}</div>
             <span class="med-card-type med-type-${m.type || 'other'}">${m.type || 'other'}</span>
@@ -3440,7 +3445,7 @@ function showCaregiverMedsDetail(pi) {
     html += `<div style="font-weight:900;font-size:0.82rem;margin:16px 0 10px;color:var(--text-muted);">Inactive (${inactiveMeds.length})</div>`;
     inactiveMeds.forEach(m => {
       html += `
-        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;opacity:0.6;">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;opacity:0.6;">
           <div style="display:flex;justify-content:space-between;align-items:center;">
             <div style="font-weight:800;font-size:0.9rem;">${escHtml(m.name)}</div>
             <span class="med-card-type med-type-${m.type || 'other'}">${m.type || 'other'}</span>
@@ -3473,7 +3478,7 @@ function showCaregiverMigraineDetail(pi) {
       const details = [m.side, m.location, m.painType].filter(Boolean).join(' · ');
       const intensity = m.intensity ? ['','Mild','Moderate','Severe','Extreme'][m.intensity] : '';
       return `
-        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;" onclick="closeCaregiverDetail();setTimeout(()=>showCaregiverEntryDetail(${pi},${patient.journal.indexOf(e)}),300)">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;" onclick="closeCaregiverDetail();setTimeout(()=>showCaregiverEntryDetail(${pi},${patient.journal.indexOf(e)}),300)">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
             <div style="font-weight:900;font-size:0.88rem;">⚡ ${e.date}</div>
             <div style="font-size:0.82rem;font-weight:800;color:${sevColors[e.severity]}">${e.severity}/5</div>
@@ -3505,7 +3510,7 @@ function showCaregiverJournalDetail(pi) {
     const migrTag = e.migraine?.active ? ' ⚡' : '';
     const timeStr = e.time && e.time !== '12:00' ? ` · ${formatEntryTime(e.time)}` : '';
     html += `
-      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;" onclick="closeCaregiverDetail();setTimeout(()=>showCaregiverEntryDetail(${pi},${ei}),300)">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:8px;cursor:pointer;" onclick="closeCaregiverDetail();setTimeout(()=>showCaregiverEntryDetail(${pi},${ei}),300)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
           <div style="font-weight:900;font-size:0.88rem;">${e.date}${timeStr}${migrTag}</div>
           <div style="font-weight:800;font-size:0.88rem;color:${sevColors[e.severity]}">${e.severity}/5</div>
@@ -3593,7 +3598,7 @@ function showCaregiverRoleChooser() {
       <button class="med-add-btn" style="margin-bottom:12px;width:100%" onclick="setCaregiverRole('caregiver')">
         🐺 I'm a Caregiver — enter a patient's code
       </button>
-      <button class="med-add-btn" style="width:100%;background:var(--accent)" onclick="setCaregiverRole('patient')">
+      <button class="med-add-btn" style="width:100%;background:var(--pink)" onclick="setCaregiverRole('patient')">
         💜 I'm a Patient — share my data
       </button>
     </div>`;
@@ -3898,20 +3903,30 @@ async function initApp() {
       MiraState.auth.currentUser = session.user;
       try {
         const profile = await loadProfileFromSupabase();
-        if (!profile) {
-          hideAuthOverlay();
-          showOnboarding();
-        } else {
+        if (profile) {
           MiraState.auth.currentProfile = profile;
           updateHeaderForProfile(MiraState.auth.currentProfile);
           updateCaregiverMenuBtn();
           hideAuthOverlay();
           hideOnboardOverlay();
+        } else {
+          // No profile in Supabase or cache — genuinely new user
+          hideAuthOverlay();
+          showOnboarding();
         }
       } catch (e) {
         console.warn('[Auth] Profile load failed, proceeding anyway:', e);
+        // Try cached profile before dumping to onboarding
+        const cachedStr = localStorage.getItem('mira_profile');
+        if (cachedStr) {
+          try { MiraState.auth.currentProfile = JSON.parse(cachedStr); } catch {}
+          if (MiraState.auth.currentProfile) {
+            updateHeaderForProfile(MiraState.auth.currentProfile);
+            updateCaregiverMenuBtn();
+          }
+        }
         hideAuthOverlay();
-        showOnboarding();
+        if (!MiraState.auth.currentProfile) showOnboarding();
       }
     } else if (event === 'SIGNED_OUT') {
       MiraState.auth.currentUser = null; MiraState.auth.currentProfile = null;
@@ -4065,7 +4080,7 @@ function renderJournalScreen() {
         const migraineTag = e.migraine?.active ? `<span style="font-size:0.72rem;font-weight:800;color:var(--purple);background:var(--purple-light);padding:2px 8px;border-radius:8px;margin-left:6px;">⚡ Migraine${e.migraine.intensity ? ' ' + ['','Mild','Mod','Sev','Ext'][e.migraine.intensity] : ''}</span>` : '';
         const gummyTag = e.gummy ? `<span style="font-size:0.72rem;font-weight:800;color:#4CAF50;background:#E8F5E9;padding:2px 8px;border-radius:8px;margin-left:6px;">🥬</span>` : '';
         const timeLabel = e.time && e.time !== '12:00' ? `<span style="font-size:0.72rem;font-weight:600;color:var(--text-muted);margin-left:6px;">${formatEntryTime(e.time)}</span>` : '';
-        const multiTag = entries.length > 1 ? `<span style="font-size:0.66rem;font-weight:700;color:var(--accent);margin-left:4px;">(${entries.indexOf(e)+1}/${entries.length})</span>` : '';
+        const multiTag = entries.length > 1 ? `<span style="font-size:0.66rem;font-weight:700;color:var(--pink);margin-left:4px;">(${entries.indexOf(e)+1}/${entries.length})</span>` : '';
         return `
         <div class="restaurant-card" onclick="openJournalEntry('${e.id}')">
           <div class="flex-row-between">
@@ -6869,7 +6884,7 @@ function renderPokedex() {
       <div class="pokedex-empty-pokeball">🎮</div>
       <div style="font-size:0.92rem;font-weight:800;margin-bottom:8px;">Your Pokédex is empty!</div>
       <div style="font-size:0.82rem;font-weight:600;color:var(--text-muted);">Log your first journal entry to catch your first Pokémon! Every day you log, a new one appears. 🌟</div>
-      <button class="search-submit-btn" style="margin-top:16px;" onclick="showScreen('journal')">📓 Go to Journal</button>
+      <button class="search-submit-btn" style="margin-top:16px;" onclick="initJournal()">📓 Go to Journal</button>
     </div>
   ` : '';
 
@@ -7026,7 +7041,7 @@ function renderAnalytics() {
   const maxSym = topSyms[0]?.[1] || 1;
 
   if (topSyms.length) {
-    const symColor = i => ['var(--pink)', 'var(--purple)', 'var(--orange)', 'var(--red)', 'var(--yellow)', 'var(--green)', 'var(--accent)', '#5C6BC0', '#FF7043', '#26A69A'][i % 10];
+    const symColor = i => ['var(--pink)', 'var(--purple)', 'var(--orange)', 'var(--red)', 'var(--yellow)', 'var(--green)', 'var(--pink)', '#5C6BC0', '#FF7043', '#26A69A'][i % 10];
     html += `
       <div class="card chart-card">
         <div class="chart-title">🔥 Top Symptoms <span style="font-weight:600;font-size:0.68rem;color:var(--text-muted);">(${journal.length} entries)</span></div>
@@ -7461,7 +7476,7 @@ function renderHistory() {
     html += `<div class="history-date-header">${escHtml(dateStr)}${journalEntry ? ` · <span style="color:${sevColors[journalEntry.severity] || 'var(--text-muted)'}">${sevLabels[journalEntry.severity] || ''} day</span>` : ''}</div>`;
 
     grouped[date].forEach(entry => {
-      const items = entry.items || 'No items logged';
+      const items = Array.isArray(entry.items) ? entry.items.map(i => i.name || i).join(', ') : (entry.items || 'No items logged');
       html += `
         <div class="history-entry">
           <div class="history-entry-icon">🍽️</div>
@@ -7869,7 +7884,8 @@ window.addEventListener('offline', updateOfflineBanner);
 updateOfflineBanner();
 
 // Register service worker + force update on new versions
-const APP_VERSION = 'v11';
+const APP_VERSION = 'v12';
+let swRefreshing = false;
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
     // Check for SW updates immediately, then every 30 min
@@ -7880,16 +7896,16 @@ if ('serviceWorker' in navigator) {
       const newWorker = reg.installing;
       if (!newWorker) return;
       newWorker.addEventListener('statechange', () => {
-        if (newWorker.state === 'activated') {
+        if (newWorker.state === 'activated' && !swRefreshing) {
+          swRefreshing = true;
           window.location.reload();
         }
       });
     });
   }).catch(err => console.warn('SW registration failed:', err));
   // If a new SW took over, reload to get fresh assets
-  let refreshing = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!refreshing) { refreshing = true; window.location.reload(); }
+    if (!swRefreshing) { swRefreshing = true; window.location.reload(); }
   });
 }
 
