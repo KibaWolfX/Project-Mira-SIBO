@@ -2892,15 +2892,19 @@ async function sendMagicLink() {
   btn.textContent = 'Sending...'; btn.disabled = true;
   const sb = getSB();
   if (sb) {
-    const redirectTo = window.location.hostname === 'localhost'
-      ? 'https://kibawolfx.github.io/Project-Mira-SIBO/'
-      : window.location.href;
+    // Always redirect to the canonical GitHub Pages URL (not current URL which may include hash/params)
+    const redirectTo = 'https://kibawolfx.github.io/Project-Mira-SIBO/';
     const { error } = await sb.auth.signInWithOtp({
       email, options: { emailRedirectTo: redirectTo }
     });
     if (error) {
       btn.textContent = '✉️ Send Magic Link'; btn.disabled = false;
-      alert('Could not send magic link: ' + error.message); return;
+      if (error.message.includes('rate') || error.message.includes('limit')) {
+        alert('Too many login attempts. Please wait a few minutes and try again, or use Google Sign-In instead.');
+      } else {
+        alert('Could not send magic link: ' + error.message);
+      }
+      return;
     }
   }
   document.getElementById('auth-form-state').style.display = 'none';
@@ -2938,7 +2942,8 @@ function stopMagicLinkPoll() {
 async function signInWithGoogle() {
   const sb = getSB();
   if (!sb) return;
-  await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+  const redirectTo = 'https://kibawolfx.github.io/Project-Mira-SIBO/';
+  await sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
 }
 
 async function signOut() {
@@ -3885,18 +3890,32 @@ async function initApp() {
 
   MiraState.auth.authConfigured = true;
 
-  // If magic link landed here with hash tokens, let Supabase extract them
-  if (window.location.hash && window.location.hash.includes('access_token')) {
+  // If auth callback landed here with hash tokens (magic link or Google OAuth)
+  const hash = window.location.hash;
+  const search = window.location.search;
+  if (hash && (hash.includes('access_token') || hash.includes('error'))) {
     try {
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const accessToken = hashParams.get('access_token');
-      const refreshToken = hashParams.get('refresh_token');
-      if (accessToken && refreshToken) {
-        await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
-        // Clean URL hash so it doesn't linger
+      const hashParams = new URLSearchParams(hash.substring(1));
+      // Check for auth errors first
+      const authError = hashParams.get('error_description') || hashParams.get('error');
+      if (authError) {
+        console.warn('Auth callback error:', authError);
+        // Clean URL and show auth screen
         history.replaceState(null, '', window.location.pathname);
+      } else {
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+        if (accessToken && refreshToken) {
+          await sb.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+          history.replaceState(null, '', window.location.pathname);
+        }
       }
     } catch (e) { console.warn('Token extraction failed:', e); }
+  }
+  // Some OAuth flows use query params (?code=...) — Supabase handles these automatically
+  // but we clean the URL after to prevent re-processing
+  if (search && (search.includes('code=') || search.includes('error='))) {
+    setTimeout(() => history.replaceState(null, '', window.location.pathname), 2000);
   }
 
   sb.auth.onAuthStateChange(async (event, session) => {
