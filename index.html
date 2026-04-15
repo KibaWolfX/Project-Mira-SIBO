@@ -1444,7 +1444,19 @@
   .med-form-btns button { flex: 1; padding: 12px; border-radius: 14px; font-family: inherit; font-size: 0.88rem; font-weight: 800; cursor: pointer; border: none; }
   .med-form-save { background: linear-gradient(135deg, var(--pink), var(--purple)); color: white; }
   .med-form-cancel { background: none; border: 1.5px solid var(--border) !important; color: var(--text-muted); }
-  .med-add-btn { width: 100%; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, var(--green), var(--mint)); color: white; border: none; font-family: inherit; font-size: 0.92rem; font-weight: 800; cursor: pointer; margin-bottom: 16px; }
+  .med-add-btn { width: 100%; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, var(--green), var(--mint)); color: white; border: none; font-family: inherit; font-size: 0.92rem; font-weight: 800; cursor: pointer; margin-bottom: 10px; }
+  .med-library-btn { background: linear-gradient(135deg, var(--purple), var(--pink)); margin-bottom: 16px; }
+  .med-library { background: var(--card); border-radius: 16px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow); }
+  .med-library-header { margin-bottom: 12px; }
+  .med-library-cats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .med-library-items { display: flex; flex-direction: column; gap: 6px; }
+  .med-library-item { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; background: var(--bg); border: 2px solid var(--border); border-radius: 12px; padding: 10px 14px; cursor: pointer; text-align: left; font-family: inherit; transition: border-color 0.2s, transform 0.1s; }
+  .med-library-item:active:not([disabled]) { transform: scale(0.97); border-color: var(--pink); }
+  .med-library-item.already-added { opacity: 0.5; cursor: default; border-style: dashed; }
+  .med-library-name { font-weight: 700; font-size: 0.88rem; color: var(--text); flex: 1; min-width: 150px; }
+  .med-library-detail { font-size: 0.75rem; color: var(--text-muted); }
+  .med-library-badge { font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 8px; background: var(--border); color: var(--text-muted); }
+  .med-library-badge.add { background: linear-gradient(135deg, var(--pink), var(--purple)); color: white; }
   .med-section-label { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin: 18px 0 8px; }
   /* Med Adherence Checklist */
   .med-checklist-card { padding: 16px; margin-bottom: 12px; }
@@ -7531,6 +7543,210 @@ const MED_TYPES = [
   { id: 'other', label: '📦 Other', css: 'med-type-other' },
 ];
 
+// ── QUICK-ADD MEDICATION LIBRARY ────────────────────────────
+const MED_LIBRARY = {
+  'SIBO': [
+    { name: 'Rifaximin (Xifaxan)', type: 'antibiotic', dose: '550mg', frequency: '3x/day' },
+    { name: 'Neomycin', type: 'antibiotic', dose: '500mg', frequency: '2x/day' },
+    { name: 'Metronidazole (Flagyl)', type: 'antibiotic', dose: '250mg', frequency: '3x/day' },
+    { name: 'Allicin (Allimax)', type: 'supplement', dose: '450mg', frequency: '3x/day' },
+    { name: 'Oregano Oil', type: 'supplement', dose: '200mg', frequency: '2x/day' },
+    { name: 'Berberine', type: 'supplement', dose: '500mg', frequency: '3x/day' },
+    { name: 'Neem', type: 'supplement', dose: '300mg', frequency: '2x/day' },
+    { name: 'Iberogast', type: 'prokinetic', dose: '20 drops', frequency: '3x/day before meals' },
+    { name: 'MotilPro', type: 'prokinetic', dose: '2 capsules', frequency: 'at bedtime' },
+    { name: 'Low-Dose Naltrexone (LDN)', type: 'prokinetic', dose: '4.5mg', frequency: 'at bedtime' },
+    { name: 'Prucalopride (Motegrity)', type: 'prokinetic', dose: '2mg', frequency: '1x/day' },
+    { name: 'Digestive Enzymes', type: 'enzyme', dose: '1-2 capsules', frequency: 'with meals' },
+    { name: 'Betaine HCl + Pepsin', type: 'enzyme', dose: '650mg', frequency: 'with meals' },
+    { name: 'PHGG (Partially Hydrolyzed Guar Gum)', type: 'supplement', dose: '5g', frequency: '1x/day' },
+    { name: 'L-Glutamine', type: 'supplement', dose: '5g', frequency: '2x/day' },
+    { name: 'Zinc Carnosine', type: 'supplement', dose: '75mg', frequency: '2x/day' },
+    { name: 'Saccharomyces Boulardii', type: 'probiotic', dose: '250mg', frequency: '2x/day' },
+    { name: 'SIBO-Specific Probiotic (Lacto/Bifido)', type: 'probiotic', dose: '1 capsule', frequency: '1x/day' },
+    { name: 'Atrantil', type: 'supplement', dose: '2 capsules', frequency: '3x/day' },
+    { name: 'GI Revive', type: 'supplement', dose: '1 scoop', frequency: '1x/day' },
+  ],
+  'MCAS (Mast Cell)': [
+    { name: 'Cromolyn Sodium (Gastrocrom)', type: 'other', dose: '200mg', frequency: '4x/day before meals' },
+    { name: 'Ketotifen', type: 'antihistamine', dose: '1mg', frequency: '2x/day' },
+    { name: 'Cetirizine (Zyrtec)', type: 'antihistamine', dose: '10mg', frequency: '1x/day' },
+    { name: 'Loratadine (Claritin)', type: 'antihistamine', dose: '10mg', frequency: '1x/day' },
+    { name: 'Fexofenadine (Allegra)', type: 'antihistamine', dose: '180mg', frequency: '1x/day' },
+    { name: 'Famotidine (Pepcid)', type: 'antihistamine', dose: '20mg', frequency: '2x/day' },
+    { name: 'Hydroxyzine (Vistaril)', type: 'antihistamine', dose: '25mg', frequency: 'as needed' },
+    { name: 'Diphenhydramine (Benadryl)', type: 'antihistamine', dose: '25mg', frequency: 'as needed' },
+    { name: 'Montelukast (Singulair)', type: 'other', dose: '10mg', frequency: '1x/day' },
+    { name: 'Quercetin', type: 'supplement', dose: '500mg', frequency: '2x/day' },
+    { name: 'Luteolin', type: 'supplement', dose: '100mg', frequency: '2x/day' },
+    { name: 'DAO Enzyme (Histamine Block)', type: 'enzyme', dose: '1 capsule', frequency: 'before meals' },
+    { name: 'Vitamin C', type: 'supplement', dose: '1000mg', frequency: '2x/day' },
+    { name: 'Palmitoylethanolamide (PEA)', type: 'supplement', dose: '400mg', frequency: '2x/day' },
+    { name: 'Epinephrine Auto-Injector (EpiPen)', type: 'other', dose: '0.3mg', frequency: 'emergency only' },
+  ],
+  'EDS (Ehlers-Danlos)': [
+    { name: 'Collagen Peptides', type: 'supplement', dose: '10g', frequency: '1x/day' },
+    { name: 'Vitamin C', type: 'supplement', dose: '1000mg', frequency: '2x/day' },
+    { name: 'Magnesium Glycinate', type: 'supplement', dose: '400mg', frequency: 'at bedtime' },
+    { name: 'CoQ10', type: 'supplement', dose: '200mg', frequency: '1x/day' },
+    { name: 'Glucosamine + Chondroitin', type: 'supplement', dose: '1500mg/1200mg', frequency: '1x/day' },
+    { name: 'MSM', type: 'supplement', dose: '1000mg', frequency: '2x/day' },
+    { name: 'Cyclobenzaprine (Flexeril)', type: 'painkiller', dose: '10mg', frequency: 'at bedtime' },
+    { name: 'Tizanidine (Zanaflex)', type: 'painkiller', dose: '4mg', frequency: 'as needed' },
+    { name: 'Naproxen (Aleve)', type: 'painkiller', dose: '220mg', frequency: 'as needed' },
+    { name: 'Meloxicam (Mobic)', type: 'painkiller', dose: '7.5mg', frequency: '1x/day' },
+    { name: 'Duloxetine (Cymbalta)', type: 'antidepressant', dose: '30mg', frequency: '1x/day' },
+    { name: 'Propranolol', type: 'betablocker', dose: '10mg', frequency: '2x/day' },
+    { name: 'Midodrine', type: 'other', dose: '5mg', frequency: '3x/day' },
+    { name: 'Fludrocortisone', type: 'other', dose: '0.1mg', frequency: '1x/day' },
+    { name: 'Compression Stockings', type: 'other', dose: '20-30 mmHg', frequency: 'daily' },
+  ],
+  'Seizures / Anticonvulsants': [
+    { name: 'Levetiracetam (Keppra)', type: 'anticonvulsant', dose: '500mg', frequency: '2x/day' },
+    { name: 'Lamotrigine (Lamictal)', type: 'anticonvulsant', dose: '100mg', frequency: '2x/day' },
+    { name: 'Valproic Acid (Depakote)', type: 'anticonvulsant', dose: '500mg', frequency: '2x/day' },
+    { name: 'Carbamazepine (Tegretol)', type: 'anticonvulsant', dose: '200mg', frequency: '2x/day' },
+    { name: 'Oxcarbazepine (Trileptal)', type: 'anticonvulsant', dose: '300mg', frequency: '2x/day' },
+    { name: 'Topiramate (Topamax)', type: 'anticonvulsant', dose: '50mg', frequency: '2x/day' },
+    { name: 'Zonisamide (Zonegran)', type: 'anticonvulsant', dose: '100mg', frequency: '1x/day' },
+    { name: 'Gabapentin (Neurontin)', type: 'anticonvulsant', dose: '300mg', frequency: '3x/day' },
+    { name: 'Pregabalin (Lyrica)', type: 'anticonvulsant', dose: '75mg', frequency: '2x/day' },
+    { name: 'Phenytoin (Dilantin)', type: 'anticonvulsant', dose: '100mg', frequency: '3x/day' },
+    { name: 'Clonazepam (Klonopin)', type: 'anticonvulsant', dose: '0.5mg', frequency: '2x/day' },
+    { name: 'Clobazam (Onfi)', type: 'anticonvulsant', dose: '10mg', frequency: '2x/day' },
+    { name: 'Lacosamide (Vimpat)', type: 'anticonvulsant', dose: '100mg', frequency: '2x/day' },
+    { name: 'Brivaracetam (Briviact)', type: 'anticonvulsant', dose: '50mg', frequency: '2x/day' },
+    { name: 'Rescue: Diazepam (Diastat)', type: 'anticonvulsant', dose: '10mg', frequency: 'emergency only' },
+    { name: 'Rescue: Midazolam (Nayzilam)', type: 'anticonvulsant', dose: '5mg nasal', frequency: 'emergency only' },
+  ],
+  'Gut Support': [
+    { name: 'Omeprazole (Prilosec)', type: 'antacid', dose: '20mg', frequency: '1x/day' },
+    { name: 'Pantoprazole (Protonix)', type: 'antacid', dose: '40mg', frequency: '1x/day' },
+    { name: 'Sucralfate (Carafate)', type: 'antacid', dose: '1g', frequency: '4x/day' },
+    { name: 'Ondansetron (Zofran)', type: 'other', dose: '4mg', frequency: 'as needed' },
+    { name: 'Dicyclomine (Bentyl)', type: 'other', dose: '20mg', frequency: '4x/day' },
+    { name: 'Hyoscyamine (Levsin)', type: 'other', dose: '0.125mg', frequency: 'as needed' },
+    { name: 'Psyllium Husk', type: 'supplement', dose: '1 tsp', frequency: '1x/day' },
+    { name: 'Magnesium Citrate', type: 'supplement', dose: '400mg', frequency: 'at bedtime' },
+    { name: 'Colostrum', type: 'supplement', dose: '3g', frequency: '1x/day' },
+    { name: 'Slippery Elm', type: 'supplement', dose: '400mg', frequency: '3x/day' },
+    { name: 'DGL Licorice', type: 'supplement', dose: '400mg', frequency: 'before meals' },
+    { name: 'Marshmallow Root', type: 'supplement', dose: '500mg', frequency: '2x/day' },
+  ],
+  'Daily Essentials': [
+    { name: 'Multivitamin', type: 'supplement', dose: '1 tablet', frequency: '1x/day' },
+    { name: 'Vitamin D3', type: 'supplement', dose: '5000 IU', frequency: '1x/day' },
+    { name: 'Vitamin B12 (Methylcobalamin)', type: 'supplement', dose: '1000mcg', frequency: '1x/day' },
+    { name: 'B-Complex', type: 'supplement', dose: '1 capsule', frequency: '1x/day' },
+    { name: 'Iron (Gentle/Bisglycinate)', type: 'supplement', dose: '25mg', frequency: '1x/day' },
+    { name: 'Omega-3 Fish Oil', type: 'supplement', dose: '1000mg', frequency: '2x/day' },
+    { name: 'Zinc', type: 'supplement', dose: '30mg', frequency: '1x/day' },
+    { name: 'Magnesium Glycinate', type: 'supplement', dose: '400mg', frequency: 'at bedtime' },
+    { name: 'Calcium + D3', type: 'supplement', dose: '600mg', frequency: '1x/day' },
+    { name: 'Melatonin', type: 'supplement', dose: '3mg', frequency: 'at bedtime' },
+    { name: 'Ashwagandha', type: 'supplement', dose: '600mg', frequency: '1x/day' },
+  ],
+  'Mental Health': [
+    { name: 'Sertraline (Zoloft)', type: 'antidepressant', dose: '50mg', frequency: '1x/day' },
+    { name: 'Escitalopram (Lexapro)', type: 'antidepressant', dose: '10mg', frequency: '1x/day' },
+    { name: 'Fluoxetine (Prozac)', type: 'antidepressant', dose: '20mg', frequency: '1x/day' },
+    { name: 'Bupropion (Wellbutrin)', type: 'antidepressant', dose: '150mg', frequency: '1x/day' },
+    { name: 'Venlafaxine (Effexor)', type: 'antidepressant', dose: '75mg', frequency: '1x/day' },
+    { name: 'Buspirone (Buspar)', type: 'other', dose: '10mg', frequency: '2x/day' },
+    { name: 'Amitriptyline (Elavil)', type: 'antidepressant', dose: '25mg', frequency: 'at bedtime' },
+    { name: 'Mirtazapine (Remeron)', type: 'antidepressant', dose: '15mg', frequency: 'at bedtime' },
+    { name: 'Trazodone', type: 'antidepressant', dose: '50mg', frequency: 'at bedtime' },
+    { name: 'Aripiprazole (Abilify)', type: 'other', dose: '5mg', frequency: '1x/day' },
+  ],
+  'Migraine': [
+    { name: 'Sumatriptan (Imitrex)', type: 'antimigraine', dose: '50mg', frequency: 'as needed' },
+    { name: 'Rizatriptan (Maxalt)', type: 'antimigraine', dose: '10mg', frequency: 'as needed' },
+    { name: 'Ubrelvy (Ubrogepant)', type: 'antimigraine', dose: '50mg', frequency: 'as needed' },
+    { name: 'Nurtec (Rimegepant)', type: 'antimigraine', dose: '75mg', frequency: 'as needed / every other day' },
+    { name: 'Ajovy (Fremanezumab)', type: 'antimigraine', dose: '225mg', frequency: '1x/month injection' },
+    { name: 'Aimovig (Erenumab)', type: 'antimigraine', dose: '70mg', frequency: '1x/month injection' },
+    { name: 'Emgality (Galcanezumab)', type: 'antimigraine', dose: '120mg', frequency: '1x/month injection' },
+    { name: 'Topiramate (Topamax)', type: 'anticonvulsant', dose: '50mg', frequency: '2x/day' },
+    { name: 'Propranolol', type: 'betablocker', dose: '40mg', frequency: '2x/day' },
+    { name: 'Magnesium (Migraine Dose)', type: 'supplement', dose: '400-600mg', frequency: '1x/day' },
+    { name: 'Riboflavin (B2)', type: 'supplement', dose: '400mg', frequency: '1x/day' },
+    { name: 'CoQ10', type: 'supplement', dose: '300mg', frequency: '1x/day' },
+  ],
+};
+
+let medLibraryOpen = false;
+let medLibraryCategory = null;
+
+function toggleMedLibrary() {
+  medLibraryOpen = !medLibraryOpen;
+  renderMedLibrary();
+}
+
+function setMedLibraryCategory(cat) {
+  medLibraryCategory = medLibraryCategory === cat ? null : cat;
+  renderMedLibrary();
+}
+
+function renderMedLibrary() {
+  const container = document.getElementById('med-library-container');
+  if (!container) return;
+  if (!medLibraryOpen) { container.innerHTML = ''; return; }
+
+  const existingMeds = loadMeds().map(m => m.name.toLowerCase());
+
+  let html = `<div class="med-library">
+    <div class="med-library-header">
+      <div class="feature-title" style="font-size:1rem;">📚 Quick-Add from Library</div>
+      <div class="journal-feature-desc">Tap any med to add it instantly. Dose & frequency pre-filled — edit anytime.</div>
+    </div>
+    <div class="med-library-cats">`;
+
+  Object.keys(MED_LIBRARY).forEach(cat => {
+    const isActive = medLibraryCategory === cat;
+    html += `<button class="chip ${isActive ? 'active' : ''}" onclick="setMedLibraryCategory('${cat}')" style="font-size:0.75rem;">${cat}</button>`;
+  });
+  html += `</div>`;
+
+  if (medLibraryCategory && MED_LIBRARY[medLibraryCategory]) {
+    html += `<div class="med-library-items">`;
+    MED_LIBRARY[medLibraryCategory].forEach((m, i) => {
+      const alreadyAdded = existingMeds.includes(m.name.toLowerCase());
+      const typeInfo = MED_TYPES.find(t => t.id === m.type) || MED_TYPES[MED_TYPES.length - 1];
+      html += `
+        <button class="med-library-item ${alreadyAdded ? 'already-added' : ''}"
+                onclick="${alreadyAdded ? '' : `quickAddMed('${medLibraryCategory}',${i})`}"
+                ${alreadyAdded ? 'disabled' : ''}>
+          <span class="med-library-name">${escHtml(m.name)}</span>
+          <span class="med-library-detail">${escHtml(m.dose)} · ${escHtml(m.frequency)}</span>
+          ${alreadyAdded ? '<span class="med-library-badge">✓ Added</span>' : '<span class="med-library-badge add">+ Add</span>'}
+        </button>`;
+    });
+    html += `</div>`;
+  }
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+function quickAddMed(category, index) {
+  const template = MED_LIBRARY[category][index];
+  if (!template) return;
+  const med = {
+    id: 'med_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+    name: template.name,
+    type: template.type,
+    dose: template.dose,
+    frequency: template.frequency,
+    startDate: new Date().toISOString().split('T')[0],
+    endDate: '',
+    active: true
+  };
+  const meds = loadMeds();
+  meds.unshift(med);
+  saveMeds(meds);
+  renderMedLibrary(); // refresh to show "Added" state
+  renderMeds();
+}
+
 let editingMedId = null;
 
 function loadMeds() {
@@ -7742,7 +7958,9 @@ function renderMeds() {
   html += renderMedAdherenceChecklist();
 
   html += `
-    <button class="med-add-btn" onclick="showMedForm()">+ Add Medication or Supplement</button>
+    <button class="med-add-btn" onclick="showMedForm()">+ Add Manually</button>
+    <button class="med-add-btn med-library-btn" onclick="toggleMedLibrary()">📚 Quick-Add from Library</button>
+    <div id="med-library-container"></div>
     <div id="med-form-container"></div>`;
 
   if (active.length) {
@@ -7884,7 +8102,7 @@ window.addEventListener('offline', updateOfflineBanner);
 updateOfflineBanner();
 
 // Register service worker + force update on new versions
-const APP_VERSION = 'v12';
+const APP_VERSION = 'v13';
 let swRefreshing = false;
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
