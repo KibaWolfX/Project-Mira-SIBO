@@ -1105,6 +1105,10 @@
   /* Pantry & Crave */
   .pantry-header-card { background: linear-gradient(135deg, #FFF5D6, #EEE5FF); border-color: #D4BBFF; margin-bottom: 16px; }
   .pantry-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+  .pantry-inv-fill-btn { width: 100%; padding: 10px 16px; border-radius: 12px; background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; border: none; font-family: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.15s, background 0.3s; }
+  .pantry-inv-fill-btn:active { transform: scale(0.97); }
+  .pantry-inv-count { background: rgba(255,255,255,0.25); padding: 2px 8px; border-radius: 8px; font-size: 0.75rem; }
+  .pantry-inv-preview { font-size: 0.72rem; color: var(--text-muted); margin-bottom: 8px; line-height: 1.4; }
   .pantry-result-card { margin-top: 16px; }
   .pantry-section-green { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--green); margin-bottom: 4px; }
   .pantry-section-orange { font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; color: var(--orange); margin-bottom: 4px; }
@@ -1585,7 +1589,7 @@
     <button class="more-item" onclick="showScreen('foods');closeMore()"><span class="more-icon">📋</span><span>Food Guide</span></button>
     <button class="more-item" onclick="showScreen('grocery');renderGroceryList();closeMore()"><span class="more-icon">🛒</span><span>Grocery List</span></button>
     <button class="more-item" onclick="initInventory();closeMore()"><span class="more-icon">🎒</span><span>My Inventory</span></button>
-    <button class="more-item" onclick="showScreen('pantry');loadCookingPrefs();closeMore()"><span class="more-icon">🍳</span><span>Pantry & Crave</span></button>
+    <button class="more-item" onclick="showScreen('pantry');loadCookingPrefs();renderPantryInvButton();closeMore()"><span class="more-icon">🍳</span><span>Pantry & Crave</span></button>
     <button class="more-item" onclick="showScreen('breakfast');closeMore()"><span class="more-icon">🌅</span><span>Grab & Go Breakfasts</span></button>
     <button class="more-item" onclick="initHistory();closeMore()"><span class="more-icon">📍</span><span>Restaurant History</span></button>
     <button class="more-item" onclick="showScreen('convention');closeMore()"><span class="more-icon">🎉</span><span>Convention Pack</span></button>
@@ -1818,6 +1822,7 @@
   </div>
 
   <div class="section-label">What's in your pantry right now?</div>
+  <div id="pantry-inv-btn-wrap"></div>
   <textarea id="pantry-input" class="meal-log-notes" rows="4"
     placeholder="e.g. chicken breast, white rice, zucchini, olive oil, eggs, carrots..."></textarea>
 
@@ -4619,11 +4624,73 @@ function loadCookingPrefs() {
   }
 }
 
+// ── INVENTORY → PANTRY INTEGRATION ──────────────────────────
+
+function renderPantryInvButton() {
+  const wrap = document.getElementById('pantry-inv-btn-wrap');
+  if (!wrap) return;
+  const inv = loadInventory();
+  if (!inv.length) { wrap.innerHTML = ''; return; }
+  const fullItems = inv.filter(i => !i.partial);
+  const partialItems = inv.filter(i => i.partial);
+  wrap.innerHTML = `
+    <button class="pantry-inv-fill-btn" onclick="fillPantryFromInventory()">
+      🎒 Fill from Inventory <span class="pantry-inv-count">${inv.length} item${inv.length !== 1 ? 's' : ''}</span>
+    </button>
+    ${fullItems.length || partialItems.length ? `<div class="pantry-inv-preview">${inv.slice(0, 6).map(i => i.name).join(', ')}${inv.length > 6 ? ` +${inv.length - 6} more` : ''}</div>` : ''}`;
+}
+
+function fillPantryFromInventory() {
+  const inv = loadInventory();
+  if (!inv.length) return;
+  const input = document.getElementById('pantry-input');
+  if (!input) return;
+  const invNames = inv.map(i => {
+    let label = i.name;
+    if (i.partial) label += ' (some left)';
+    return label;
+  });
+  // If there's already text, append after a comma
+  const existing = input.value.trim();
+  if (existing) {
+    // Avoid duplicates — only add items not already mentioned
+    const lower = existing.toLowerCase();
+    const newItems = invNames.filter(n => !lower.includes(n.toLowerCase().replace(' (some left)', '')));
+    if (newItems.length) {
+      input.value = existing + ', ' + newItems.join(', ');
+    }
+  } else {
+    input.value = invNames.join(', ');
+  }
+  // Auto-resize the textarea
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 200) + 'px';
+  // Visual feedback
+  const btn = document.querySelector('.pantry-inv-fill-btn');
+  if (btn) {
+    btn.textContent = '✅ Filled!';
+    btn.style.background = 'var(--green)';
+    setTimeout(() => renderPantryInvButton(), 1500);
+  }
+}
+
+function getInventoryForPrompt() {
+  const inv = loadInventory();
+  if (!inv.length) return '';
+  const full = inv.filter(i => !i.partial).map(i => i.name);
+  const partial = inv.filter(i => i.partial).map(i => i.name);
+  let text = '';
+  if (full.length) text += `\nIn stock (full): ${full.join(', ')}`;
+  if (partial.length) text += `\nIn stock (partial/almost out): ${partial.join(', ')}`;
+  return text;
+}
+
 async function runPantryCrave() {
   if (isOffline()) { document.getElementById('pantry-result').innerHTML = '<div class="nearby-error">📡 You\'re offline — Pantry & Crave needs an internet connection.</div>'; return; }
   const pantry = document.getElementById('pantry-input')?.value.trim();
-  if (!pantry) {
-    document.getElementById('pantry-result').innerHTML = '<div class="nearby-error">Tell me what you have in your pantry first.</div>';
+  const invText = getInventoryForPrompt();
+  if (!pantry && !invText) {
+    document.getElementById('pantry-result').innerHTML = '<div class="nearby-error">Tell me what you have in your pantry first, or fill from your inventory!</div>';
     return;
   }
   const crave = MiraState.pantry.selectedCrave || 'anything SIBO-safe';
@@ -4633,9 +4700,11 @@ async function runPantryCrave() {
 
   const userName = MiraState.auth.currentProfile?.name || 'The user';
   const setupDesc = SETUP_DESCRIPTIONS[MiraState.pantry.selectedSetup] || SETUP_DESCRIPTIONS.full;
+  const pantrySection = pantry ? `What ${userName} listed in their pantry: ${pantry}` : '';
+  const inventorySection = invText ? `\n${userName}'s tracked inventory:${invText}` : '';
   const prompt = `${getMiraProtocol()}
 
-What ${userName} has in their pantry: ${pantry}
+${pantrySection}${inventorySection}
 
 They are craving: ${crave}
 Effort level: ${effort}
@@ -4643,9 +4712,11 @@ Available cooking equipment: ${setupDesc}
 
 CRITICAL: Every recipe step must ONLY use the equipment listed above. Do not suggest any technique that requires equipment not available. Adapt cooking methods accordingly (e.g. microwave-only means no sautéing, no-cook means no heating at all).
 
+Prioritize ingredients they already have in stock. Items marked "partial/almost out" should be used sparingly or noted as possibly needing a top-up.
+
 Suggest 1–2 specific meals they can make RIGHT NOW using mostly what they have. For each meal:
 - Name it
-- List which pantry items it uses
+- List which pantry/inventory items it uses
 - Note any 1–2 items they'd need to grab if missing
 - Give simple step-by-step instructions (${MiraState.pantry.selectedEffort === 'quick' ? '3–5 steps max' : 'as detailed as needed'}) using ONLY their available equipment
 - Confirm why it fits their protocol
@@ -8102,7 +8173,7 @@ window.addEventListener('offline', updateOfflineBanner);
 updateOfflineBanner();
 
 // Register service worker + force update on new versions
-const APP_VERSION = 'v13';
+const APP_VERSION = 'v14';
 let swRefreshing = false;
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').then(reg => {
